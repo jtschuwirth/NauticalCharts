@@ -9,7 +9,6 @@
 
     <link href="build/site.css" rel="stylesheet">
     <script src="build/mainbundle.js"></script>
-    <script src="build/gamebundle.js"></script>
     <script >
         function onClickInstall() {
             window.open("https://metamask.io/")
@@ -35,14 +34,14 @@
 <body>
 
     <div id="main">
-        <h1>Titulo Pagina</h1>
+        <h1>Nautical Charts</h1>
         <p>Version 0.0.1</p>
         <div id="metamask">
             <button type="button" id = "connectButton" onclick="onClickInstall();">Install Metamask</button>
         </div>
         <br>
         <div id ="metamask">
-            <p id="red"></p>
+            <p id="network"></p>
         </div>
 
         <div class="navbar">
@@ -54,7 +53,8 @@
             <button class = "navbtn"id="btnMenu" onclick="buttonclick('menu6');">pestaña 6</button> 
             
             <ul id="menu1" class="menuOn"> 
-                <h2> AQUI EL JUEGO</h2>
+                <h2> Game</h2>
+                <p id="game"></p>
             </ul>
 
             <ul id="menu2" class="menuOff"> 

@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "lite-server",
-    "game": "browserify -t reactify src/js/game.js --standalone myBundle > build/gamebundle.js",
     "build": "browserify -t reactify src/js/main.js --standalone myBundle > build/mainbundle.js"
   },
   "repository": {
