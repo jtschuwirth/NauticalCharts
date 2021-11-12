@@ -1,0 +1,31 @@
+{
+  "name": "nauticalcharts",
+  "version": "1.0.0",
+  "description": "Juego de roll and write de cartas nauticas",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "game": "browserify -t reactify src/js/game.js --standalone myBundle > build/gamebundle.js",
+    "build": "browserify -t reactify src/js/main.js --standalone myBundle > build/mainbundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jtschuwirth/NauticalCharts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jtschuwirth/NauticalCharts/issues"
+  },
+  "homepage": "https://github.com/jtschuwirth/NauticalCharts#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.3.2",
+    "browserify-shim": "^3.8.14",
+    "ethers": "^5.5.1",
+    "lite-server": "^2.6.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-tools": "^0.13.3",
+    "reactify": "^1.1.1"
+  }
+}

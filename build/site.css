@@ -1,0 +1,79 @@
+body {
+    font-family: "Trebuchet MS", Verdana, sans-serif;
+    font-size: 16px;
+    background-color: dimgrey;
+    color: #696969;
+    padding: 3px;
+}
+
+#main {
+    padding: 5px;
+    padding-left:  15px;
+    padding-right: 15px;
+    background-color: #ffffff;
+    border-radius: 0 0 5px 5px;
+}
+
+
+#metamask {
+    margin: auto;
+    text-align: center;
+  }
+
+h1 {
+    font-family: Georgia, serif;
+    border-bottom: 3px solid #333;
+    color: #333;
+    font-size: 30px;
+}
+
+#menu1  {    position: center;    top: 10 px;    left: 101 px;       } 
+.menuOff     {    display: none;    }        
+.menuOn    {    display: block;    }
+
+#menu2  {    position: center;    top: 10 px;    left: 101 px;       } 
+.menuOff     {    display: none;    }        
+.menuOn    {    display: block;    }
+
+#menu3  {    position: center;    top: 10 px;    left: 101 px;       } 
+.menuOff     {    display: none;    }        
+.menuOn    {    display: block;    }
+
+#menu4  {    position: center;    top: 10 px;    left: 101 px;       } 
+.menuOff     {    display: none;    }        
+.menuOn    {    display: block;    }
+
+#menu5  {    position: center;    top: 10 px;    left: 101 px;       } 
+.menuOff     {    display: none;    }        
+.menuOn    {    display: block;    }
+
+
+/* The navigation menu */
+.navbar {
+    overflow: hidden;
+    background-color: #333;
+  }  
+.navbtn {
+    font-size: 16px;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 14px 16px;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
+  }
+/* Add a red background color to navigation links on hover */
+.navbtn:hover {
+    background-color: red;
+  }
+
+  ol, ul {
+    padding-left: 30px;
+  }
+  
+  .board-row:after {
+    clear: both;
+    content: "";
+    display: table;
+  }
