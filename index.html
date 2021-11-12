@@ -9,12 +9,13 @@
 
     <link href="build/site.css" rel="stylesheet">
     <script src="build/mainbundle.js"></script>
+    <script src="build/gamebundle.js"></script>
     <script >
         function onClickInstall() {
             window.open("https://metamask.io/")
         }
 
-        async function buttonclick(menu) {    
+        function buttonclick(menu) {    
             var menuList = document.getElementById(menu);
             document.getElementById("menu1").className = "menuOff"
             document.getElementById("menu2").className = "menuOff"
@@ -26,8 +27,8 @@
                 menuList.className = "menuOn";    
             } else {        
                 menuList.className = "menuOff";    
-            }    
-    },
+            } 
+        }
     </script>
 </head>
 
@@ -53,25 +54,29 @@
             <button class = "navbtn"id="btnMenu" onclick="buttonclick('menu6');">pestaña 6</button> 
             
             <ul id="menu1" class="menuOn"> 
-                <h2>Main Page</h2>
-                <p id ="errorlog"></p> 
+                <h2> AQUI EL JUEGO</h2>
             </ul>
 
-            <ul id="menu2" class="menuOff">  
+            <ul id="menu2" class="menuOff"> 
+                <h2>pestaña 2</h2> 
 
             </ul>
             
             <ul id="menu3" class="menuOff">
+                <h2>pestaña 3</h2> 
 
             </ul> 
 
-            <ul id="menu4" class="menuOff">  
+            <ul id="menu4" class="menuOff">
+                <h2>pestaña 4</h2>  
 
             </ul>
-            <ul id="menu5" class="menuOff"> 
+            <ul id="menu5" class="menuOff">
+                <h2>pestaña 5</h2> 
 
             </ul>
             <ul id="menu6" class="menuOff">
+                <h2>pestaña 6</h2> 
 
             </ul>
         </div>
