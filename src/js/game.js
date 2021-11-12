@@ -17,7 +17,7 @@ class Game extends React.Component {
     render() {
         return (
             <div>
-                Aqui esta el juego
+                <Canvas />
             </div>
         );
     }
@@ -25,8 +25,23 @@ class Game extends React.Component {
 
 //clase canvas la cual tiene de hijos a los hexagonos, es el tablero en si
 class Canvas extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+    }
 
+    render() {
+        return (
+            <div>
+                Juego
+            </div>
+
+          );
+    }
 }
+
+
 
 //comando necesario para importar la clase en main.js
 module.exports.Game = Game;

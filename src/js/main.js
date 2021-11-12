@@ -1,6 +1,5 @@
 
 const game = require("./game.js");
-const { ethers, Contract } = require("ethers");
 var React = require('react');
 var ReactDOM = require('react-dom');
 
