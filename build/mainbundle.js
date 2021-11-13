@@ -30329,6 +30329,7 @@ class Game extends React.Component {
             //valores de las tiles es entrega desde el backend para todos los usuarios (es el mapa de la partida)
             errorlog: null,
             currentPoints: 0,
+            currentTurn: 1,
             tileValues: [
                 [100,100,100,100,100,100,100,1,100,100,100,100],
                 [100,100,100,8,100,100,100,100,100,100,3,100],
@@ -30426,6 +30427,7 @@ class Game extends React.Component {
 
     endTurn() {
         this.rollDices();
+        this.setState({currentTurn: this.state.currentTurn+1});
 
     }
 
@@ -30471,6 +30473,9 @@ class Game extends React.Component {
         let array = this.state.diceValues;
         return (
             React.createElement("div", null, 
+                React.createElement("div", {class: "center"}, 
+                    "Turno: ", this.state.currentTurn
+                ), 
                 React.createElement("div", {class: "center"}, 
                     "Dados"             
                 ), 
