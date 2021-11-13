@@ -30330,12 +30330,12 @@ class Game extends React.Component {
             errorlog: null,
             currentPoints: 0,
             tileValues: [
-                [0,0,0,0,0,0,0,1,0,0,0,0],
-                [0,0,0,1,0,0,0,0,0,0,1,0],
-                [1,0,0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,1,0,0,0,0,0],
-                [0,1,0,0,0,0,0,0,0,1,0,0],
-                [0,0,0,1,0,0,0,1,0,0,0,0]
+                [100,100,100,100,100,100,100,1,100,100,100,100],
+                [100,100,100,8,100,100,100,100,100,100,3,100],
+                [1,100,100,100,100,100,100,100,100,100,100,100],
+                [100,100,100,100,100,100,2,100,100,100,100,100],
+                [100,2,100,100,100,100,100,100,100,1,100,100],
+                [100,100,100,5,100,100,100,5,100,100,100,100]
             ],
             diceValues: [null, null, null],
             selectedSquare: [null,null],
@@ -30358,6 +30358,14 @@ class Game extends React.Component {
         return this.state.tileValues[position[1]][position[0]]
     }
 
+    changeTileValues(change) {
+        const old_tiles = this.state.tileValues;
+        const new_tiles = old_tiles.map((_) => _ );
+
+        new_tiles[this.state.currentPosition[1]][this.state.currentPosition[0]] = new_tiles[this.state.currentPosition[1]][this.state.currentPosition[0]]+change;    
+        this.setState({tileValues: new_tiles});
+    }
+
     sail() {
         this.setState({errorlog: null});
         if (this.state.currentPosition[0] != this.state.selectedSquare[0] && this.state.currentPosition[1] != this.state.selectedSquare[1]) {
@@ -30370,11 +30378,16 @@ class Game extends React.Component {
     loot() {
         this.setState({errorlog: null});
         let currentValue;
+        let change;
         currentValue = this.positionValue(this.state.currentPosition);
         if (currentValue == 0) {
             this.errorlog("No puedes lootear esta casilla, es mar");
         } else {
+            //Luego cambiar a lootear la cantidad asignada por el dado
             this.setState({currentPoints: this.state.currentPoints+currentValue});
+            change = -currentValue;
+            this.changeTileValues(change);
+
         }
 
     }
@@ -30470,15 +30483,17 @@ class Square extends React.Component {
         let Type;
         let selected;
         let className;
+        let value;
+
         if (this.props.selectedSquare[0]==this.props.id[0] && this.props.selectedSquare[1]==this.props.id[1]) {
             selected ="Selected";
         } else {
             selected ="";
         }
 
-        if (this.props.value == 0) {
+        if (this.props.value == 100) {
             Type = "sea";           
-        } else if (this.props.value == 1) {
+        } else if (this.props.value < 10) {
             Type = "island";
         }
 
@@ -30486,11 +30501,18 @@ class Square extends React.Component {
             Type = "ship";
         }
         className = Type+selected;
+
+        if (this.props.value!=100) {
+            value = this.props.value;
+        } else {
+            value =null;
+        }
+        
         return (
                 React.createElement("button", {
                     className: className, 
                     onClick:  () => this.select()
-                }
+                }, " ", value
                 )
         );
     }
