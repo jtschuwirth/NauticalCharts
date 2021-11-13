@@ -30327,6 +30327,7 @@ class Game extends React.Component {
         super(props);
         this.state = {
             //valores de las tiles es entrega desde el backend para todos los usuarios (es el mapa de la partida)
+            showPopup: false,
             errorlog: null,
             currentPoints: 0,
             currentTurn: 1,
@@ -30344,6 +30345,7 @@ class Game extends React.Component {
             currentPosition: [4,3],
         };
         this.getBoardData = this.getBoardData.bind(this)
+        this.togglePopup = this.togglePopup.bind(this)
     }
 
     //funcion que correr cuando el componente es creado
@@ -30351,6 +30353,12 @@ class Game extends React.Component {
         this.rollDices();
 
     }
+
+    togglePopup() {
+        this.setState({
+          showPopup: !this.state.showPopup
+        });
+      }
 
     getBoardData(childData) {
         this.setState({selectedSquare: childData})
@@ -30382,7 +30390,8 @@ class Game extends React.Component {
             this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
         } else if (this.state.selectedDice == null) {
             this.errorlog("Debes seleccionar un dado para utilizar");
-
+        } else if (this.state.currentPosition[0] == this.state.selectedSquare[0] && this.state.currentPosition[1] == this.state.selectedSquare[1]) {
+            this.errorlog("No puedes navegar a la casilla en la que estas");
         } else if (
         this.state.currentPosition[0]-this.state.selectedSquare[0] > this.state.diceValues[this.state.selectedDice] ||
         this.state.selectedSquare[0]-this.state.currentPosition[0] > this.state.diceValues[this.state.selectedDice]) {
@@ -30426,10 +30435,21 @@ class Game extends React.Component {
     }
 
     endTurn() {
-        this.rollDices();
-        this.setState({currentTurn: this.state.currentTurn+1});
-
+        if (this.state.currentTurn == 5) {
+            this.endGame();
+        } else {
+            this.rollDices();
+            this.setState({currentTurn: this.state.currentTurn+1});
+        }
     }
+
+    endGame() {
+        this.togglePopup();
+    }
+
+    playAgain() {
+        window.location.reload()
+     }
 
     renderDices(value, index) {
         if (value == null) {
@@ -30463,7 +30483,6 @@ class Game extends React.Component {
     selectDice(index) {
         this.setState({selectedDice: index})
     }
-
 
     errorlog(value) {
         this.setState({errorlog: value});
@@ -30501,14 +30520,19 @@ class Game extends React.Component {
                 ), 
                 React.createElement("br", null), 
                 React.createElement("div", {class: "center"}, 
-                    "Te encuentras en [", this.state.currentPosition[0], ",", this.state.currentPosition[1], "]"
-                ), 
-                React.createElement("div", {class: "center"}, 
                     "Tienes: ", this.state.currentPoints, " Puntos"
                 ), 
                 React.createElement("div", {class: "center"}, 
                     this.state.errorlog
-                )
+                ), 
+                this.state.showPopup ? 
+                    React.createElement(Popup, {
+                    currentPoints: this.state.currentPoints, 
+                    closePopup: this.togglePopup.bind(this), 
+                    playAgain: this.playAgain.bind(this)}
+                    )
+                : null
+                
             )
         );
     }
@@ -30614,6 +30638,27 @@ class Square extends React.Component {
 
     }
 }
+
+class Popup extends React.Component {
+
+    render() {
+      return (
+        React.createElement("div", {className: "popup"}, 
+          React.createElement("div", {className: "popup_inner"}, 
+                React.createElement("div", {class: "center"}, 
+                    "Total Points: ", this.props.currentPoints
+                ), 
+                React.createElement("br", null), 
+                React.createElement("br", null), 
+                React.createElement("div", {class: "center"}, 
+                    React.createElement("button", {onClick: this.props.playAgain}, "Play Again"), 
+                    React.createElement("button", {onClick: this.props.closePopup}, "Go to Main Menu")
+                )
+          )
+        )
+      );
+    }
+  }
 
 
 //comando necesario para importar la clase Game en main.js
