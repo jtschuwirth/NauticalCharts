@@ -13,6 +13,7 @@ class Game extends React.Component {
         this.state = {
             //valores de las tiles es entrega desde el backend para todos los usuarios (es el mapa de la partida)
             errorlog: null,
+            currentPoints: 0,
             tileValues: [
                 [0,0,0,0,0,0,0,1,0,0,0,0],
                 [0,0,0,1,0,0,0,0,0,0,1,0],
@@ -38,16 +39,28 @@ class Game extends React.Component {
         this.setState({selectedSquare: childData})
     }
 
+    positionValue(position) {
+        return this.state.tileValues[position[1]][position[0]]
+    }
+
     sail() {
         this.setState({errorlog: null});
         if (this.state.currentPosition[0] != this.state.selectedSquare[0] && this.state.currentPosition[1] != this.state.selectedSquare[1]) {
-            this.errorlog("Casilla no valida, solo puedes navegar en linea recta")
+            this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
         } else {
             this.setState({currentPosition: this.state.selectedSquare});
         }
     }
 
     loot() {
+        this.setState({errorlog: null});
+        let currentValue;
+        currentValue = this.positionValue(this.state.currentPosition);
+        if (currentValue == 0) {
+            this.errorlog("No puedes lootear esta casilla, es mar");
+        } else {
+            this.setState({currentPoints: this.state.currentPoints+currentValue});
+        }
 
     }
 
@@ -79,6 +92,9 @@ class Game extends React.Component {
                 <br></br>
                 <div class="center">
                     Te encuentras en [{this.state.currentPosition[0]},{this.state.currentPosition[1]}]
+                </div>
+                <div class="center">
+                    Tienes: {this.state.currentPoints} Puntos
                 </div>
                 <div class="center">
                     {this.state.errorlog}
