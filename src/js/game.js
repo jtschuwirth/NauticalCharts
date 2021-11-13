@@ -85,16 +85,26 @@ class Game extends React.Component {
         this.setState({errorlog: null});
         let currentValue;
         let change;
+        let looted;
         currentValue = this.positionValue(this.state.currentPosition);
+        if (this.state.diceValues[this.state.selectedDice] > currentValue) {
+            looted = currentValue
+        } else {
+            looted = this.state.diceValues[this.state.selectedDice]
+        }
+        
         if (currentValue == 100) {
             this.errorlog("No puedes lootear esta casilla, es mar");         
+        } else if (this.state.diceValues[this.state.selectedDice] == null) {
+            this.errorlog("Debes seleccionar un dado para lootear"); 
         } else if (currentValue == 0) {
             this.errorlog("Ya no quedan recursos en esta isla");
         } else {
             //Luego cambiar a lootear la cantidad asignada por el dado
-            this.setState({currentPoints: this.state.currentPoints+currentValue});
-            change = -currentValue;
+            this.setState({currentPoints: this.state.currentPoints+looted});
+            change = -looted;
             this.changeTileValues(change);
+            this.changeDiceValues();
         }
 
     }
