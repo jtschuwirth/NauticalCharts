@@ -47,6 +47,11 @@ h1 {
 .menuOff     {    display: none;    }        
 .menuOn    {    display: block;    }
 
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 /* The navigation menu */
 .navbar {
@@ -122,7 +127,7 @@ h1 {
     margin-top: -1px;
   }
 
-  .start {
+  .ship {
     background: #fff;
     border: 1px solid #999;
     float: left;
@@ -132,7 +137,7 @@ h1 {
     margin-top: -1px;
   }
 
-  .startSelected {
+  .shipSelected {
     position: relative;
     box-sizing: border-box;
     background: #fff;

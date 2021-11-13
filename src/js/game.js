@@ -12,31 +12,77 @@ class Game extends React.Component {
         super(props);
         this.state = {
             //valores de las tiles es entrega desde el backend para todos los usuarios (es el mapa de la partida)
+            errorlog: null,
             tileValues: [
-                [0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,1,0,0,0,0],
                 [0,0,0,1,0,0,0,0,0,0,1,0],
                 [1,0,0,0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,2,0,1,0,0,0,0,0],
+                [0,0,0,0,0,0,1,0,0,0,0,0],
                 [0,1,0,0,0,0,0,0,0,1,0,0],
                 [0,0,0,1,0,0,0,1,0,0,0,0]
             ],
+            diceValues: [null, null, null],
             selectedSquare: [null,null],
+            selectedDice: null,
+            currentPosition: [4,3],
         };
         this.getBoardData = this.getBoardData.bind(this)
+    }
+
+    //funcion que correr cuando el componente es creado
+    componentDidMount() {
+
     }
 
     getBoardData(childData) {
         this.setState({selectedSquare: childData})
     }
 
+    sail() {
+        this.setState({errorlog: null});
+        if (this.state.currentPosition[0] != this.state.selectedSquare[0] && this.state.currentPosition[1] != this.state.selectedSquare[1]) {
+            this.errorlog("Casilla no valida, solo puedes navegar en linea recta")
+        } else {
+            this.setState({currentPosition: this.state.selectedSquare});
+        }
+    }
+
+    loot() {
+
+    }
+
+    endTurn() {
+
+    }
+
+    errorlog(value) {
+        this.setState({errorlog: value});
+    }
+
     render() {
         return (
             <div>
-                <Board 
-                    tileValues={this.state.tileValues} 
-                    selectedSquare = {this.state.selectedSquare}
-                    sendBoardData={this.getBoardData}
-                />
+                <div class="center">
+                    <Board 
+                        tileValues={this.state.tileValues} 
+                        selectedSquare = {this.state.selectedSquare}
+                        currentPosition = {this.state.currentPosition}
+                        sendBoardData={this.getBoardData}
+                    />
+                </div>
+                <br></br>
+                <div class = "center">
+                    <button onClick={ () => this.sail()}>Sail</button>
+                    <button onClick={ () => this.loot()}>Loot</button>
+                    <button onClick={ () => this.endTurn()}>End Turn</button>
+                </div>
+                <br></br>
+                <div class="center">
+                    Te encuentras en [{this.state.currentPosition[0]},{this.state.currentPosition[1]}]
+                </div>
+                <div class="center">
+                    {this.state.errorlog}
+                </div>
             </div>
         );
     }
@@ -60,6 +106,7 @@ class Board extends React.Component {
             id={[index, row]} 
             value={value} 
             selectedSquare={this.props.selectedSquare}
+            currentPosition = {this.props.currentPosition}
             sendData={this.getSelectedSquare}
         />
     }
@@ -97,12 +144,15 @@ class Square extends React.Component {
         } else {
             selected ="";
         }
+
         if (this.props.value == 0) {
             Type = "sea";           
         } else if (this.props.value == 1) {
             Type = "island";
-        } else if (this.props.value == 2) {
-            Type="start";
+        }
+
+        if (this.props.currentPosition[0]==this.props.id[0] && this.props.currentPosition[1]==this.props.id[1]) {
+            Type = "ship";
         }
         className = Type+selected;
         return (
