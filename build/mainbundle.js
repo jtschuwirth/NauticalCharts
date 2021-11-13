@@ -30347,6 +30347,7 @@ class Game extends React.Component {
 
     //funcion que correr cuando el componente es creado
     componentDidMount() {
+        this.rollDices();
 
     }
 
@@ -30366,12 +30367,32 @@ class Game extends React.Component {
         this.setState({tileValues: new_tiles});
     }
 
+    changeDiceValues() {
+        const old_dices = this.state.diceValues;
+        const new_dices = old_dices.map((_) => _ );
+
+        new_dices[this.state.selectedDice] = null;  
+        this.setState({diceValues: new_dices});
+    }
+
     sail() {
         this.setState({errorlog: null});
         if (this.state.currentPosition[0] != this.state.selectedSquare[0] && this.state.currentPosition[1] != this.state.selectedSquare[1]) {
             this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
+        } else if (this.state.selectedDice == null) {
+            this.errorlog("Debes seleccionar un dado para utilizar");
+
+        } else if (
+        this.state.currentPosition[0]-this.state.selectedSquare[0] > this.state.diceValues[this.state.selectedDice] ||
+        this.state.selectedSquare[0]-this.state.currentPosition[0] > this.state.diceValues[this.state.selectedDice]) {
+            this.errorlog("No puedes avanzar mas de lo que dice el dado");
+        } else if (
+        this.state.currentPosition[1]-this.state.selectedSquare[1] > this.state.diceValues[this.state.selectedDice] ||
+        this.state.selectedSquare[1]-this.state.currentPosition[1] > this.state.diceValues[this.state.selectedDice]) {
+            this.errorlog("No puedes avanzar mas de lo que dice el dado");
         } else {
             this.setState({currentPosition: this.state.selectedSquare});
+            this.changeDiceValues();
         }
     }
 
@@ -30380,29 +30401,75 @@ class Game extends React.Component {
         let currentValue;
         let change;
         currentValue = this.positionValue(this.state.currentPosition);
-        if (currentValue == 0) {
-            this.errorlog("No puedes lootear esta casilla, es mar");
+        if (currentValue == 100) {
+            this.errorlog("No puedes lootear esta casilla, es mar");         
+        } else if (currentValue == 0) {
+            this.errorlog("Ya no quedan recursos en esta isla");
         } else {
             //Luego cambiar a lootear la cantidad asignada por el dado
             this.setState({currentPoints: this.state.currentPoints+currentValue});
             change = -currentValue;
             this.changeTileValues(change);
-
         }
 
     }
 
     endTurn() {
+        this.rollDices();
 
     }
+
+    renderDices(value, index) {
+        if (value == null) {
+            return ""
+        }
+        if (this.state.selectedDice == index) {
+            return React.createElement("button", {
+                onClick:  () => this.selectDice(index), 
+                className: "diceSelected"
+                }, 
+                    value
+                )
+
+        } else {
+            return React.createElement("button", {
+                onClick:  () => this.selectDice(index), 
+                className: "dice"
+                }, 
+                    value
+                )
+        }
+    }
+
+    rollDices() {
+        const dice0 = Math.floor(Math.random() * (7 - 1)) + 1;
+        const dice1 = Math.floor(Math.random() * (7 - 1)) + 1;
+        const dice2 = Math.floor(Math.random() * (7 - 1)) + 1;
+        this.setState({diceValues: [dice0, dice1, dice2]});
+    }
+
+    selectDice(index) {
+        this.setState({selectedDice: index})
+    }
+
 
     errorlog(value) {
         this.setState({errorlog: value});
     }
 
     render() {
+        let array = this.state.diceValues;
         return (
             React.createElement("div", null, 
+                React.createElement("div", {class: "center"}, 
+                    "Dados"             
+                ), 
+
+                React.createElement("div", {class: "center"}, 
+                    array.map((_, index) => this.renderDices(_, index))
+                ), 
+                React.createElement("br", null), 
+
                 React.createElement("div", {class: "center"}, 
                     React.createElement(Board, {
                         tileValues: this.state.tileValues, 

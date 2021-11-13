@@ -148,3 +148,25 @@ h1 {
     margin-right: -1px;
     margin-top: -1px;
   }
+
+  .dice {
+    background: #fff;
+    border: 1px solid #999;
+    float: left;
+    height: 30px;
+    width: 30px;
+    margin-right: -1px;
+    margin-top: -1px;
+  }
+
+  .diceSelected {
+    position: relative;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid black;
+    float: left;
+    height: 30px;
+    width: 30px;
+    margin-right: -1px;
+    margin-top: -1px;
+  }
