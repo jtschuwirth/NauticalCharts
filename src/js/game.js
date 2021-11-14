@@ -16,18 +16,11 @@ class Game extends React.Component {
             errorlog: null,
             currentPoints: 0,
             currentTurn: 1,
-            tileValues: [
-                [100,100,100,100,100,100,100,1,100,100,100,100],
-                [100,100,100,8,100,100,100,100,100,100,3,100],
-                [1,100,100,100,100,100,100,100,100,100,100,100],
-                [100,100,100,100,100,100,2,100,100,100,100,100],
-                [100,2,100,100,100,100,100,100,100,1,100,100],
-                [100,100,100,5,100,100,100,5,100,100,100,100]
-            ],
+            tileValues: [[1,0],[1,100]],
             diceValues: [null, null, null],
             selectedSquare: [null,null],
             selectedDice: null,
-            currentPosition: [4,3],
+            currentPosition: [null, null],
         };
         this.getBoardData = this.getBoardData.bind(this)
         this.togglePopup = this.togglePopup.bind(this)
@@ -35,7 +28,12 @@ class Game extends React.Component {
 
     //funcion que correr cuando el componente es creado
     componentDidMount() {
+        const map = this.crearMapa();
+        const pos = this.pos_inicial(map);
+        this.setState({tileValues: map});
+        this.setState({currentPosition: pos});
         this.rollDices();
+    
 
     }
 
@@ -180,13 +178,6 @@ class Game extends React.Component {
                 <div class="center">
                     Turno: {this.state.currentTurn}          
                 </div>
-                <div class="center">
-                    Dados             
-                </div>
-
-                <div class="center">
-                    {array.map((_, index) => this.renderDices(_, index))}
-                </div>
                 <br></br>
 
                 <div class="center">
@@ -196,6 +187,13 @@ class Game extends React.Component {
                         currentPosition = {this.state.currentPosition}
                         sendBoardData={this.getBoardData}
                     />
+                </div>
+                <br></br>
+                <div class="center">
+                    Dados             
+                </div>
+                <div class="center">
+                    {array.map((_, index) => this.renderDices(_, index))}
                 </div>
                 <br></br>
                 <div class = "center">
@@ -220,6 +218,76 @@ class Game extends React.Component {
                 }
             </div>
         );
+    }
+
+    crearMapa() {
+        const size_x = 13;
+        const size_y = 13;
+        const n_isles = 10;
+        const min_dis = 3;
+        const loot_min = 2;
+        const loot_max = 10;
+        //creamos el array con valores (100 - agua) y el tamaño correcto
+        var mapa = Array.apply(null, Array(size_y)).map( () => {
+            return Array.apply(null, Array(size_x)).map( () => {return 100} )
+        });
+      
+        //las islas no pueden estar en los límites del mapa
+        var pos_islas = []
+        for (var i = 1; i < size_x - 1; i++) {
+          for (var j = 1; j < size_y - 1; j++) {
+            pos_islas.push({x: i, y: j});
+          }
+        }
+        this.shuffle(pos_islas)
+      
+        //asignamos las islas en el tablero
+        while (pos_islas.length > 0 && n_isles > 0){
+          var pos = pos_islas.pop();
+          mapa[pos.y][pos.x] = this.getRandomInt(loot_min, loot_max);
+      
+          var temp = [];
+          for (var i = 1; i < pos_islas.length; i++){
+            if ( this.dist( pos_islas[i], pos) > min_dis ){
+              temp.push(pos_islas[i])
+            }
+          }
+          pos_islas = temp
+        }
+      
+      //{x: xVal, y: yVal}
+      
+        return mapa;
+    }
+
+    pos_inicial(mapa) {
+        while(true) {
+            var pos = [this.getRandomInt(1, 7) + this.getRandomInt(1, 7), this.getRandomInt(1, 7) + this.getRandomInt(1, 7)];
+            if (mapa[pos[0]][pos[1]] == 100) {
+                return pos;
+            }
+        }
+    }
+
+    
+
+    dist(coord_1, coord_2) {
+        return Math.abs(coord_1.x - coord_2.x) + Math.abs(coord_1.y - coord_2.y)
+    }
+      
+    shuffle(array) {
+        //https://dev.to/codebubb/how-to-shuffle-an-array-in-javascript-2ikj
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const temp = array[i];
+          array[i] = array[j];
+          array[j] = temp;
+        }
+    }
+      
+    getRandomInt(min, max) {
+        //https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+        return Math.floor(Math.random() * (max - min)) + min;
     }
 }
 
