@@ -223,7 +223,7 @@ class Game extends React.Component {
     crearMapa() {
         const size_x = 13;
         const size_y = 13;
-        const n_isles = 10;
+        var n_isles = 10;
         const min_dis = 3;
         const loot_min = 2;
         const loot_max = 10;
@@ -243,17 +243,18 @@ class Game extends React.Component {
       
         //asignamos las islas en el tablero
         while (pos_islas.length > 0 && n_isles > 0){
-          var pos = pos_islas.pop();
-          mapa[pos.y][pos.x] = this.getRandomInt(loot_min, loot_max);
-          n_isles--;
+            var pos = pos_islas.pop();
+            mapa[pos.y][pos.x] = this.getRandomInt(loot_min, loot_max);
+            n_isles--;
+          
       
-          var temp = [];
-          for (var i = 1; i < pos_islas.length; i++){
-            if ( this.dist( pos_islas[i], pos) > min_dis ){
-              temp.push(pos_islas[i])
+            var temp = [];
+            for (var i = 1; i < pos_islas.length; i++){
+                if ( this.dist( pos_islas[i], pos) > min_dis ){
+                temp.push(pos_islas[i])
+                }
             }
-          }
-          pos_islas = temp
+            pos_islas = temp
         }
       
       //{x: xVal, y: yVal}
