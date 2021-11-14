@@ -30560,6 +30560,7 @@ class Game extends React.Component {
         while (pos_islas.length > 0 && n_isles > 0){
           var pos = pos_islas.pop();
           mapa[pos.y][pos.x] = this.getRandomInt(loot_min, loot_max);
+          n_isles--;
       
           var temp = [];
           for (var i = 1; i < pos_islas.length; i++){
@@ -30578,7 +30579,7 @@ class Game extends React.Component {
     pos_inicial(mapa) {
         while(true) {
             var pos = [this.getRandomInt(1, 7) + this.getRandomInt(1, 7), this.getRandomInt(1, 7) + this.getRandomInt(1, 7)];
-            if (mapa[pos[0]][pos[1]] == 100) {
+            if (mapa[pos[1]][pos[0]] == 100) {
                 return pos;
             }
         }
