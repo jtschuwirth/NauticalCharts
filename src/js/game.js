@@ -48,10 +48,9 @@ class Game extends React.Component {
     }
 
     positionValue(position) {
-        return this.state.tileValues[position[0]][position[1]][position[2]]
+        return this.state.tileValues[position[0]][position[1]]
     }
 
-    //Cambiar a coordenadas hexagonales falta saber como interactuar con el mapa
     changeTileValues(change) {
         const old_tiles = this.state.tileValues;
         const new_tiles = old_tiles.map((_) => _ );
@@ -93,7 +92,6 @@ class Game extends React.Component {
             this.changeDiceValues();
         }
     }
-
 
     loot() {
         this.setState({errorlog: null});
@@ -176,55 +174,6 @@ class Game extends React.Component {
         this.setState({errorlog: value});
     }
 
-    render() {
-        let array = this.state.diceValues;
-        return (
-            <div>
-                <div class="center">
-                    Turno: {this.state.currentTurn}        
-                </div>
-                <div class="center">
-                    Tienes: {this.state.currentPoints} Puntos
-                </div>
-                <br></br>
-
-                <div class="center">
-                    <Board 
-                        tileValues={this.state.tileValues}
-                        selectedHexagon = {this.state.selectedHexagon}
-                        currentPosition = {this.state.currentPosition}
-                        sendBoardData={this.getBoardData}
-                    />
-                </div>
-                <br></br>
-                <div class="center">
-                    Dados             
-                </div>
-                <div class="center">
-                    {array.map((_, index) => this.renderDices(_, index))}
-                </div>
-                <br></br>
-                <div class = "center">
-                    <button onClick={ () => this.sail()}>Sail</button>
-                    <button onClick={ () => this.loot()}>Loot</button>
-                    <button onClick={ () => this.endTurn()}>End Turn</button>
-                </div>
-                <br></br>
-                <div class="center">
-                    {this.state.errorlog}
-                </div>
-                {this.state.showPopup ? 
-                    <Popup
-                    currentPoints={this.state.currentPoints}
-                    closePopup={this.togglePopup.bind(this)}
-                    playAgain={this.playAgain.bind(this)}
-                    />
-                : null
-                }
-            </div>
-        );
-    }
-
     crearMapa() {
         const size_x = 13;
         const size_y = 13;
@@ -289,6 +238,58 @@ class Game extends React.Component {
     getRandomInt(min, max) {
         //https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Math/random
         return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    render() {
+        let array = this.state.diceValues;
+        return (
+            <div>
+                <div class="center">
+                    Game ID: {this.props.gameId}
+                </div>
+                <div class="center">
+                    Turno: {this.state.currentTurn}        
+                </div>
+                <div class="center">
+                    Tienes: {this.state.currentPoints} Puntos
+                </div>
+                <br></br>
+
+                <div class="center">
+                    <Board 
+                        tileValues={this.state.tileValues}
+                        selectedHexagon = {this.state.selectedHexagon}
+                        currentPosition = {this.state.currentPosition}
+                        sendBoardData={this.getBoardData}
+                    />
+                </div>
+                <br></br>
+                <div class="center">
+                    Dados             
+                </div>
+                <div class="center">
+                    {array.map((_, index) => this.renderDices(_, index))}
+                </div>
+                <br></br>
+                <div class = "center">
+                    <button onClick={ () => this.sail()}>Sail</button>
+                    <button onClick={ () => this.loot()}>Loot</button>
+                    <button onClick={ () => this.endTurn()}>End Turn</button>
+                </div>
+                <br></br>
+                <div class="center">
+                    {this.state.errorlog}
+                </div>
+                {this.state.showPopup ? 
+                    <Popup
+                    currentPoints={this.state.currentPoints}
+                    closePopup={this.togglePopup.bind(this)}
+                    playAgain={this.playAgain.bind(this)}
+                    />
+                : null
+                }
+            </div>
+        );
     }
 }
 
