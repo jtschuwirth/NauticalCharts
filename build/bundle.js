@@ -32921,7 +32921,7 @@ var Game = /*#__PURE__*/function (_React$Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       var map = this.crearMapa();
-      var pos = this.pos_inicial(map);
+      var pos = this.pos_inicial();
       this.setState({
         tileValues: map
       });
@@ -32957,7 +32957,7 @@ var Game = /*#__PURE__*/function (_React$Component) {
       var new_tiles = old_tiles.map(function (_) {
         return _;
       });
-      new_tiles[this.state.currentPosition[1]][this.state.currentPosition[0]] = new_tiles[this.state.currentPosition[1]][this.state.currentPosition[0]] + change;
+      new_tiles[this.state.currentPosition[0]][this.state.currentPosition[1]] = new_tiles[this.state.currentPosition[0]][this.state.currentPosition[1]] + change;
       this.setState({
         tileValues: new_tiles
       });
@@ -32973,8 +32973,7 @@ var Game = /*#__PURE__*/function (_React$Component) {
       this.setState({
         diceValues: new_dices
       });
-    } //Cambiar a coordenadas hexagonales falta saber como interactuar con el mapa
-
+    }
   }, {
     key: "sail",
     value: function sail() {
@@ -32982,19 +32981,21 @@ var Game = /*#__PURE__*/function (_React$Component) {
         errorlog: null
       });
 
-      if (this.state.currentPosition[0] != this.state.selectedSquare[0] && this.state.currentPosition[1] != this.state.selectedSquare[1]) {
+      if (this.state.currentPosition[0] != this.state.selectedHexagon[0] && this.state.currentPosition[1] != this.state.selectedHexagon[1] && this.state.currentPosition[2] != this.state.selectedHexagon[2]) {
         this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
       } else if (this.state.selectedDice == null) {
         this.errorlog("Debes seleccionar un dado para utilizar");
-      } else if (this.state.currentPosition[0] == this.state.selectedSquare[0] && this.state.currentPosition[1] == this.state.selectedSquare[1]) {
+      } else if (this.state.currentPosition[0] == this.state.selectedHexagon[0] && this.state.currentPosition[1] == this.state.selectedHexagon[1] && this.state.currentPosition[2] == this.state.selectedHexagon[2]) {
         this.errorlog("No puedes navegar a la casilla en la que estas");
-      } else if (this.state.currentPosition[0] - this.state.selectedSquare[0] > this.state.diceValues[this.state.selectedDice] || this.state.selectedSquare[0] - this.state.currentPosition[0] > this.state.diceValues[this.state.selectedDice]) {
+      } else if (this.state.currentPosition[0] - this.state.selectedHexagon[0] > this.state.diceValues[this.state.selectedDice] || this.state.selectedHexagon[0] - this.state.currentPosition[0] > this.state.diceValues[this.state.selectedDice]) {
         this.errorlog("No puedes avanzar mas de lo que dice el dado");
-      } else if (this.state.currentPosition[1] - this.state.selectedSquare[1] > this.state.diceValues[this.state.selectedDice] || this.state.selectedSquare[1] - this.state.currentPosition[1] > this.state.diceValues[this.state.selectedDice]) {
+      } else if (this.state.currentPosition[1] - this.state.selectedHexagon[1] > this.state.diceValues[this.state.selectedDice] || this.state.selectedHexagon[1] - this.state.currentPosition[1] > this.state.diceValues[this.state.selectedDice]) {
+        this.errorlog("No puedes avanzar mas de lo que dice el dado");
+      } else if (this.state.currentPosition[2] - this.state.selectedHexagon[2] > this.state.diceValues[this.state.selectedDice] || this.state.selectedHexagon[2] - this.state.currentPosition[2] > this.state.diceValues[this.state.selectedDice]) {
         this.errorlog("No puedes avanzar mas de lo que dice el dado");
       } else {
         this.setState({
-          currentPosition: this.state.selectedSquare
+          currentPosition: this.state.selectedHexagon
         });
         this.changeDiceValues();
       }
@@ -33196,7 +33197,7 @@ var Game = /*#__PURE__*/function (_React$Component) {
     }
   }, {
     key: "pos_inicial",
-    value: function pos_inicial(mapa) {
+    value: function pos_inicial() {
       var pos = [0, 0, 0];
       return pos;
     }
@@ -33308,10 +33309,10 @@ var Board = /*#__PURE__*/function (_React$Component2) {
         link: "src/seaSelected.png"
       }), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
         id: "ship",
-        link: "src/sea.png"
+        link: "src/ship.png"
       }), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
         id: "shipSelected",
-        link: "src/seaSelected.png"
+        link: "src/shipSelected.png"
       }));
     }
   }]);
@@ -33384,7 +33385,9 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component3) {
         onClick: function onClick() {
           return _this8.select();
         }
-      });
+      }, /*#__PURE__*/React.createElement(_reactHexgrid.Text, {
+        className: "hexagonText"
+      }, value));
     }
   }]);
 

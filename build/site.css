@@ -83,62 +83,6 @@ h1 {
     display: table;
   }
 
-  .sea {
-    background: #00CED1;
-    border: 1px solid #999;
-    float: left;
-    height: 30px;
-    width: 30px;
-    margin-right: -1px;
-    margin-top: -1px;
-  }
-
-
-
-  .island {
-    background: #228B22;
-    border: 1px solid #999;
-    float: left;
-    height: 30px;
-    width: 30px;
-    margin-right: -1px;
-    margin-top: -1px;
-  }
-
-  .islandSelected {
-    position: relative;
-    box-sizing: border-box;
-    background: #228B22;
-    border: 1px solid black;
-    float: left;
-    height: 30px;
-    width: 30px;
-    margin-right: -1px;
-    margin-top: -1px;
-  }
-
-  .ship {
-    background: #fff;
-    border: 1px solid #999;
-    float: left;
-    height: 30px;
-    width: 30px;
-    margin-right: -1px;
-    margin-top: -1px;
-  }
-
-  .shipSelected {
-    position: relative;
-    box-sizing: border-box;
-    background: #fff;
-    border: 1px solid black;
-    float: left;
-    height: 30px;
-    width: 30px;
-    margin-right: -1px;
-    margin-top: -1px;
-  }
-
   .dice {
     background: #fff;
     border: 1px solid #999;
@@ -182,7 +126,7 @@ h1 {
     margin: auto;
     background: white;
   }
-
-  canvas {
-    border: 1px solid black;
+  .hexagonText {
+    font-size: 4px;
   }
+

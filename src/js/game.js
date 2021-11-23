@@ -31,7 +31,7 @@ class Game extends React.Component {
     //funcion que correr cuando el componente es creado
     componentDidMount() {
         const map = this.crearMapa();
-        const pos = this.pos_inicial(map);
+        const pos = this.pos_inicial();
         this.setState({tileValues: map});
         this.setState({currentPosition: pos});
         this.rollDices();
@@ -56,7 +56,7 @@ class Game extends React.Component {
         const old_tiles = this.state.tileValues;
         const new_tiles = old_tiles.map((_) => _ );
 
-        new_tiles[this.state.currentPosition[1]][this.state.currentPosition[0]] = new_tiles[this.state.currentPosition[1]][this.state.currentPosition[0]]+change;    
+        new_tiles[this.state.currentPosition[0]][this.state.currentPosition[1]]= new_tiles[this.state.currentPosition[0]][this.state.currentPosition[1]]+change;    
         this.setState({tileValues: new_tiles});
     }
 
@@ -68,25 +68,28 @@ class Game extends React.Component {
         this.setState({diceValues: new_dices});
     }
 
-    //Cambiar a coordenadas hexagonales falta saber como interactuar con el mapa
     sail() {
         this.setState({errorlog: null});
-        if (this.state.currentPosition[0] != this.state.selectedSquare[0] && this.state.currentPosition[1] != this.state.selectedSquare[1]) {
+        if (this.state.currentPosition[0] != this.state.selectedHexagon[0] && this.state.currentPosition[1] != this.state.selectedHexagon[1] && this.state.currentPosition[2] != this.state.selectedHexagon[2]) {
             this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
         } else if (this.state.selectedDice == null) {
             this.errorlog("Debes seleccionar un dado para utilizar");
-        } else if (this.state.currentPosition[0] == this.state.selectedSquare[0] && this.state.currentPosition[1] == this.state.selectedSquare[1]) {
+        } else if (this.state.currentPosition[0] == this.state.selectedHexagon[0] && this.state.currentPosition[1] == this.state.selectedHexagon[1] && this.state.currentPosition[2] == this.state.selectedHexagon[2]) {
             this.errorlog("No puedes navegar a la casilla en la que estas");
         } else if (
-        this.state.currentPosition[0]-this.state.selectedSquare[0] > this.state.diceValues[this.state.selectedDice] ||
-        this.state.selectedSquare[0]-this.state.currentPosition[0] > this.state.diceValues[this.state.selectedDice]) {
+        this.state.currentPosition[0]-this.state.selectedHexagon[0] > this.state.diceValues[this.state.selectedDice] ||
+        this.state.selectedHexagon[0]-this.state.currentPosition[0] > this.state.diceValues[this.state.selectedDice]) {
             this.errorlog("No puedes avanzar mas de lo que dice el dado");
         } else if (
-        this.state.currentPosition[1]-this.state.selectedSquare[1] > this.state.diceValues[this.state.selectedDice] ||
-        this.state.selectedSquare[1]-this.state.currentPosition[1] > this.state.diceValues[this.state.selectedDice]) {
+        this.state.currentPosition[1]-this.state.selectedHexagon[1] > this.state.diceValues[this.state.selectedDice] ||
+        this.state.selectedHexagon[1]-this.state.currentPosition[1] > this.state.diceValues[this.state.selectedDice]) {
             this.errorlog("No puedes avanzar mas de lo que dice el dado");
-        } else {
-            this.setState({currentPosition: this.state.selectedSquare});
+        } else if (
+        this.state.currentPosition[2]-this.state.selectedHexagon[2] > this.state.diceValues[this.state.selectedDice] ||
+        this.state.selectedHexagon[2]-this.state.currentPosition[2] > this.state.diceValues[this.state.selectedDice]) {
+            this.errorlog("No puedes avanzar mas de lo que dice el dado");
+        }else {
+            this.setState({currentPosition: this.state.selectedHexagon});
             this.changeDiceValues();
         }
     }
@@ -264,7 +267,7 @@ class Game extends React.Component {
         return mapa;
     }
 
-    pos_inicial(mapa) {
+    pos_inicial() {
         var pos = [0,0,0];
         return pos
     }
@@ -329,8 +332,8 @@ class Board extends React.Component {
                 <Pattern id="islandSelected" link="src/islandSelected.png" />
                 <Pattern id="sea" link="src/sea.png" />
                 <Pattern id="seaSelected" link="src/seaSelected.png" />
-                <Pattern id="ship" link="src/sea.png" />
-                <Pattern id="shipSelected" link="src/seaSelected.png" />
+                <Pattern id="ship" link="src/ship.png" />
+                <Pattern id="shipSelected" link="src/shipSelected.png" />
             </HexGrid>
         )
     }
@@ -377,7 +380,7 @@ class BoardHexagon extends React.Component {
         classType = Type+selected;
         return(
             <Hexagon q={this.props.q} r={this.props.r} s={this.props.s} fill={classType} onClick={ () => this.select()}
-            >
+            ><Text className ={"hexagonText"}>{value}</Text>
             </Hexagon>
         )
     }
@@ -401,9 +404,7 @@ class Popup extends React.Component {
         </div>
       );
     }
-  }
-
-
+}
 
 
 //comando necesario para importar la clase Game en main.js
