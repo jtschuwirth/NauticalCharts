@@ -33109,13 +33109,13 @@ var Game = /*#__PURE__*/function (_React$Component) {
       var array = this.state.diceValues;
       return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
         "class": "center"
-      }, "Turno: ", this.state.currentTurn, /*#__PURE__*/React.createElement(App, null)), /*#__PURE__*/React.createElement("div", {
+      }, "Turno: ", this.state.currentTurn), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, "Tienes: ", this.state.currentPoints, " Puntos"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, /*#__PURE__*/React.createElement(Board, {
         tileValues: this.state.tileValues,
-        selectedSquare: this.state.selectedSquare,
+        selectedHexagon: this.state.selectedHexagon,
         currentPosition: this.state.currentPosition,
         sendBoardData: this.getBoardData
       })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
@@ -33245,12 +33245,18 @@ var Board = /*#__PURE__*/function (_React$Component2) {
     _this4 = _super2.call(this, props);
     _this4.state = {};
     _this4.getSelectedSquare = _this4.getSelectedSquare.bind(_assertThisInitialized(_this4));
+    _this4.getSelectedHexagon = _this4.getSelectedHexagon.bind(_assertThisInitialized(_this4));
     return _this4;
   }
 
   _createClass(Board, [{
     key: "getSelectedSquare",
     value: function getSelectedSquare(childData) {
+      this.props.sendBoardData(childData);
+    }
+  }, {
+    key: "getSelectedHexagon",
+    value: function getSelectedHexagon(childData) {
       this.props.sendBoardData(childData);
     }
   }, {
@@ -33278,11 +33284,44 @@ var Board = /*#__PURE__*/function (_React$Component2) {
   }, {
     key: "render",
     value: function render() {
-      var _this6 = this;
-
       var tiles = this.props.tileValues;
-      return /*#__PURE__*/React.createElement("div", null, tiles.map(function (_, index) {
-        return _this6.renderRow(_, index);
+      return /*#__PURE__*/React.createElement(_reactHexgrid.HexGrid, {
+        width: 1200,
+        height: 800,
+        viewBox: "-50 -50 100 100"
+      }, /*#__PURE__*/React.createElement(_reactHexgrid.Layout, {
+        size: {
+          x: 10,
+          y: 10
+        },
+        flat: true,
+        spacing: 1,
+        origin: {
+          x: 0,
+          y: 0
+        }
+      }, /*#__PURE__*/React.createElement(BoardHexagon, {
+        q: 0,
+        r: 0,
+        s: 0,
+        value: 100,
+        selectedHexagon: this.props.selectedHexagon,
+        currentPosition: this.props.currentPosition,
+        sendData: this.getSelectedHexagon
+      }), /*#__PURE__*/React.createElement(BoardHexagon, {
+        q: 0,
+        r: 1,
+        s: 0,
+        value: 100,
+        selectedHexagon: this.props.selectedHexagon,
+        currentPosition: this.props.currentPosition,
+        sendData: this.getSelectedHexagon
+      })), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
+        id: "island",
+        link: "src/island.png"
+      }), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
+        id: "sea",
+        link: "src/sea.png"
       }));
     }
   }]);
@@ -33296,19 +33335,19 @@ var Square = /*#__PURE__*/function (_React$Component3) {
   var _super3 = _createSuper(Square);
 
   function Square(props) {
-    var _this7;
+    var _this6;
 
     _classCallCheck(this, Square);
 
-    _this7 = _super3.call(this, props);
-    _this7.state = {};
-    return _this7;
+    _this6 = _super3.call(this, props);
+    _this6.state = {};
+    return _this6;
   }
 
   _createClass(Square, [{
     key: "squareType",
     value: function squareType() {
-      var _this8 = this;
+      var _this7 = this;
 
       var Type;
       var selected;
@@ -33342,7 +33381,7 @@ var Square = /*#__PURE__*/function (_React$Component3) {
       return /*#__PURE__*/React.createElement("button", {
         className: className,
         onClick: function onClick() {
-          return _this8.select();
+          return _this7.select();
         }
       }, " ", value);
     }
@@ -33365,15 +33404,79 @@ var Square = /*#__PURE__*/function (_React$Component3) {
   return Square;
 }(React.Component);
 
-var Popup = /*#__PURE__*/function (_React$Component4) {
-  _inherits(Popup, _React$Component4);
+var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
+  _inherits(BoardHexagon, _React$Component4);
 
-  var _super4 = _createSuper(Popup);
+  var _super4 = _createSuper(BoardHexagon);
+
+  function BoardHexagon(props) {
+    var _this8;
+
+    _classCallCheck(this, BoardHexagon);
+
+    _this8 = _super4.call(this, props);
+    _this8.state = {
+      value: _this8.props.value
+    };
+    return _this8;
+  }
+
+  _createClass(BoardHexagon, [{
+    key: "select",
+    value: function select() {
+      if (this.state.value == 100) {
+        this.setState({
+          value: 1
+        });
+      } else if (this.state.value < 10) {
+        this.setState({
+          value: 100
+        });
+      }
+
+      if (this.props.selectedHexagon[0] != this.props.q || this.props.selectedHexagon[1] != this.props.r || this.props.selectedHexagon[2] != this.props.s) {
+        this.props.sendData([this.props.q, this.props.r, this.props.s]);
+      } else {
+        this.props.sendData([null, null, null]);
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this9 = this;
+
+      var Type;
+
+      if (this.state.value == 100) {
+        Type = "sea";
+      } else if (this.state.value < 10) {
+        Type = "island";
+      }
+
+      return /*#__PURE__*/React.createElement(_reactHexgrid.Hexagon, {
+        q: this.props.q,
+        r: this.props.r,
+        s: this.props.s,
+        fill: Type,
+        onClick: function onClick() {
+          return _this9.select();
+        }
+      });
+    }
+  }]);
+
+  return BoardHexagon;
+}(React.Component);
+
+var Popup = /*#__PURE__*/function (_React$Component5) {
+  _inherits(Popup, _React$Component5);
+
+  var _super5 = _createSuper(Popup);
 
   function Popup() {
     _classCallCheck(this, Popup);
 
-    return _super4.apply(this, arguments);
+    return _super5.apply(this, arguments);
   }
 
   _createClass(Popup, [{
@@ -33398,15 +33501,15 @@ var Popup = /*#__PURE__*/function (_React$Component4) {
   return Popup;
 }(React.Component);
 
-var App = /*#__PURE__*/function (_React$Component5) {
-  _inherits(App, _React$Component5);
+var App = /*#__PURE__*/function (_React$Component6) {
+  _inherits(App, _React$Component6);
 
-  var _super5 = _createSuper(App);
+  var _super6 = _createSuper(App);
 
   function App() {
     _classCallCheck(this, App);
 
-    return _super5.apply(this, arguments);
+    return _super6.apply(this, arguments);
   }
 
   _createClass(App, [{
