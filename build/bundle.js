@@ -39857,10 +39857,6 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
 var game = require("./game.js");
 
 var React = require('react');
@@ -39880,33 +39876,19 @@ var socket = io(SERVER, {
   transports: ['websocket']
 }); //Funcion de inicializacion de la pagina
 
-var initialize = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            ReactDOM.render( /*#__PURE__*/React.createElement(PlayButton, {
-              userAddress: "Address"
-            }), document.getElementById('playButton'));
-
-          case 1:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-
-  return function initialize() {
-    return _ref.apply(this, arguments);
-  };
-}();
+var initialize = function initialize() {
+  ReactDOM.render( /*#__PURE__*/React.createElement(PlayButton, {
+    userAddress: "Address"
+  }), document.getElementById('playButton'));
+};
 
 var foundGame = function foundGame(id) {
   ReactDOM.render( /*#__PURE__*/React.createElement(game.Game, {
     gameId: id
   }), document.getElementById('game'));
+  ReactDOM.render( /*#__PURE__*/React.createElement(QuitButton, {
+    userAddress: "Address"
+  }), document.getElementById('quitButton'));
 };
 
 var PlayButton = /*#__PURE__*/function (_React$Component) {
@@ -39953,11 +39935,13 @@ var PlayButton = /*#__PURE__*/function (_React$Component) {
       var _this3 = this;
 
       if (this.state.showButton == true) {
-        return /*#__PURE__*/React.createElement("button", {
+        return /*#__PURE__*/React.createElement("div", {
+          "class": "center"
+        }, /*#__PURE__*/React.createElement("button", {
           onClick: function onClick() {
             return _this3.searchGame();
           }
-        }, "Play!");
+        }, "Play!"));
       } else {
         return /*#__PURE__*/React.createElement("div", null);
       }
@@ -39965,6 +39949,48 @@ var PlayButton = /*#__PURE__*/function (_React$Component) {
   }]);
 
   return PlayButton;
+}(React.Component);
+
+var QuitButton = /*#__PURE__*/function (_React$Component2) {
+  _inherits(QuitButton, _React$Component2);
+
+  var _super2 = _createSuper(QuitButton);
+
+  function QuitButton(props) {
+    var _this4;
+
+    _classCallCheck(this, QuitButton);
+
+    _this4 = _super2.call(this, props);
+    _this4.state = {
+      showButton: true
+    };
+    return _this4;
+  }
+
+  _createClass(QuitButton, [{
+    key: "quitGame",
+    value: function quitGame() {}
+  }, {
+    key: "render",
+    value: function render() {
+      var _this5 = this;
+
+      if (this.state.showButton == true) {
+        return /*#__PURE__*/React.createElement("div", {
+          "class": "center"
+        }, /*#__PURE__*/React.createElement("button", {
+          onClick: function onClick() {
+            return _this5.quitGame();
+          }
+        }, "Quit"));
+      } else {
+        return /*#__PURE__*/React.createElement("div", null);
+      }
+    }
+  }]);
+
+  return QuitButton;
 }(React.Component);
 
 window.addEventListener('DOMContentLoaded', initialize);

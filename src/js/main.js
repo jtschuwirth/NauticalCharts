@@ -16,7 +16,7 @@ const socket = io(SERVER, {
 
 
 //Funcion de inicializacion de la pagina
-const initialize = async () => {
+const initialize = () => {
     ReactDOM.render(
         <PlayButton userAddress = {"Address"} />,
         document.getElementById('playButton')
@@ -27,6 +27,10 @@ const foundGame = (id) => {
     ReactDOM.render(
         <game.Game gameId={id}/>,
         document.getElementById('game')
+    );
+    ReactDOM.render(
+        <QuitButton userAddress = {"Address"}/>,
+        document.getElementById('quitButton')
     );
 }
 
@@ -53,7 +57,35 @@ class PlayButton extends React.Component {
     render() {
         if (this.state.showButton == true) {
             return (
-                <button onClick={ () => this.searchGame()}>Play!</button>
+                <div class="center">
+                    <button onClick={ () => this.searchGame()}>Play!</button>
+                </div>
+            );
+        } else {
+            return (
+                <div></div>
+            );
+        }
+    }
+}
+
+class QuitButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showButton: true,
+        };
+    }
+
+    quitGame() {
+    }
+
+    render() {
+        if (this.state.showButton == true) {
+            return (
+                <div class="center">
+                    <button onClick={ () => this.quitGame()}>Quit</button>
+                </div>
             );
         } else {
             return (
