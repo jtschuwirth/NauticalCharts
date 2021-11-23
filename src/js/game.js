@@ -13,7 +13,6 @@ class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            //valores de las tiles es entrega desde el backend para todos los usuarios (es el mapa de la partida)
             showPopup: false,
             errorlog: null,
             currentPoints: 0,
@@ -23,7 +22,7 @@ class Game extends React.Component {
             selectedSquare: [null,null],
             selectedHexagon: [null,null,null],
             selectedDice: null,
-            currentPosition: [null, null],
+            currentPosition: [null, null, null],
         };
         this.getBoardData = this.getBoardData.bind(this)
         this.togglePopup = this.togglePopup.bind(this)
@@ -36,8 +35,6 @@ class Game extends React.Component {
         this.setState({tileValues: map});
         this.setState({currentPosition: pos});
         this.rollDices();
-    
-
     }
 
     togglePopup() {
@@ -51,9 +48,10 @@ class Game extends React.Component {
     }
 
     positionValue(position) {
-        return this.state.tileValues[position[1]][position[0]]
+        return this.state.tileValues[position[0]][position[1]][position[2]]
     }
 
+    //Cambiar a coordenadas hexagonales falta saber como interactuar con el mapa
     changeTileValues(change) {
         const old_tiles = this.state.tileValues;
         const new_tiles = old_tiles.map((_) => _ );
@@ -70,6 +68,7 @@ class Game extends React.Component {
         this.setState({diceValues: new_dices});
     }
 
+    //Cambiar a coordenadas hexagonales falta saber como interactuar con el mapa
     sail() {
         this.setState({errorlog: null});
         if (this.state.currentPosition[0] != this.state.selectedSquare[0] && this.state.currentPosition[1] != this.state.selectedSquare[1]) {
@@ -92,6 +91,7 @@ class Game extends React.Component {
         }
     }
 
+
     loot() {
         this.setState({errorlog: null});
         let currentValue;
@@ -111,7 +111,6 @@ class Game extends React.Component {
         } else if (currentValue == 0) {
             this.errorlog("Ya no quedan recursos en esta isla");
         } else {
-            //Luego cambiar a lootear la cantidad asignada por el dado
             this.setState({currentPoints: this.state.currentPoints+looted});
             change = -looted;
             this.changeTileValues(change);
@@ -266,12 +265,8 @@ class Game extends React.Component {
     }
 
     pos_inicial(mapa) {
-        while(true) {
-            var pos = [this.getRandomInt(1, 7) + this.getRandomInt(1, 7), this.getRandomInt(1, 7) + this.getRandomInt(1, 7)];
-            if (mapa[pos[1]][pos[0]] == 100) {
-                return pos;
-            }
-        }
+        var pos = [0,0,0];
+        return pos
     }
 
     dist(coord_1, coord_2) {
@@ -300,26 +295,11 @@ class Board extends React.Component {
         super(props);
         this.state = {
         };
-        this.getSelectedSquare = this.getSelectedSquare.bind(this)
         this.getSelectedHexagon = this.getSelectedHexagon.bind(this)
-    }
-
-    getSelectedSquare(childData) {
-        this.props.sendBoardData(childData);
     }
 
     getSelectedHexagon(childData) {
         this.props.sendBoardData(childData);
-    }
-
-    renderSquare(value, row, index) {
-        return <Square 
-            id={[index, row]} 
-            value={value} 
-            selectedSquare={this.props.selectedSquare}
-            currentPosition = {this.props.currentPosition}
-            sendData={this.getSelectedSquare}
-        />
     }
 
     renderHexagon(value, q,r,s) {
@@ -333,27 +313,13 @@ class Board extends React.Component {
                         sendData={this.getSelectedHexagon}/>
     }
 
-    renderRow(array, row) {
-        return <div className="board-row">
-                    {array.map((_, index) => this.renderSquare(_, row, index))}
-                </div>
-    }
-
     renderR(array, q){
         return array.map((_, index) => this.renderHexagon(_, q, index, -q-index ))
 
     }
 
-    renderBoard(array) {
-        return <div>
-                    {array.map((_, index) => this.renderR(array, index) )}
-                </div>
-    }
-
     render() {
         var tiles = this.props.tileValues;
-        //var tiles = [[100,100],[100,5]];
-        //var tiles = [[100]];
         return (
             <HexGrid width={1200} height={800} viewBox="-50 -50 100 100">
                 <Layout size={{ x: 3, y: 3 }} flat={true} spacing={1} origin={{ x: 0, y: 0 }}>
@@ -363,69 +329,10 @@ class Board extends React.Component {
                 <Pattern id="islandSelected" link="src/islandSelected.png" />
                 <Pattern id="sea" link="src/sea.png" />
                 <Pattern id="seaSelected" link="src/seaSelected.png" />
+                <Pattern id="ship" link="src/sea.png" />
+                <Pattern id="shipSelected" link="src/seaSelected.png" />
             </HexGrid>
         )
-    }
-}
-
-class Square extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-        };
-    }
-
-    squareType() {
-        let Type;
-        let selected;
-        let className;
-        let value;
-
-        if (this.props.selectedSquare[0]==this.props.id[0] && this.props.selectedSquare[1]==this.props.id[1]) {
-            selected ="Selected";
-        } else {
-            selected ="";
-        }
-
-        if (this.props.value == 100) {
-            Type = "sea";           
-        } else if (this.props.value < 10) {
-            Type = "island";
-        }
-
-        if (this.props.currentPosition[0]==this.props.id[0] && this.props.currentPosition[1]==this.props.id[1]) {
-            Type = "ship";
-        }
-        className = Type+selected;
-
-        if (this.props.value!=100) {
-            value = this.props.value;
-        } else {
-            value =null;
-        }
-        
-        return (
-            <button 
-            className={className}
-            onClick={ () => this.select()}
-            > {value}
-            </button>
-        );
-    }
-
-    select() {
-        if (this.props.selectedSquare[0]!=this.props.id[0] || this.props.selectedSquare[1]!=this.props.id[1]) {
-            this.props.sendData(this.props.id);
-        } else {
-            this.props.sendData([null,null]);
-        }
-      }
-  
-    render() {
-        return (
-            this.squareType()
-        )
-
     }
 }
 
@@ -433,7 +340,6 @@ class BoardHexagon extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: this.props.value
         };
     }
     select() {
@@ -450,9 +356,9 @@ class BoardHexagon extends React.Component {
         let value;
         let classType;
         let selected;
-        if (this.state.value == 100) {
+        if (this.props.value == 100) {
             Type = "sea";           
-        } else if (this.state.value < 10) {
+        } else if (this.props.value < 10) {
             Type = "island";
         }
         if (this.props.selectedHexagon[0]==this.props.q && this.props.selectedHexagon[1]==this.props.r && this.props.selectedHexagon[2]==this.props.s) {
@@ -460,8 +366,11 @@ class BoardHexagon extends React.Component {
         } else {
             selected ="";
         }
-        if (this.state.value!=100) {
-            value = this.state.value;
+        if (this.props.currentPosition[0]==this.props.q && this.props.currentPosition[1]==this.props.r && this.props.currentPosition[2]==this.props.s) {
+            Type = "ship";
+        }
+        if (this.props.value!=100) {
+            value = this.props.value;
         } else {
             value =null;
         }
@@ -473,7 +382,6 @@ class BoardHexagon extends React.Component {
         )
     }
 }
-
 
 class Popup extends React.Component {
     render() {
