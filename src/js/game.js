@@ -1,10 +1,12 @@
 //comando para compilar
-//npm run build 
+//gulp
 //para correr la pagina en localhost
 //npm run dev
 
+
 var React = require('react');
 var ReactDOM = require('react-dom');
+import { HexGrid, Layout, Hexagon, Text, Pattern, Path, Hex } from 'react-hexgrid';
 
 //Clase Game clase superior donde se guardan los estados de la partida
 class Game extends React.Component {
@@ -176,7 +178,8 @@ class Game extends React.Component {
         return (
             <div>
                 <div class="center">
-                    Turno: {this.state.currentTurn}          
+                    Turno: {this.state.currentTurn} 
+                    <App />         
                 </div>
                 <div class="center">
                     Tienes: {this.state.currentPoints} Puntos
@@ -368,11 +371,11 @@ class Square extends React.Component {
         }
         
         return (
-                <button 
-                    className={className}
-                    onClick={ () => this.select()}
-                > {value}
-                </button>
+            <button 
+            className={className}
+            onClick={ () => this.select()}
+            > {value}
+            </button>
         );
     }
 
@@ -412,6 +415,18 @@ class Popup extends React.Component {
       );
     }
   }
+
+class App extends React.Component {
+    render() {
+        return (
+            <HexGrid width={1200} height={800} viewBox="-50 -50 100 100">
+                <Layout size={{ x: 10, y: 10 }} flat={true} spacing={1.1} origin={{ x: 0, y: 0 }}>
+                    <Hexagon q={0} r={0} s={0} />
+                </Layout>
+            </HexGrid>
+        );
+    }
+}
 
 
 //comando necesario para importar la clase Game en main.js

@@ -1,4 +1,156 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.myBundle = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+/*!
+  Copyright (c) 2018 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames() {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg)) {
+				if (arg.length) {
+					var inner = classNames.apply(null, arg);
+					if (inner) {
+						classes.push(inner);
+					}
+				}
+			} else if (argType === 'object') {
+				if (arg.toString === Object.prototype.toString) {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				} else {
+					classes.push(arg.toString());
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		classNames.default = classNames;
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+		// register as 'classnames', consistent with npm package name
+		define('classnames', [], function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
+}());
+
+},{}],2:[function(require,module,exports){
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+'use strict';
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
+},{}],3:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -184,99 +336,811 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],2:[function(require,module,exports){
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
+},{}],4:[function(require,module,exports){
+(function (process){(function (){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
 'use strict';
-/* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
-function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
+var printWarning = function() {};
 
-	return Object(val);
+if (process.env.NODE_ENV !== 'production') {
+  var ReactPropTypesSecret = require('./lib/ReactPropTypesSecret');
+  var loggedTypeFailures = {};
+  var has = Function.call.bind(Object.prototype.hasOwnProperty);
+
+  printWarning = function(text) {
+    var message = 'Warning: ' + text;
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
 }
 
-function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
+/**
+ * Assert that the values match with the type specs.
+ * Error messages are memorized and will only be shown once.
+ *
+ * @param {object} typeSpecs Map of name to a ReactPropType
+ * @param {object} values Runtime values that need to be type-checked
+ * @param {string} location e.g. "prop", "context", "child context"
+ * @param {string} componentName Name of the component for error messages.
+ * @param {?Function} getStack Returns the component stack.
+ * @private
+ */
+function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
+  if (process.env.NODE_ENV !== 'production') {
+    for (var typeSpecName in typeSpecs) {
+      if (has(typeSpecs, typeSpecName)) {
+        var error;
+        // Prop type validation may throw. In case they do, we don't want to
+        // fail the render phase where it didn't fail before. So we log it.
+        // After these have been cleaned up, we'll let them throw.
+        try {
+          // This is intentionally an invariant that gets caught. It's the same
+          // behavior as without this statement except with a better message.
+          if (typeof typeSpecs[typeSpecName] !== 'function') {
+            var err = Error(
+              (componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' +
+              'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.'
+            );
+            err.name = 'Invariant Violation';
+            throw err;
+          }
+          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
+        } catch (ex) {
+          error = ex;
+        }
+        if (error && !(error instanceof Error)) {
+          printWarning(
+            (componentName || 'React class') + ': type specification of ' +
+            location + ' `' + typeSpecName + '` is invalid; the type checker ' +
+            'function must return `null` or an `Error` but returned a ' + typeof error + '. ' +
+            'You may have forgotten to pass an argument to the type checker ' +
+            'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' +
+            'shape all require an argument).'
+          );
+        }
+        if (error instanceof Error && !(error.message in loggedTypeFailures)) {
+          // Only monitor this failure once because there tends to be a lot of the
+          // same error.
+          loggedTypeFailures[error.message] = true;
 
-		// Detect buggy property enumeration order in older V8 versions.
+          var stack = getStack ? getStack() : '';
 
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
-
-		return true;
-	} catch (err) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
+          printWarning(
+            'Failed ' + location + ' type: ' + error.message + (stack != null ? stack : '')
+          );
+        }
+      }
+    }
+  }
 }
 
-module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
+/**
+ * Resets warning cache when testing.
+ *
+ * @private
+ */
+checkPropTypes.resetWarningCache = function() {
+  if (process.env.NODE_ENV !== 'production') {
+    loggedTypeFailures = {};
+  }
+}
 
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
+module.exports = checkPropTypes;
 
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
+}).call(this)}).call(this,require('_process'))
+},{"./lib/ReactPropTypesSecret":8,"_process":3}],5:[function(require,module,exports){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
+'use strict';
 
-	return to;
+var ReactPropTypesSecret = require('./lib/ReactPropTypesSecret');
+
+function emptyFunction() {}
+function emptyFunctionWithReset() {}
+emptyFunctionWithReset.resetWarningCache = emptyFunction;
+
+module.exports = function() {
+  function shim(props, propName, componentName, location, propFullName, secret) {
+    if (secret === ReactPropTypesSecret) {
+      // It is still safe when called from React.
+      return;
+    }
+    var err = new Error(
+      'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+      'Use PropTypes.checkPropTypes() to call them. ' +
+      'Read more at http://fb.me/use-check-prop-types'
+    );
+    err.name = 'Invariant Violation';
+    throw err;
+  };
+  shim.isRequired = shim;
+  function getShim() {
+    return shim;
+  };
+  // Important!
+  // Keep this list in sync with production version in `./factoryWithTypeCheckers.js`.
+  var ReactPropTypes = {
+    array: shim,
+    bool: shim,
+    func: shim,
+    number: shim,
+    object: shim,
+    string: shim,
+    symbol: shim,
+
+    any: shim,
+    arrayOf: getShim,
+    element: shim,
+    elementType: shim,
+    instanceOf: getShim,
+    node: shim,
+    objectOf: getShim,
+    oneOf: getShim,
+    oneOfType: getShim,
+    shape: getShim,
+    exact: getShim,
+
+    checkPropTypes: emptyFunctionWithReset,
+    resetWarningCache: emptyFunction
+  };
+
+  ReactPropTypes.PropTypes = ReactPropTypes;
+
+  return ReactPropTypes;
 };
 
-},{}],3:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":8}],6:[function(require,module,exports){
+(function (process){(function (){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+'use strict';
+
+var ReactIs = require('react-is');
+var assign = require('object-assign');
+
+var ReactPropTypesSecret = require('./lib/ReactPropTypesSecret');
+var checkPropTypes = require('./checkPropTypes');
+
+var has = Function.call.bind(Object.prototype.hasOwnProperty);
+var printWarning = function() {};
+
+if (process.env.NODE_ENV !== 'production') {
+  printWarning = function(text) {
+    var message = 'Warning: ' + text;
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+}
+
+function emptyFunctionThatReturnsNull() {
+  return null;
+}
+
+module.exports = function(isValidElement, throwOnDirectAccess) {
+  /* global Symbol */
+  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+
+  /**
+   * Returns the iterator method function contained on the iterable object.
+   *
+   * Be sure to invoke the function with the iterable as context:
+   *
+   *     var iteratorFn = getIteratorFn(myIterable);
+   *     if (iteratorFn) {
+   *       var iterator = iteratorFn.call(myIterable);
+   *       ...
+   *     }
+   *
+   * @param {?object} maybeIterable
+   * @return {?function}
+   */
+  function getIteratorFn(maybeIterable) {
+    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+    if (typeof iteratorFn === 'function') {
+      return iteratorFn;
+    }
+  }
+
+  /**
+   * Collection of methods that allow declaration and validation of props that are
+   * supplied to React components. Example usage:
+   *
+   *   var Props = require('ReactPropTypes');
+   *   var MyArticle = React.createClass({
+   *     propTypes: {
+   *       // An optional string prop named "description".
+   *       description: Props.string,
+   *
+   *       // A required enum prop named "category".
+   *       category: Props.oneOf(['News','Photos']).isRequired,
+   *
+   *       // A prop named "dialog" that requires an instance of Dialog.
+   *       dialog: Props.instanceOf(Dialog).isRequired
+   *     },
+   *     render: function() { ... }
+   *   });
+   *
+   * A more formal specification of how these methods are used:
+   *
+   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
+   *   decl := ReactPropTypes.{type}(.isRequired)?
+   *
+   * Each and every declaration produces a function with the same signature. This
+   * allows the creation of custom validation functions. For example:
+   *
+   *  var MyLink = React.createClass({
+   *    propTypes: {
+   *      // An optional string or URI prop named "href".
+   *      href: function(props, propName, componentName) {
+   *        var propValue = props[propName];
+   *        if (propValue != null && typeof propValue !== 'string' &&
+   *            !(propValue instanceof URI)) {
+   *          return new Error(
+   *            'Expected a string or an URI for ' + propName + ' in ' +
+   *            componentName
+   *          );
+   *        }
+   *      }
+   *    },
+   *    render: function() {...}
+   *  });
+   *
+   * @internal
+   */
+
+  var ANONYMOUS = '<<anonymous>>';
+
+  // Important!
+  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+  var ReactPropTypes = {
+    array: createPrimitiveTypeChecker('array'),
+    bool: createPrimitiveTypeChecker('boolean'),
+    func: createPrimitiveTypeChecker('function'),
+    number: createPrimitiveTypeChecker('number'),
+    object: createPrimitiveTypeChecker('object'),
+    string: createPrimitiveTypeChecker('string'),
+    symbol: createPrimitiveTypeChecker('symbol'),
+
+    any: createAnyTypeChecker(),
+    arrayOf: createArrayOfTypeChecker,
+    element: createElementTypeChecker(),
+    elementType: createElementTypeTypeChecker(),
+    instanceOf: createInstanceTypeChecker,
+    node: createNodeChecker(),
+    objectOf: createObjectOfTypeChecker,
+    oneOf: createEnumTypeChecker,
+    oneOfType: createUnionTypeChecker,
+    shape: createShapeTypeChecker,
+    exact: createStrictShapeTypeChecker,
+  };
+
+  /**
+   * inlined Object.is polyfill to avoid requiring consumers ship their own
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+   */
+  /*eslint-disable no-self-compare*/
+  function is(x, y) {
+    // SameValue algorithm
+    if (x === y) {
+      // Steps 1-5, 7-10
+      // Steps 6.b-6.e: +0 != -0
+      return x !== 0 || 1 / x === 1 / y;
+    } else {
+      // Step 6.a: NaN == NaN
+      return x !== x && y !== y;
+    }
+  }
+  /*eslint-enable no-self-compare*/
+
+  /**
+   * We use an Error-like object for backward compatibility as people may call
+   * PropTypes directly and inspect their output. However, we don't use real
+   * Errors anymore. We don't inspect their stack anyway, and creating them
+   * is prohibitively expensive if they are created too often, such as what
+   * happens in oneOfType() for any type before the one that matched.
+   */
+  function PropTypeError(message) {
+    this.message = message;
+    this.stack = '';
+  }
+  // Make `instanceof Error` still work for returned errors.
+  PropTypeError.prototype = Error.prototype;
+
+  function createChainableTypeChecker(validate) {
+    if (process.env.NODE_ENV !== 'production') {
+      var manualPropTypeCallCache = {};
+      var manualPropTypeWarningCount = 0;
+    }
+    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
+      componentName = componentName || ANONYMOUS;
+      propFullName = propFullName || propName;
+
+      if (secret !== ReactPropTypesSecret) {
+        if (throwOnDirectAccess) {
+          // New behavior only for users of `prop-types` package
+          var err = new Error(
+            'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+            'Use `PropTypes.checkPropTypes()` to call them. ' +
+            'Read more at http://fb.me/use-check-prop-types'
+          );
+          err.name = 'Invariant Violation';
+          throw err;
+        } else if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined') {
+          // Old behavior for people using React.PropTypes
+          var cacheKey = componentName + ':' + propName;
+          if (
+            !manualPropTypeCallCache[cacheKey] &&
+            // Avoid spamming the console because they are often not actionable except for lib authors
+            manualPropTypeWarningCount < 3
+          ) {
+            printWarning(
+              'You are manually calling a React.PropTypes validation ' +
+              'function for the `' + propFullName + '` prop on `' + componentName  + '`. This is deprecated ' +
+              'and will throw in the standalone `prop-types` package. ' +
+              'You may be seeing this warning due to a third-party PropTypes ' +
+              'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.'
+            );
+            manualPropTypeCallCache[cacheKey] = true;
+            manualPropTypeWarningCount++;
+          }
+        }
+      }
+      if (props[propName] == null) {
+        if (isRequired) {
+          if (props[propName] === null) {
+            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
+          }
+          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
+        }
+        return null;
+      } else {
+        return validate(props, propName, componentName, location, propFullName);
+      }
+    }
+
+    var chainedCheckType = checkType.bind(null, false);
+    chainedCheckType.isRequired = checkType.bind(null, true);
+
+    return chainedCheckType;
+  }
+
+  function createPrimitiveTypeChecker(expectedType) {
+    function validate(props, propName, componentName, location, propFullName, secret) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== expectedType) {
+        // `propValue` being instance of, say, date/regexp, pass the 'object'
+        // check, but we can offer a more precise error message here rather than
+        // 'of type `object`'.
+        var preciseType = getPreciseType(propValue);
+
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createAnyTypeChecker() {
+    return createChainableTypeChecker(emptyFunctionThatReturnsNull);
+  }
+
+  function createArrayOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
+      }
+      var propValue = props[propName];
+      if (!Array.isArray(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
+      }
+      for (var i = 0; i < propValue.length; i++) {
+        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret);
+        if (error instanceof Error) {
+          return error;
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      if (!isValidElement(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      if (!ReactIs.isValidElementType(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement type.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createInstanceTypeChecker(expectedClass) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!(props[propName] instanceof expectedClass)) {
+        var expectedClassName = expectedClass.name || ANONYMOUS;
+        var actualClassName = getClassName(props[propName]);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createEnumTypeChecker(expectedValues) {
+    if (!Array.isArray(expectedValues)) {
+      if (process.env.NODE_ENV !== 'production') {
+        if (arguments.length > 1) {
+          printWarning(
+            'Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' +
+            'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).'
+          );
+        } else {
+          printWarning('Invalid argument supplied to oneOf, expected an array.');
+        }
+      }
+      return emptyFunctionThatReturnsNull;
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      for (var i = 0; i < expectedValues.length; i++) {
+        if (is(propValue, expectedValues[i])) {
+          return null;
+        }
+      }
+
+      var valuesString = JSON.stringify(expectedValues, function replacer(key, value) {
+        var type = getPreciseType(value);
+        if (type === 'symbol') {
+          return String(value);
+        }
+        return value;
+      });
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + String(propValue) + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createObjectOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
+      }
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
+      }
+      for (var key in propValue) {
+        if (has(propValue, key)) {
+          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+          if (error instanceof Error) {
+            return error;
+          }
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createUnionTypeChecker(arrayOfTypeCheckers) {
+    if (!Array.isArray(arrayOfTypeCheckers)) {
+      process.env.NODE_ENV !== 'production' ? printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
+      return emptyFunctionThatReturnsNull;
+    }
+
+    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+      var checker = arrayOfTypeCheckers[i];
+      if (typeof checker !== 'function') {
+        printWarning(
+          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
+          'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.'
+        );
+        return emptyFunctionThatReturnsNull;
+      }
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+        var checker = arrayOfTypeCheckers[i];
+        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret) == null) {
+          return null;
+        }
+      }
+
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createNodeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!isNode(props[propName])) {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      for (var key in shapeTypes) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          continue;
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createStrictShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      // We need to check all keys in case some are required but missing from
+      // props.
+      var allKeys = assign({}, props[propName], shapeTypes);
+      for (var key in allKeys) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          return new PropTypeError(
+            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
+            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
+            '\nValid keys: ' +  JSON.stringify(Object.keys(shapeTypes), null, '  ')
+          );
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function isNode(propValue) {
+    switch (typeof propValue) {
+      case 'number':
+      case 'string':
+      case 'undefined':
+        return true;
+      case 'boolean':
+        return !propValue;
+      case 'object':
+        if (Array.isArray(propValue)) {
+          return propValue.every(isNode);
+        }
+        if (propValue === null || isValidElement(propValue)) {
+          return true;
+        }
+
+        var iteratorFn = getIteratorFn(propValue);
+        if (iteratorFn) {
+          var iterator = iteratorFn.call(propValue);
+          var step;
+          if (iteratorFn !== propValue.entries) {
+            while (!(step = iterator.next()).done) {
+              if (!isNode(step.value)) {
+                return false;
+              }
+            }
+          } else {
+            // Iterator will provide entry [k,v] tuples rather than values.
+            while (!(step = iterator.next()).done) {
+              var entry = step.value;
+              if (entry) {
+                if (!isNode(entry[1])) {
+                  return false;
+                }
+              }
+            }
+          }
+        } else {
+          return false;
+        }
+
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  function isSymbol(propType, propValue) {
+    // Native Symbol.
+    if (propType === 'symbol') {
+      return true;
+    }
+
+    // falsy value can't be a Symbol
+    if (!propValue) {
+      return false;
+    }
+
+    // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+    if (propValue['@@toStringTag'] === 'Symbol') {
+      return true;
+    }
+
+    // Fallback for non-spec compliant Symbols which are polyfilled.
+    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Equivalent of `typeof` but with special handling for array and regexp.
+  function getPropType(propValue) {
+    var propType = typeof propValue;
+    if (Array.isArray(propValue)) {
+      return 'array';
+    }
+    if (propValue instanceof RegExp) {
+      // Old webkits (at least until Android 4.0) return 'function' rather than
+      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
+      // passes PropTypes.object.
+      return 'object';
+    }
+    if (isSymbol(propType, propValue)) {
+      return 'symbol';
+    }
+    return propType;
+  }
+
+  // This handles more types than `getPropType`. Only used for error messages.
+  // See `createPrimitiveTypeChecker`.
+  function getPreciseType(propValue) {
+    if (typeof propValue === 'undefined' || propValue === null) {
+      return '' + propValue;
+    }
+    var propType = getPropType(propValue);
+    if (propType === 'object') {
+      if (propValue instanceof Date) {
+        return 'date';
+      } else if (propValue instanceof RegExp) {
+        return 'regexp';
+      }
+    }
+    return propType;
+  }
+
+  // Returns a string that is postfixed to a warning about an invalid type.
+  // For example, "undefined" or "of type array"
+  function getPostfixForTypeWarning(value) {
+    var type = getPreciseType(value);
+    switch (type) {
+      case 'array':
+      case 'object':
+        return 'an ' + type;
+      case 'boolean':
+      case 'date':
+      case 'regexp':
+        return 'a ' + type;
+      default:
+        return type;
+    }
+  }
+
+  // Returns class name of the object, if any.
+  function getClassName(propValue) {
+    if (!propValue.constructor || !propValue.constructor.name) {
+      return ANONYMOUS;
+    }
+    return propValue.constructor.name;
+  }
+
+  ReactPropTypes.checkPropTypes = checkPropTypes;
+  ReactPropTypes.resetWarningCache = checkPropTypes.resetWarningCache;
+  ReactPropTypes.PropTypes = ReactPropTypes;
+
+  return ReactPropTypes;
+};
+
+}).call(this)}).call(this,require('_process'))
+},{"./checkPropTypes":4,"./lib/ReactPropTypesSecret":8,"_process":3,"object-assign":2,"react-is":26}],7:[function(require,module,exports){
+(function (process){(function (){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+if (process.env.NODE_ENV !== 'production') {
+  var ReactIs = require('react-is');
+
+  // By explicitly using `prop-types` you are opting into new development behavior.
+  // http://fb.me/prop-types-in-prod
+  var throwOnDirectAccess = true;
+  module.exports = require('./factoryWithTypeCheckers')(ReactIs.isElement, throwOnDirectAccess);
+} else {
+  // By explicitly using `prop-types` you are opting into new production behavior.
+  // http://fb.me/prop-types-in-prod
+  module.exports = require('./factoryWithThrowingShims')();
+}
+
+}).call(this)}).call(this,require('_process'))
+},{"./factoryWithThrowingShims":5,"./factoryWithTypeCheckers":6,"_process":3,"react-is":26}],8:[function(require,module,exports){
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+'use strict';
+
+var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+
+module.exports = ReactPropTypesSecret;
+
+},{}],9:[function(require,module,exports){
 (function (process){(function (){
 /** @license React v17.0.2
  * react-dom.development.js
@@ -26542,7 +27406,7 @@ exports.version = ReactVersion;
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":1,"object-assign":2,"react":8,"scheduler":13,"scheduler/tracing":14}],4:[function(require,module,exports){
+},{"_process":3,"object-assign":2,"react":29,"scheduler":34,"scheduler/tracing":35}],10:[function(require,module,exports){
 /** @license React v17.0.2
  * react-dom.production.min.js
  *
@@ -26841,7 +27705,7 @@ exports.findDOMNode=function(a){if(null==a)return null;if(1===a.nodeType)return 
 exports.render=function(a,b,c){if(!rk(b))throw Error(y(200));return tk(null,a,b,!1,c)};exports.unmountComponentAtNode=function(a){if(!rk(a))throw Error(y(40));return a._reactRootContainer?(Xj(function(){tk(null,null,a,!1,function(){a._reactRootContainer=null;a[ff]=null})}),!0):!1};exports.unstable_batchedUpdates=Wj;exports.unstable_createPortal=function(a,b){return uk(a,b,2<arguments.length&&void 0!==arguments[2]?arguments[2]:null)};
 exports.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!rk(c))throw Error(y(200));if(null==a||void 0===a._reactInternals)throw Error(y(38));return tk(a,b,c,!1,d)};exports.version="17.0.2";
 
-},{"object-assign":2,"react":8,"scheduler":13}],5:[function(require,module,exports){
+},{"object-assign":2,"react":29,"scheduler":34}],11:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -26883,7 +27747,1683 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":3,"./cjs/react-dom.production.min.js":4,"_process":1}],6:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":9,"./cjs/react-dom.production.min.js":10,"_process":3}],12:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(['exports', './models/Hex', './HexUtils'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('./models/Hex'), require('./HexUtils'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.Hex, global.HexUtils);
+    global.GridGenerator = mod.exports;
+  }
+})(this, function (exports, _Hex, _HexUtils) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _Hex2 = _interopRequireDefault(_Hex);
+
+  var _HexUtils2 = _interopRequireDefault(_HexUtils);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+  var GridGenerator = function () {
+    function GridGenerator() {
+      _classCallCheck(this, GridGenerator);
+    }
+
+    _createClass(GridGenerator, null, [{
+      key: 'getGenerator',
+      value: function getGenerator(name) {
+        if (GridGenerator.hasOwnProperty(name)) return GridGenerator[name];
+
+        return null;
+      }
+    }, {
+      key: 'ring',
+      value: function ring(center, mapRadius) {
+        var hexas = [];
+        var hex = _HexUtils2.default.add(center, _HexUtils2.default.multiply(_HexUtils2.default.direction(4), mapRadius));
+        for (var i = 0; i < 6; i++) {
+          for (var j = 0; j < mapRadius; j++) {
+            hexas.push(hex);
+            hex = _HexUtils2.default.neighbour(hex, i);
+          }
+        }
+        return hexas;
+      }
+    }, {
+      key: 'spiral',
+      value: function spiral(center, mapRadius) {
+        var results = [center];
+        for (var k = 1; k <= mapRadius; k++) {
+          var temp = this.ring(center, k);
+          results = results.concat(temp);
+        }
+        return results;
+      }
+    }, {
+      key: 'parallelogram',
+      value: function parallelogram(q1, q2, r1, r2) {
+        var hexas = [];
+        for (var q = q1; q <= q2; q++) {
+          for (var r = r1; r <= r2; r++) {
+            hexas.push(new _Hex2.default(q, r, -q - r));
+          }
+        }
+
+        return hexas;
+      }
+    }, {
+      key: 'triangle',
+      value: function triangle(mapSize) {
+        var hexas = [];
+        for (var q = 0; q <= mapSize; q++) {
+          for (var r = 0; r <= mapSize - q; r++) {
+            hexas.push(new _Hex2.default(q, r, -q - r));
+          }
+        }
+
+        return hexas;
+      }
+    }, {
+      key: 'hexagon',
+      value: function hexagon(mapRadius) {
+        var hexas = [];
+        for (var q = -mapRadius; q <= mapRadius; q++) {
+          var r1 = Math.max(-mapRadius, -q - mapRadius);
+          var r2 = Math.min(mapRadius, -q + mapRadius);
+          for (var r = r1; r <= r2; r++) {
+            hexas.push(new _Hex2.default(q, r, -q - r));
+          }
+        }
+
+        return hexas;
+      }
+    }, {
+      key: 'rectangle',
+      value: function rectangle(mapWidth, mapHeight) {
+        var hexas = [];
+        for (var r = 0; r < mapHeight; r++) {
+          var offset = Math.floor(r / 2); // or r>>1
+          for (var q = -offset; q < mapWidth - offset; q++) {
+            hexas.push(new _Hex2.default(q, r, -q - r));
+          }
+        }
+
+        return hexas;
+      }
+    }, {
+      key: 'orientedRectangle',
+      value: function orientedRectangle(mapWidth, mapHeight) {
+        var hexas = [];
+        for (var q = 0; q < mapWidth; q++) {
+          var offset = Math.floor(q / 2); // or q>>1
+          for (var r = -offset; r < mapHeight - offset; r++) {
+            hexas.push(new _Hex2.default(q, r, -q - r));
+          }
+        }
+
+        return hexas;
+      }
+    }]);
+
+    return GridGenerator;
+  }();
+
+  exports.default = GridGenerator;
+});
+},{"./HexUtils":14,"./models/Hex":21}],13:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(['exports', 'react', 'prop-types'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('react'), require('prop-types'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.React, global.propTypes);
+    global.HexGrid = mod.exports;
+  }
+})(this, function (exports, _react, _propTypes) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _react2 = _interopRequireDefault(_react);
+
+  var _propTypes2 = _interopRequireDefault(_propTypes);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+  function _possibleConstructorReturn(self, call) {
+    if (!self) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+
+    return call && (typeof call === "object" || typeof call === "function") ? call : self;
+  }
+
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+  }
+
+  var HexGrid = function (_Component) {
+    _inherits(HexGrid, _Component);
+
+    function HexGrid() {
+      _classCallCheck(this, HexGrid);
+
+      return _possibleConstructorReturn(this, (HexGrid.__proto__ || Object.getPrototypeOf(HexGrid)).apply(this, arguments));
+    }
+
+    _createClass(HexGrid, [{
+      key: 'render',
+      value: function render() {
+        var _props = this.props,
+            width = _props.width,
+            height = _props.height,
+            viewBox = _props.viewBox;
+
+        return _react2.default.createElement(
+          'svg',
+          { className: 'grid', width: width, height: height, viewBox: viewBox, version: '1.1', xmlns: 'http://www.w3.org/2000/svg' },
+          this.props.children
+        );
+      }
+    }]);
+
+    return HexGrid;
+  }(_react.Component);
+
+  HexGrid.propTypes = {
+    width: _propTypes2.default.oneOfType([_propTypes2.default.string.isRequired, _propTypes2.default.number.isRequired]),
+    height: _propTypes2.default.oneOfType([_propTypes2.default.string.isRequired, _propTypes2.default.number.isRequired]),
+    viewBox: _propTypes2.default.string,
+    children: _propTypes2.default.node.isRequired
+  };
+  HexGrid.defaultProps = {
+    width: 800,
+    height: 600,
+    viewBox: "-50 -50 100 100"
+  };
+  exports.default = HexGrid;
+});
+},{"prop-types":7,"react":29}],14:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(['exports', './models/Hex', './models/Point'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('./models/Hex'), require('./models/Point'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.Hex, global.Point);
+    global.HexUtils = mod.exports;
+  }
+})(this, function (exports, _Hex, _Point) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _Hex2 = _interopRequireDefault(_Hex);
+
+  var _Point2 = _interopRequireDefault(_Point);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+  var HexUtils = function () {
+    function HexUtils() {
+      _classCallCheck(this, HexUtils);
+    }
+
+    _createClass(HexUtils, null, [{
+      key: 'equals',
+      value: function equals(a, b) {
+        return a.q == b.q && a.r == b.r && a.s == b.s;
+      }
+    }, {
+      key: 'add',
+      value: function add(a, b) {
+        return new _Hex2.default(a.q + b.q, a.r + b.r, a.s + b.s);
+      }
+    }, {
+      key: 'subtract',
+      value: function subtract(a, b) {
+        return new _Hex2.default(a.q - b.q, a.r - b.r, a.s - b.s);
+      }
+    }, {
+      key: 'multiply',
+      value: function multiply(a, k) {
+        return new _Hex2.default(a.q * k, a.r * k, a.s * k);
+      }
+    }, {
+      key: 'lengths',
+      value: function lengths(hex) {
+        return parseInt((Math.abs(hex.q) + Math.abs(hex.r) + Math.abs(hex.s)) / 2);
+      }
+    }, {
+      key: 'distance',
+      value: function distance(a, b) {
+        return HexUtils.lengths(HexUtils.subtract(a, b));
+      }
+    }, {
+      key: 'direction',
+      value: function direction(_direction) {
+        return HexUtils.DIRECTIONS[(6 + _direction % 6) % 6];
+      }
+    }, {
+      key: 'neighbour',
+      value: function neighbour(hex, direction) {
+        return HexUtils.add(hex, HexUtils.direction(direction));
+      }
+    }, {
+      key: 'neighbours',
+      value: function neighbours(hex) {
+        var array = [];
+        for (var i = 0; i < HexUtils.DIRECTIONS.length; i += 1) {
+          array.push(HexUtils.neighbour(hex, i));
+        }
+
+        return array;
+      }
+    }, {
+      key: 'round',
+      value: function round(hex) {
+        var rq = Math.round(hex.q);
+        var rr = Math.round(hex.r);
+        var rs = Math.round(hex.s);
+
+        var qDiff = Math.abs(rq - hex.q);
+        var rDiff = Math.abs(rr - hex.r);
+        var sDiff = Math.abs(rs - hex.s);
+
+        if (qDiff > rDiff && qDiff > sDiff) rq = -rr - rs;else if (rDiff > sDiff) rr = -rq - rs;else rs = -rq - rr;
+
+        return new _Hex2.default(rq, rr, rs);
+      }
+    }, {
+      key: 'hexToPixel',
+      value: function hexToPixel(hex, layout) {
+        var s = layout.spacing;
+        var M = layout.orientation;
+        var x = (M.f0 * hex.q + M.f1 * hex.r) * layout.size.x;
+        var y = (M.f2 * hex.q + M.f3 * hex.r) * layout.size.y;
+        // Apply spacing
+        x = x * s;
+        y = y * s;
+        return new _Point2.default(x + layout.origin.x, y + layout.origin.y);
+      }
+    }, {
+      key: 'pixelToHex',
+      value: function pixelToHex(point, layout) {
+        var M = layout.orientation;
+        var pt = new _Point2.default((point.x - layout.origin.x) / layout.size.x, (point.y - layout.origin.y) / layout.size.y);
+        var q = M.b0 * pt.x + M.b1 * pt.y;
+        var r = M.b2 * pt.x + M.b3 * pt.y;
+        var hex = new _Hex2.default(q, r, -q - r);
+        return HexUtils.round(hex);
+      }
+    }, {
+      key: 'lerp',
+      value: function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+    }, {
+      key: 'hexLerp',
+      value: function hexLerp(a, b, t) {
+        return new _Hex2.default(HexUtils.lerp(a.q, b.q, t), HexUtils.lerp(a.r, b.r, t), HexUtils.lerp(a.s, b.s, t));
+      }
+    }, {
+      key: 'getID',
+      value: function getID(hex) {
+        return hex.q + ',' + hex.r + ',' + hex.s;
+      }
+    }]);
+
+    return HexUtils;
+  }();
+
+  HexUtils.DIRECTIONS = [new _Hex2.default(1, 0, -1), new _Hex2.default(1, -1, 0), new _Hex2.default(0, -1, 1), new _Hex2.default(-1, 0, 1), new _Hex2.default(-1, 1, 0), new _Hex2.default(0, 1, -1)];
+  exports.default = HexUtils;
+});
+},{"./models/Hex":21,"./models/Point":23}],15:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(['exports', 'react', 'prop-types', 'classnames', '../models/Hex', '../HexUtils'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('react'), require('prop-types'), require('classnames'), require('../models/Hex'), require('../HexUtils'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.React, global.propTypes, global.classnames, global.Hex, global.HexUtils);
+    global.Hexagon = mod.exports;
+  }
+})(this, function (exports, _react, _propTypes, _classnames, _Hex, _HexUtils) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _react2 = _interopRequireDefault(_react);
+
+  var _propTypes2 = _interopRequireDefault(_propTypes);
+
+  var _classnames2 = _interopRequireDefault(_classnames);
+
+  var _Hex2 = _interopRequireDefault(_Hex);
+
+  var _HexUtils2 = _interopRequireDefault(_HexUtils);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  var _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+  function _possibleConstructorReturn(self, call) {
+    if (!self) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+
+    return call && (typeof call === "object" || typeof call === "function") ? call : self;
+  }
+
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+  }
+
+  var Hexagon = function (_Component) {
+    _inherits(Hexagon, _Component);
+
+    function Hexagon(props, context) {
+      _classCallCheck(this, Hexagon);
+
+      var _this = _possibleConstructorReturn(this, (Hexagon.__proto__ || Object.getPrototypeOf(Hexagon)).call(this, props, context));
+
+      var q = props.q,
+          r = props.r,
+          s = props.s;
+      var layout = context.layout;
+
+      var hex = new _Hex2.default(q, r, s);
+      var pixel = _HexUtils2.default.hexToPixel(hex, layout);
+      _this.state = { hex: hex, pixel: pixel };
+      return _this;
+    }
+
+    // TODO Refactor to reduce duplicate
+
+
+    _createClass(Hexagon, [{
+      key: 'componentWillReceiveProps',
+      value: function componentWillReceiveProps(nextProps) {
+        var q = nextProps.q,
+            r = nextProps.r,
+            s = nextProps.s;
+        var layout = this.context.layout;
+
+        var hex = new _Hex2.default(q, r, s);
+        var pixel = _HexUtils2.default.hexToPixel(hex, layout);
+        this.setState({ hex: hex, pixel: pixel });
+      }
+    }, {
+      key: 'onMouseEnter',
+      value: function onMouseEnter(e) {
+        if (this.props.onMouseEnter) {
+          this.props.onMouseEnter(e, this);
+        }
+      }
+    }, {
+      key: 'onMouseOver',
+      value: function onMouseOver(e) {
+        if (this.props.onMouseOver) {
+          this.props.onMouseOver(e, this);
+        }
+      }
+    }, {
+      key: 'onMouseLeave',
+      value: function onMouseLeave(e) {
+        if (this.props.onMouseLeave) {
+          this.props.onMouseLeave(e, this);
+        }
+      }
+    }, {
+      key: 'onClick',
+      value: function onClick(e) {
+        if (this.props.onClick) {
+          this.props.onClick(e, this);
+        }
+      }
+    }, {
+      key: 'onDragStart',
+      value: function onDragStart(e) {
+        if (this.props.onDragStart) {
+          var targetProps = _extends({}, this.state, {
+            data: this.props.data,
+            fill: this.props.fill,
+            className: this.props.className
+          });
+          e.dataTransfer.setData('hexagon', JSON.stringify(targetProps));
+          this.props.onDragStart(e, this);
+        }
+      }
+    }, {
+      key: 'onDragEnd',
+      value: function onDragEnd(e) {
+        if (this.props.onDragEnd) {
+          e.preventDefault();
+          var success = e.dataTransfer.dropEffect !== 'none';
+          this.props.onDragEnd(e, this, success);
+        }
+      }
+    }, {
+      key: 'onDragOver',
+      value: function onDragOver(e) {
+        if (this.props.onDragOver) {
+          this.props.onDragOver(e, this);
+        }
+      }
+    }, {
+      key: 'onDrop',
+      value: function onDrop(e) {
+        if (this.props.onDrop) {
+          e.preventDefault();
+          var target = JSON.parse(e.dataTransfer.getData('hexagon'));
+          this.props.onDrop(e, this, target);
+        }
+      }
+    }, {
+      key: 'render',
+      value: function render() {
+        var _this2 = this;
+
+        var _props = this.props,
+            fill = _props.fill,
+            cellStyle = _props.cellStyle,
+            className = _props.className;
+        var points = this.context.points;
+        var _state = this.state,
+            hex = _state.hex,
+            pixel = _state.pixel;
+
+        var fillId = fill ? 'url(#' + fill + ')' : null;
+        return _react2.default.createElement(
+          'g',
+          {
+            className: (0, _classnames2.default)('hexagon-group', className),
+            transform: 'translate(' + pixel.x + ', ' + pixel.y + ')',
+            draggable: 'true',
+            onMouseEnter: function onMouseEnter(e) {
+              return _this2.onMouseEnter(e);
+            },
+            onMouseOver: function onMouseOver(e) {
+              return _this2.onMouseOver(e);
+            },
+            onMouseLeave: function onMouseLeave(e) {
+              return _this2.onMouseLeave(e);
+            },
+            onClick: function onClick(e) {
+              return _this2.onClick(e);
+            },
+            onDragStart: function onDragStart(e) {
+              return _this2.onDragStart(e);
+            },
+            onDragEnd: function onDragEnd(e) {
+              return _this2.onDragEnd(e);
+            },
+            onDragOver: function onDragOver(e) {
+              return _this2.onDragOver(e);
+            },
+            onDrop: function onDrop(e) {
+              return _this2.onDrop(e);
+            }
+          },
+          _react2.default.createElement(
+            'g',
+            { className: 'hexagon' },
+            _react2.default.createElement('polygon', { points: points, fill: fillId, style: cellStyle }),
+            this.props.children
+          )
+        );
+      }
+    }]);
+
+    return Hexagon;
+  }(_react.Component);
+
+  Hexagon.propTypes = {
+    q: _propTypes2.default.number.isRequired,
+    r: _propTypes2.default.number.isRequired,
+    s: _propTypes2.default.number.isRequired,
+    fill: _propTypes2.default.string,
+    cellStyle: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.object]),
+    className: _propTypes2.default.string,
+    data: _propTypes2.default.object,
+    onMouseEnter: _propTypes2.default.func,
+    onMouseOver: _propTypes2.default.func,
+    onMouseLeave: _propTypes2.default.func,
+    onClick: _propTypes2.default.func,
+    onDragStart: _propTypes2.default.func,
+    onDragEnd: _propTypes2.default.func,
+    onDragOver: _propTypes2.default.func,
+    onDrop: _propTypes2.default.func,
+    children: _propTypes2.default.node
+  };
+  Hexagon.contextTypes = {
+    layout: _propTypes2.default.object, // TODO Shape
+    points: _propTypes2.default.string
+  };
+  exports.default = Hexagon;
+});
+},{"../HexUtils":14,"../models/Hex":21,"classnames":1,"prop-types":7,"react":29}],16:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(['exports', 'react', 'prop-types'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('react'), require('prop-types'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.React, global.propTypes);
+    global.Text = mod.exports;
+  }
+})(this, function (exports, _react, _propTypes) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _react2 = _interopRequireDefault(_react);
+
+  var _propTypes2 = _interopRequireDefault(_propTypes);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+  function _possibleConstructorReturn(self, call) {
+    if (!self) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+
+    return call && (typeof call === "object" || typeof call === "function") ? call : self;
+  }
+
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+  }
+
+  var Text = function (_Component) {
+    _inherits(Text, _Component);
+
+    function Text() {
+      _classCallCheck(this, Text);
+
+      return _possibleConstructorReturn(this, (Text.__proto__ || Object.getPrototypeOf(Text)).apply(this, arguments));
+    }
+
+    _createClass(Text, [{
+      key: 'render',
+      value: function render() {
+        var _props = this.props,
+            children = _props.children,
+            x = _props.x,
+            y = _props.y,
+            className = _props.className;
+
+        return _react2.default.createElement(
+          'text',
+          { x: x || 0, y: y ? y : '0.3em', className: className, textAnchor: 'middle' },
+          children
+        );
+      }
+    }]);
+
+    return Text;
+  }(_react.Component);
+
+  Text.propTypes = {
+    children: _propTypes2.default.string,
+    x: _propTypes2.default.number,
+    y: _propTypes2.default.number,
+    className: _propTypes2.default.string
+  };
+  exports.default = Text;
+});
+},{"prop-types":7,"react":29}],17:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(['exports', 'react', 'prop-types', './models/Orientation', './models/Point'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('react'), require('prop-types'), require('./models/Orientation'), require('./models/Point'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.React, global.propTypes, global.Orientation, global.Point);
+    global.Layout = mod.exports;
+  }
+})(this, function (exports, _react, _propTypes, _Orientation, _Point) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _react2 = _interopRequireDefault(_react);
+
+  var _propTypes2 = _interopRequireDefault(_propTypes);
+
+  var _Orientation2 = _interopRequireDefault(_Orientation);
+
+  var _Point2 = _interopRequireDefault(_Point);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _objectWithoutProperties(obj, keys) {
+    var target = {};
+
+    for (var i in obj) {
+      if (keys.indexOf(i) >= 0) continue;
+      if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+      target[i] = obj[i];
+    }
+
+    return target;
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+  function _possibleConstructorReturn(self, call) {
+    if (!self) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+
+    return call && (typeof call === "object" || typeof call === "function") ? call : self;
+  }
+
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+  }
+
+  var Layout = function (_Component) {
+    _inherits(Layout, _Component);
+
+    function Layout() {
+      _classCallCheck(this, Layout);
+
+      return _possibleConstructorReturn(this, (Layout.__proto__ || Object.getPrototypeOf(Layout)).apply(this, arguments));
+    }
+
+    _createClass(Layout, [{
+      key: 'getChildContext',
+      value: function getChildContext() {
+        var _props = this.props,
+            children = _props.children,
+            flat = _props.flat,
+            className = _props.className,
+            rest = _objectWithoutProperties(_props, ['children', 'flat', 'className']);
+
+        var orientation = flat ? Layout.LAYOUT_FLAT : Layout.LAYOUT_POINTY;
+        var cornerCoords = this.calculateCoordinates(orientation);
+        var points = cornerCoords.map(function (point) {
+          return point.x + ',' + point.y;
+        }).join(' ');
+        var childLayout = Object.assign({}, rest, { orientation: orientation });
+
+        return {
+          layout: childLayout,
+          points: points
+        };
+      }
+    }, {
+      key: 'getPointOffset',
+      value: function getPointOffset(corner, orientation, size) {
+        var angle = 2.0 * Math.PI * (corner + orientation.startAngle) / 6;
+        return new _Point2.default(size.x * Math.cos(angle), size.y * Math.sin(angle));
+      }
+    }, {
+      key: 'calculateCoordinates',
+      value: function calculateCoordinates(orientation) {
+        var _this2 = this;
+
+        var corners = [];
+        var center = new _Point2.default(0, 0);
+        var size = this.props.size;
+
+
+        Array.from(new Array(6), function (x, i) {
+          var offset = _this2.getPointOffset(i, orientation, size);
+          var point = new _Point2.default(center.x + offset.x, center.y + offset.y);
+          corners.push(point);
+        });
+
+        return corners;
+      }
+    }, {
+      key: 'render',
+      value: function render() {
+        var _props2 = this.props,
+            children = _props2.children,
+            className = _props2.className;
+
+        return _react2.default.createElement(
+          'g',
+          { className: className },
+          children
+        );
+      }
+    }]);
+
+    return Layout;
+  }(_react.Component);
+
+  Layout.LAYOUT_FLAT = new _Orientation2.default(3.0 / 2.0, 0.0, Math.sqrt(3.0) / 2.0, Math.sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, Math.sqrt(3.0) / 3.0, 0.0);
+  Layout.LAYOUT_POINTY = new _Orientation2.default(Math.sqrt(3.0), Math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, Math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5);
+  Layout.propTypes = {
+    children: _propTypes2.default.node.isRequired,
+    className: _propTypes2.default.string,
+    flat: _propTypes2.default.bool,
+    origin: _propTypes2.default.object,
+    size: _propTypes2.default.object,
+    spacing: _propTypes2.default.number
+  };
+  Layout.defaultProps = {
+    size: new _Point2.default(10, 10),
+    flat: true,
+    spacing: 1.0,
+    origin: new _Point2.default(0, 0)
+  };
+  Layout.childContextTypes = {
+    layout: _propTypes2.default.object, // TODO Shape
+    points: _propTypes2.default.string
+  };
+  exports.default = Layout;
+});
+},{"./models/Orientation":22,"./models/Point":23,"prop-types":7,"react":29}],18:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(['exports', 'react', 'prop-types', './HexUtils'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('react'), require('prop-types'), require('./HexUtils'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.React, global.propTypes, global.HexUtils);
+    global.Path = mod.exports;
+  }
+})(this, function (exports, _react, _propTypes, _HexUtils) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _react2 = _interopRequireDefault(_react);
+
+  var _propTypes2 = _interopRequireDefault(_propTypes);
+
+  var _HexUtils2 = _interopRequireDefault(_HexUtils);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+  function _possibleConstructorReturn(self, call) {
+    if (!self) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+
+    return call && (typeof call === "object" || typeof call === "function") ? call : self;
+  }
+
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+  }
+
+  var Path = function (_Component) {
+    _inherits(Path, _Component);
+
+    function Path() {
+      _classCallCheck(this, Path);
+
+      return _possibleConstructorReturn(this, (Path.__proto__ || Object.getPrototypeOf(Path)).apply(this, arguments));
+    }
+
+    _createClass(Path, [{
+      key: 'getPoints',
+      value: function getPoints() {
+        var _props = this.props,
+            start = _props.start,
+            end = _props.end;
+        var layout = this.context.layout;
+
+        if (!start || !end) {
+          return '';
+        }
+
+        // Get all the intersecting hexes between start and end points
+        var distance = _HexUtils2.default.distance(start, end);
+        var intersects = [];
+        var step = 1.0 / Math.max(distance, 1);
+        for (var i = 0; i <= distance; i++) {
+          intersects.push(_HexUtils2.default.round(_HexUtils2.default.hexLerp(start, end, step * i)));
+        }
+
+        // Construct Path points out of all the intersecting hexes (e.g. M 0,0 L 10,20, L 30,20)
+        var points = 'M';
+        points += intersects.map(function (hex) {
+          var p = _HexUtils2.default.hexToPixel(hex, layout);
+          return ' ' + p.x + ',' + p.y + ' ';
+        }).join('L');
+
+        return points;
+      }
+    }, {
+      key: 'render',
+      value: function render() {
+        return _react2.default.createElement('path', { d: this.getPoints() });
+      }
+    }]);
+
+    return Path;
+  }(_react.Component);
+
+  Path.propTypes = {
+    start: _propTypes2.default.object,
+    end: _propTypes2.default.object,
+    layout: _propTypes2.default.object
+  };
+  Path.contextTypes = {
+    layout: _propTypes2.default.object // TODO Shape
+  };
+  exports.default = Path;
+});
+},{"./HexUtils":14,"prop-types":7,"react":29}],19:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(['exports', 'react', 'prop-types', './HexUtils', './models/Point'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('react'), require('prop-types'), require('./HexUtils'), require('./models/Point'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.React, global.propTypes, global.HexUtils, global.Point);
+    global.Pattern = mod.exports;
+  }
+})(this, function (exports, _react, _propTypes, _HexUtils, _Point) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _react2 = _interopRequireDefault(_react);
+
+  var _propTypes2 = _interopRequireDefault(_propTypes);
+
+  var _HexUtils2 = _interopRequireDefault(_HexUtils);
+
+  var _Point2 = _interopRequireDefault(_Point);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+  function _possibleConstructorReturn(self, call) {
+    if (!self) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+
+    return call && (typeof call === "object" || typeof call === "function") ? call : self;
+  }
+
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+  }
+
+  var Pattern = function (_Component) {
+    _inherits(Pattern, _Component);
+
+    function Pattern() {
+      _classCallCheck(this, Pattern);
+
+      return _possibleConstructorReturn(this, (Pattern.__proto__ || Object.getPrototypeOf(Pattern)).apply(this, arguments));
+    }
+
+    _createClass(Pattern, [{
+      key: 'render',
+      value: function render() {
+        var _props = this.props,
+            id = _props.id,
+            link = _props.link,
+            size = _props.size;
+
+
+        return _react2.default.createElement(
+          'defs',
+          null,
+          _react2.default.createElement(
+            'pattern',
+            { id: id, patternUnits: 'objectBoundingBox', x: 0, y: 0, width: size.x, height: size.y },
+            _react2.default.createElement('image', { xlinkHref: link, x: 0, y: 0, width: size.x * 2, height: size.y * 2 })
+          )
+        );
+      }
+    }]);
+
+    return Pattern;
+  }(_react.Component);
+
+  Pattern.propTypes = {
+    id: _propTypes2.default.string.isRequired,
+    link: _propTypes2.default.string.isRequired,
+    size: _propTypes2.default.object
+  };
+  Pattern.defaultProps = {
+    size: new _Point2.default(10, 10)
+  };
+  exports.default = Pattern;
+});
+},{"./HexUtils":14,"./models/Point":23,"prop-types":7,"react":29}],20:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(['exports', './GridGenerator', './HexGrid', './HexUtils', './Layout', './Path', './Pattern', './Hexagon/Hexagon', './Hexagon/Text', './models/Hex'], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports, require('./GridGenerator'), require('./HexGrid'), require('./HexUtils'), require('./Layout'), require('./Path'), require('./Pattern'), require('./Hexagon/Hexagon'), require('./Hexagon/Text'), require('./models/Hex'));
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports, global.GridGenerator, global.HexGrid, global.HexUtils, global.Layout, global.Path, global.Pattern, global.Hexagon, global.Text, global.Hex);
+    global.index = mod.exports;
+  }
+})(this, function (exports, _GridGenerator, _HexGrid, _HexUtils, _Layout, _Path, _Pattern, _Hexagon, _Text, _Hex) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.Hex = exports.Text = exports.Hexagon = exports.Pattern = exports.Path = exports.Layout = exports.HexUtils = exports.HexGrid = exports.GridGenerator = undefined;
+
+  var _GridGenerator2 = _interopRequireDefault(_GridGenerator);
+
+  var _HexGrid2 = _interopRequireDefault(_HexGrid);
+
+  var _HexUtils2 = _interopRequireDefault(_HexUtils);
+
+  var _Layout2 = _interopRequireDefault(_Layout);
+
+  var _Path2 = _interopRequireDefault(_Path);
+
+  var _Pattern2 = _interopRequireDefault(_Pattern);
+
+  var _Hexagon2 = _interopRequireDefault(_Hexagon);
+
+  var _Text2 = _interopRequireDefault(_Text);
+
+  var _Hex2 = _interopRequireDefault(_Hex);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  exports.GridGenerator = _GridGenerator2.default;
+  exports.HexGrid = _HexGrid2.default;
+  exports.HexUtils = _HexUtils2.default;
+  exports.Layout = _Layout2.default;
+  exports.Path = _Path2.default;
+  exports.Pattern = _Pattern2.default;
+  exports.Hexagon = _Hexagon2.default;
+  exports.Text = _Text2.default;
+  exports.Hex = _Hex2.default;
+});
+},{"./GridGenerator":12,"./HexGrid":13,"./HexUtils":14,"./Hexagon/Hexagon":15,"./Hexagon/Text":16,"./Layout":17,"./Path":18,"./Pattern":19,"./models/Hex":21}],21:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(["exports"], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports);
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports);
+    global.Hex = mod.exports;
+  }
+})(this, function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var Hex = function Hex(q, r, s) {
+    _classCallCheck(this, Hex);
+
+    this.q = q;
+    this.r = r;
+    this.s = s;
+  };
+
+  exports.default = Hex;
+});
+},{}],22:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(["exports"], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports);
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports);
+    global.Orientation = mod.exports;
+  }
+})(this, function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var Orientation = function Orientation(f0, f1, f2, f3, b0, b1, b2, b3, startAngle) {
+    _classCallCheck(this, Orientation);
+
+    this.f0 = f0;
+    this.f1 = f1;
+    this.f2 = f2;
+    this.f3 = f3;
+    this.b0 = b0;
+    this.b1 = b1;
+    this.b2 = b2;
+    this.b3 = b3;
+    this.startAngle = startAngle;
+  };
+
+  exports.default = Orientation;
+});
+},{}],23:[function(require,module,exports){
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(["exports"], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports);
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory(mod.exports);
+    global.Point = mod.exports;
+  }
+})(this, function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var Point = function Point(x, y) {
+    _classCallCheck(this, Point);
+
+    this.x = x;
+    this.y = y;
+  };
+
+  exports.default = Point;
+});
+},{}],24:[function(require,module,exports){
+(function (process){(function (){
+/** @license React v16.13.1
+ * react-is.development.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+'use strict';
+
+
+
+if (process.env.NODE_ENV !== "production") {
+  (function() {
+'use strict';
+
+// The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+// nor polyfill, then a plain number is used for performance.
+var hasSymbol = typeof Symbol === 'function' && Symbol.for;
+var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
+var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
+var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
+var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
+var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
+var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
+var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+// (unstable) APIs that have been removed. Can we remove the symbols?
+
+var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
+var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
+var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
+var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
+var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
+var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
+var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
+var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
+var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
+
+function isValidElementType(type) {
+  return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
+  type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
+}
+
+function typeOf(object) {
+  if (typeof object === 'object' && object !== null) {
+    var $$typeof = object.$$typeof;
+
+    switch ($$typeof) {
+      case REACT_ELEMENT_TYPE:
+        var type = object.type;
+
+        switch (type) {
+          case REACT_ASYNC_MODE_TYPE:
+          case REACT_CONCURRENT_MODE_TYPE:
+          case REACT_FRAGMENT_TYPE:
+          case REACT_PROFILER_TYPE:
+          case REACT_STRICT_MODE_TYPE:
+          case REACT_SUSPENSE_TYPE:
+            return type;
+
+          default:
+            var $$typeofType = type && type.$$typeof;
+
+            switch ($$typeofType) {
+              case REACT_CONTEXT_TYPE:
+              case REACT_FORWARD_REF_TYPE:
+              case REACT_LAZY_TYPE:
+              case REACT_MEMO_TYPE:
+              case REACT_PROVIDER_TYPE:
+                return $$typeofType;
+
+              default:
+                return $$typeof;
+            }
+
+        }
+
+      case REACT_PORTAL_TYPE:
+        return $$typeof;
+    }
+  }
+
+  return undefined;
+} // AsyncMode is deprecated along with isAsyncMode
+
+var AsyncMode = REACT_ASYNC_MODE_TYPE;
+var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
+var ContextConsumer = REACT_CONTEXT_TYPE;
+var ContextProvider = REACT_PROVIDER_TYPE;
+var Element = REACT_ELEMENT_TYPE;
+var ForwardRef = REACT_FORWARD_REF_TYPE;
+var Fragment = REACT_FRAGMENT_TYPE;
+var Lazy = REACT_LAZY_TYPE;
+var Memo = REACT_MEMO_TYPE;
+var Portal = REACT_PORTAL_TYPE;
+var Profiler = REACT_PROFILER_TYPE;
+var StrictMode = REACT_STRICT_MODE_TYPE;
+var Suspense = REACT_SUSPENSE_TYPE;
+var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
+
+function isAsyncMode(object) {
+  {
+    if (!hasWarnedAboutDeprecatedIsAsyncMode) {
+      hasWarnedAboutDeprecatedIsAsyncMode = true; // Using console['warn'] to evade Babel and ESLint
+
+      console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
+    }
+  }
+
+  return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
+}
+function isConcurrentMode(object) {
+  return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
+}
+function isContextConsumer(object) {
+  return typeOf(object) === REACT_CONTEXT_TYPE;
+}
+function isContextProvider(object) {
+  return typeOf(object) === REACT_PROVIDER_TYPE;
+}
+function isElement(object) {
+  return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
+}
+function isForwardRef(object) {
+  return typeOf(object) === REACT_FORWARD_REF_TYPE;
+}
+function isFragment(object) {
+  return typeOf(object) === REACT_FRAGMENT_TYPE;
+}
+function isLazy(object) {
+  return typeOf(object) === REACT_LAZY_TYPE;
+}
+function isMemo(object) {
+  return typeOf(object) === REACT_MEMO_TYPE;
+}
+function isPortal(object) {
+  return typeOf(object) === REACT_PORTAL_TYPE;
+}
+function isProfiler(object) {
+  return typeOf(object) === REACT_PROFILER_TYPE;
+}
+function isStrictMode(object) {
+  return typeOf(object) === REACT_STRICT_MODE_TYPE;
+}
+function isSuspense(object) {
+  return typeOf(object) === REACT_SUSPENSE_TYPE;
+}
+
+exports.AsyncMode = AsyncMode;
+exports.ConcurrentMode = ConcurrentMode;
+exports.ContextConsumer = ContextConsumer;
+exports.ContextProvider = ContextProvider;
+exports.Element = Element;
+exports.ForwardRef = ForwardRef;
+exports.Fragment = Fragment;
+exports.Lazy = Lazy;
+exports.Memo = Memo;
+exports.Portal = Portal;
+exports.Profiler = Profiler;
+exports.StrictMode = StrictMode;
+exports.Suspense = Suspense;
+exports.isAsyncMode = isAsyncMode;
+exports.isConcurrentMode = isConcurrentMode;
+exports.isContextConsumer = isContextConsumer;
+exports.isContextProvider = isContextProvider;
+exports.isElement = isElement;
+exports.isForwardRef = isForwardRef;
+exports.isFragment = isFragment;
+exports.isLazy = isLazy;
+exports.isMemo = isMemo;
+exports.isPortal = isPortal;
+exports.isProfiler = isProfiler;
+exports.isStrictMode = isStrictMode;
+exports.isSuspense = isSuspense;
+exports.isValidElementType = isValidElementType;
+exports.typeOf = typeOf;
+  })();
+}
+
+}).call(this)}).call(this,require('_process'))
+},{"_process":3}],25:[function(require,module,exports){
+/** @license React v16.13.1
+ * react-is.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+'use strict';var b="function"===typeof Symbol&&Symbol.for,c=b?Symbol.for("react.element"):60103,d=b?Symbol.for("react.portal"):60106,e=b?Symbol.for("react.fragment"):60107,f=b?Symbol.for("react.strict_mode"):60108,g=b?Symbol.for("react.profiler"):60114,h=b?Symbol.for("react.provider"):60109,k=b?Symbol.for("react.context"):60110,l=b?Symbol.for("react.async_mode"):60111,m=b?Symbol.for("react.concurrent_mode"):60111,n=b?Symbol.for("react.forward_ref"):60112,p=b?Symbol.for("react.suspense"):60113,q=b?
+Symbol.for("react.suspense_list"):60120,r=b?Symbol.for("react.memo"):60115,t=b?Symbol.for("react.lazy"):60116,v=b?Symbol.for("react.block"):60121,w=b?Symbol.for("react.fundamental"):60117,x=b?Symbol.for("react.responder"):60118,y=b?Symbol.for("react.scope"):60119;
+function z(a){if("object"===typeof a&&null!==a){var u=a.$$typeof;switch(u){case c:switch(a=a.type,a){case l:case m:case e:case g:case f:case p:return a;default:switch(a=a&&a.$$typeof,a){case k:case n:case t:case r:case h:return a;default:return u}}case d:return u}}}function A(a){return z(a)===m}exports.AsyncMode=l;exports.ConcurrentMode=m;exports.ContextConsumer=k;exports.ContextProvider=h;exports.Element=c;exports.ForwardRef=n;exports.Fragment=e;exports.Lazy=t;exports.Memo=r;exports.Portal=d;
+exports.Profiler=g;exports.StrictMode=f;exports.Suspense=p;exports.isAsyncMode=function(a){return A(a)||z(a)===l};exports.isConcurrentMode=A;exports.isContextConsumer=function(a){return z(a)===k};exports.isContextProvider=function(a){return z(a)===h};exports.isElement=function(a){return"object"===typeof a&&null!==a&&a.$$typeof===c};exports.isForwardRef=function(a){return z(a)===n};exports.isFragment=function(a){return z(a)===e};exports.isLazy=function(a){return z(a)===t};
+exports.isMemo=function(a){return z(a)===r};exports.isPortal=function(a){return z(a)===d};exports.isProfiler=function(a){return z(a)===g};exports.isStrictMode=function(a){return z(a)===f};exports.isSuspense=function(a){return z(a)===p};
+exports.isValidElementType=function(a){return"string"===typeof a||"function"===typeof a||a===e||a===m||a===g||a===f||a===p||a===q||"object"===typeof a&&null!==a&&(a.$$typeof===t||a.$$typeof===r||a.$$typeof===h||a.$$typeof===k||a.$$typeof===n||a.$$typeof===w||a.$$typeof===x||a.$$typeof===y||a.$$typeof===v)};exports.typeOf=z;
+
+},{}],26:[function(require,module,exports){
+(function (process){(function (){
+'use strict';
+
+if (process.env.NODE_ENV === 'production') {
+  module.exports = require('./cjs/react-is.production.min.js');
+} else {
+  module.exports = require('./cjs/react-is.development.js');
+}
+
+}).call(this)}).call(this,require('_process'))
+},{"./cjs/react-is.development.js":24,"./cjs/react-is.production.min.js":25,"_process":3}],27:[function(require,module,exports){
 (function (process){(function (){
 /** @license React v17.0.2
  * react.development.js
@@ -29220,7 +31760,7 @@ exports.version = ReactVersion;
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":1,"object-assign":2}],7:[function(require,module,exports){
+},{"_process":3,"object-assign":2}],28:[function(require,module,exports){
 /** @license React v17.0.2
  * react.production.min.js
  *
@@ -29245,7 +31785,7 @@ key:d,ref:k,props:e,_owner:h}};exports.createContext=function(a,b){void 0===b&&(
 exports.lazy=function(a){return{$$typeof:v,_payload:{_status:-1,_result:a},_init:Q}};exports.memo=function(a,b){return{$$typeof:u,type:a,compare:void 0===b?null:b}};exports.useCallback=function(a,b){return S().useCallback(a,b)};exports.useContext=function(a,b){return S().useContext(a,b)};exports.useDebugValue=function(){};exports.useEffect=function(a,b){return S().useEffect(a,b)};exports.useImperativeHandle=function(a,b,c){return S().useImperativeHandle(a,b,c)};
 exports.useLayoutEffect=function(a,b){return S().useLayoutEffect(a,b)};exports.useMemo=function(a,b){return S().useMemo(a,b)};exports.useReducer=function(a,b,c){return S().useReducer(a,b,c)};exports.useRef=function(a){return S().useRef(a)};exports.useState=function(a){return S().useState(a)};exports.version="17.0.2";
 
-},{"object-assign":2}],8:[function(require,module,exports){
+},{"object-assign":2}],29:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -29256,7 +31796,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"./cjs/react.development.js":6,"./cjs/react.production.min.js":7,"_process":1}],9:[function(require,module,exports){
+},{"./cjs/react.development.js":27,"./cjs/react.production.min.js":28,"_process":3}],30:[function(require,module,exports){
 (function (process){(function (){
 /** @license React v0.20.2
  * scheduler-tracing.development.js
@@ -29607,7 +32147,7 @@ exports.unstable_wrap = unstable_wrap;
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":1}],10:[function(require,module,exports){
+},{"_process":3}],31:[function(require,module,exports){
 /** @license React v0.20.2
  * scheduler-tracing.production.min.js
  *
@@ -29618,7 +32158,7 @@ exports.unstable_wrap = unstable_wrap;
  */
 'use strict';var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_subscribe=function(){};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_unsubscribe=function(){};exports.unstable_wrap=function(a){return a};
 
-},{}],11:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (process){(function (){
 /** @license React v0.20.2
  * scheduler.development.js
@@ -30268,7 +32808,7 @@ exports.unstable_wrapCallback = unstable_wrapCallback;
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":1}],12:[function(require,module,exports){
+},{"_process":3}],33:[function(require,module,exports){
 /** @license React v0.20.2
  * scheduler.production.min.js
  *
@@ -30290,7 +32830,7 @@ exports.unstable_next=function(a){switch(P){case 1:case 2:case 3:var b=3;break;d
 exports.unstable_scheduleCallback=function(a,b,c){var d=exports.unstable_now();"object"===typeof c&&null!==c?(c=c.delay,c="number"===typeof c&&0<c?d+c:d):c=d;switch(a){case 1:var e=-1;break;case 2:e=250;break;case 5:e=1073741823;break;case 4:e=1E4;break;default:e=5E3}e=c+e;a={id:N++,callback:b,priorityLevel:a,startTime:c,expirationTime:e,sortIndex:-1};c>d?(a.sortIndex=c,H(M,a),null===J(L)&&a===J(M)&&(S?h():S=!0,g(U,c-d))):(a.sortIndex=e,H(L,a),R||Q||(R=!0,f(V)));return a};
 exports.unstable_wrapCallback=function(a){var b=P;return function(){var c=P;P=b;try{return a.apply(this,arguments)}finally{P=c}}};
 
-},{}],13:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -30301,7 +32841,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":11,"./cjs/scheduler.production.min.js":12,"_process":1}],14:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":32,"./cjs/scheduler.production.min.js":33,"_process":3}],35:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -30312,441 +32852,630 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this)}).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":9,"./cjs/scheduler-tracing.production.min.js":10,"_process":1}],15:[function(require,module,exports){
+},{"./cjs/scheduler-tracing.development.js":30,"./cjs/scheduler-tracing.production.min.js":31,"_process":3}],36:[function(require,module,exports){
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+var _reactHexgrid = require("react-hexgrid");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
 //comando para compilar
-//npm run build 
+//gulp
 //para correr la pagina en localhost
 //npm run dev
-
 var React = require('react');
+
 var ReactDOM = require('react-dom');
 
 //Clase Game clase superior donde se guardan los estados de la partida
-class Game extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            //valores de las tiles es entrega desde el backend para todos los usuarios (es el mapa de la partida)
-            showPopup: false,
-            errorlog: null,
-            currentPoints: 0,
-            currentTurn: 1,
-            tileValues: [[1,0],[1,100]],
-            diceValues: [null, null, null],
-            selectedSquare: [null,null],
-            selectedDice: null,
-            currentPosition: [null, null],
-        };
-        this.getBoardData = this.getBoardData.bind(this)
-        this.togglePopup = this.togglePopup.bind(this)
+var Game = /*#__PURE__*/function (_React$Component) {
+  _inherits(Game, _React$Component);
+
+  var _super = _createSuper(Game);
+
+  function Game(props) {
+    var _this;
+
+    _classCallCheck(this, Game);
+
+    _this = _super.call(this, props);
+    _this.state = {
+      //valores de las tiles es entrega desde el backend para todos los usuarios (es el mapa de la partida)
+      showPopup: false,
+      errorlog: null,
+      currentPoints: 0,
+      currentTurn: 1,
+      tileValues: [[1, 0], [1, 100]],
+      diceValues: [null, null, null],
+      selectedSquare: [null, null],
+      selectedDice: null,
+      currentPosition: [null, null]
+    };
+    _this.getBoardData = _this.getBoardData.bind(_assertThisInitialized(_this));
+    _this.togglePopup = _this.togglePopup.bind(_assertThisInitialized(_this));
+    return _this;
+  } //funcion que correr cuando el componente es creado
+
+
+  _createClass(Game, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var map = this.crearMapa();
+      var pos = this.pos_inicial(map);
+      this.setState({
+        tileValues: map
+      });
+      this.setState({
+        currentPosition: pos
+      });
+      this.rollDices();
     }
-
-    //funcion que correr cuando el componente es creado
-    componentDidMount() {
-        const map = this.crearMapa();
-        const pos = this.pos_inicial(map);
-        this.setState({tileValues: map});
-        this.setState({currentPosition: pos});
-        this.rollDices();
-    
-
+  }, {
+    key: "togglePopup",
+    value: function togglePopup() {
+      this.setState({
+        showPopup: !this.state.showPopup
+      });
     }
+  }, {
+    key: "getBoardData",
+    value: function getBoardData(childData) {
+      this.setState({
+        selectedSquare: childData
+      });
+    }
+  }, {
+    key: "positionValue",
+    value: function positionValue(position) {
+      return this.state.tileValues[position[1]][position[0]];
+    }
+  }, {
+    key: "changeTileValues",
+    value: function changeTileValues(change) {
+      var old_tiles = this.state.tileValues;
+      var new_tiles = old_tiles.map(function (_) {
+        return _;
+      });
+      new_tiles[this.state.currentPosition[1]][this.state.currentPosition[0]] = new_tiles[this.state.currentPosition[1]][this.state.currentPosition[0]] + change;
+      this.setState({
+        tileValues: new_tiles
+      });
+    }
+  }, {
+    key: "changeDiceValues",
+    value: function changeDiceValues() {
+      var old_dices = this.state.diceValues;
+      var new_dices = old_dices.map(function (_) {
+        return _;
+      });
+      new_dices[this.state.selectedDice] = null;
+      this.setState({
+        diceValues: new_dices
+      });
+    }
+  }, {
+    key: "sail",
+    value: function sail() {
+      this.setState({
+        errorlog: null
+      });
 
-    togglePopup() {
+      if (this.state.currentPosition[0] != this.state.selectedSquare[0] && this.state.currentPosition[1] != this.state.selectedSquare[1]) {
+        this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
+      } else if (this.state.selectedDice == null) {
+        this.errorlog("Debes seleccionar un dado para utilizar");
+      } else if (this.state.currentPosition[0] == this.state.selectedSquare[0] && this.state.currentPosition[1] == this.state.selectedSquare[1]) {
+        this.errorlog("No puedes navegar a la casilla en la que estas");
+      } else if (this.state.currentPosition[0] - this.state.selectedSquare[0] > this.state.diceValues[this.state.selectedDice] || this.state.selectedSquare[0] - this.state.currentPosition[0] > this.state.diceValues[this.state.selectedDice]) {
+        this.errorlog("No puedes avanzar mas de lo que dice el dado");
+      } else if (this.state.currentPosition[1] - this.state.selectedSquare[1] > this.state.diceValues[this.state.selectedDice] || this.state.selectedSquare[1] - this.state.currentPosition[1] > this.state.diceValues[this.state.selectedDice]) {
+        this.errorlog("No puedes avanzar mas de lo que dice el dado");
+      } else {
         this.setState({
-          showPopup: !this.state.showPopup
+          currentPosition: this.state.selectedSquare
         });
+        this.changeDiceValues();
+      }
+    }
+  }, {
+    key: "loot",
+    value: function loot() {
+      this.setState({
+        errorlog: null
+      });
+      var currentValue;
+      var change;
+      var looted;
+      currentValue = this.positionValue(this.state.currentPosition);
+
+      if (this.state.diceValues[this.state.selectedDice] > currentValue) {
+        looted = currentValue;
+      } else {
+        looted = this.state.diceValues[this.state.selectedDice];
       }
 
-    getBoardData(childData) {
-        this.setState({selectedSquare: childData})
-    }
-
-    positionValue(position) {
-        return this.state.tileValues[position[1]][position[0]]
-    }
-
-    changeTileValues(change) {
-        const old_tiles = this.state.tileValues;
-        const new_tiles = old_tiles.map((_) => _ );
-
-        new_tiles[this.state.currentPosition[1]][this.state.currentPosition[0]] = new_tiles[this.state.currentPosition[1]][this.state.currentPosition[0]]+change;    
-        this.setState({tileValues: new_tiles});
-    }
-
-    changeDiceValues() {
-        const old_dices = this.state.diceValues;
-        const new_dices = old_dices.map((_) => _ );
-
-        new_dices[this.state.selectedDice] = null;  
-        this.setState({diceValues: new_dices});
-    }
-
-    sail() {
-        this.setState({errorlog: null});
-        if (this.state.currentPosition[0] != this.state.selectedSquare[0] && this.state.currentPosition[1] != this.state.selectedSquare[1]) {
-            this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
-        } else if (this.state.selectedDice == null) {
-            this.errorlog("Debes seleccionar un dado para utilizar");
-        } else if (this.state.currentPosition[0] == this.state.selectedSquare[0] && this.state.currentPosition[1] == this.state.selectedSquare[1]) {
-            this.errorlog("No puedes navegar a la casilla en la que estas");
-        } else if (
-        this.state.currentPosition[0]-this.state.selectedSquare[0] > this.state.diceValues[this.state.selectedDice] ||
-        this.state.selectedSquare[0]-this.state.currentPosition[0] > this.state.diceValues[this.state.selectedDice]) {
-            this.errorlog("No puedes avanzar mas de lo que dice el dado");
-        } else if (
-        this.state.currentPosition[1]-this.state.selectedSquare[1] > this.state.diceValues[this.state.selectedDice] ||
-        this.state.selectedSquare[1]-this.state.currentPosition[1] > this.state.diceValues[this.state.selectedDice]) {
-            this.errorlog("No puedes avanzar mas de lo que dice el dado");
-        } else {
-            this.setState({currentPosition: this.state.selectedSquare});
-            this.changeDiceValues();
-        }
-    }
-
-    loot() {
-        this.setState({errorlog: null});
-        let currentValue;
-        let change;
-        let looted;
-        currentValue = this.positionValue(this.state.currentPosition);
-        if (this.state.diceValues[this.state.selectedDice] > currentValue) {
-            looted = currentValue
-        } else {
-            looted = this.state.diceValues[this.state.selectedDice]
-        }
-        
-        if (currentValue == 100) {
-            this.errorlog("No puedes lootear esta casilla, es mar");         
-        } else if (this.state.diceValues[this.state.selectedDice] == null) {
-            this.errorlog("Debes seleccionar un dado para lootear"); 
-        } else if (currentValue == 0) {
-            this.errorlog("Ya no quedan recursos en esta isla");
-        } else {
-            //Luego cambiar a lootear la cantidad asignada por el dado
-            this.setState({currentPoints: this.state.currentPoints+looted});
-            change = -looted;
-            this.changeTileValues(change);
-            this.changeDiceValues();
-        }
-
-    }
-
-    endTurn() {
-        if (this.state.currentTurn == 5) {
-            this.endGame();
-        } else {
-            this.rollDices();
-            this.setState({currentTurn: this.state.currentTurn+1});
-        }
-    }
-
-    endGame() {
-        this.togglePopup();
-    }
-
-    playAgain() {
-        window.location.reload()
-     }
-
-    renderDices(value, index) {
-        if (value == null) {
-            return ""
-        }
-        if (this.state.selectedDice == index) {
-            return React.createElement("button", {
-                onClick:  () => this.selectDice(index), 
-                className: "diceSelected"
-                }, 
-                    value
-                )
-
-        } else {
-            return React.createElement("button", {
-                onClick:  () => this.selectDice(index), 
-                className: "dice"
-                }, 
-                    value
-                )
-        }
-    }
-
-    rollDices() {
-        const dice0 = Math.floor(Math.random() * (7 - 1)) + 1;
-        const dice1 = Math.floor(Math.random() * (7 - 1)) + 1;
-        const dice2 = Math.floor(Math.random() * (7 - 1)) + 1;
-        this.setState({diceValues: [dice0, dice1, dice2]});
-    }
-
-    selectDice(index) {
-        this.setState({selectedDice: index})
-    }
-
-    errorlog(value) {
-        this.setState({errorlog: value});
-    }
-
-    render() {
-        let array = this.state.diceValues;
-        return (
-            React.createElement("div", null, 
-                React.createElement("div", {class: "center"}, 
-                    "Turno: ", this.state.currentTurn
-                ), 
-                React.createElement("div", {class: "center"}, 
-                    "Tienes: ", this.state.currentPoints, " Puntos"
-                ), 
-                React.createElement("br", null), 
-
-                React.createElement("div", {class: "center"}, 
-                    React.createElement(Board, {
-                        tileValues: this.state.tileValues, 
-                        selectedSquare: this.state.selectedSquare, 
-                        currentPosition: this.state.currentPosition, 
-                        sendBoardData: this.getBoardData}
-                    )
-                ), 
-                React.createElement("br", null), 
-                React.createElement("div", {class: "center"}, 
-                    "Dados"             
-                ), 
-                React.createElement("div", {class: "center"}, 
-                    array.map((_, index) => this.renderDices(_, index))
-                ), 
-                React.createElement("br", null), 
-                React.createElement("div", {class: "center"}, 
-                    React.createElement("button", {onClick:  () => this.sail()}, "Sail"), 
-                    React.createElement("button", {onClick:  () => this.loot()}, "Loot"), 
-                    React.createElement("button", {onClick:  () => this.endTurn()}, "End Turn")
-                ), 
-                React.createElement("br", null), 
-                React.createElement("div", {class: "center"}, 
-                    this.state.errorlog
-                ), 
-                this.state.showPopup ? 
-                    React.createElement(Popup, {
-                    currentPoints: this.state.currentPoints, 
-                    closePopup: this.togglePopup.bind(this), 
-                    playAgain: this.playAgain.bind(this)}
-                    )
-                : null
-                
-            )
-        );
-    }
-
-    crearMapa() {
-        const size_x = 13;
-        const size_y = 13;
-        var n_isles = 10;
-        const min_dis = 3;
-        const loot_min = 2;
-        const loot_max = 10;
-        //creamos el array con valores (100 - agua) y el tamaño correcto
-        var mapa = Array.apply(null, Array(size_y)).map( () => {
-            return Array.apply(null, Array(size_x)).map( () => {return 100} )
+      if (currentValue == 100) {
+        this.errorlog("No puedes lootear esta casilla, es mar");
+      } else if (this.state.diceValues[this.state.selectedDice] == null) {
+        this.errorlog("Debes seleccionar un dado para lootear");
+      } else if (currentValue == 0) {
+        this.errorlog("Ya no quedan recursos en esta isla");
+      } else {
+        //Luego cambiar a lootear la cantidad asignada por el dado
+        this.setState({
+          currentPoints: this.state.currentPoints + looted
         });
-      
-        //las islas no pueden estar en los límites del mapa
-        var pos_islas = []
-        for (var i = 1; i < size_x - 1; i++) {
-          for (var j = 1; j < size_y - 1; j++) {
-            pos_islas.push({x: i, y: j});
+        change = -looted;
+        this.changeTileValues(change);
+        this.changeDiceValues();
+      }
+    }
+  }, {
+    key: "endTurn",
+    value: function endTurn() {
+      if (this.state.currentTurn == 5) {
+        this.endGame();
+      } else {
+        this.rollDices();
+        this.setState({
+          currentTurn: this.state.currentTurn + 1
+        });
+      }
+    }
+  }, {
+    key: "endGame",
+    value: function endGame() {
+      this.togglePopup();
+    }
+  }, {
+    key: "playAgain",
+    value: function playAgain() {
+      window.location.reload();
+    }
+  }, {
+    key: "renderDices",
+    value: function renderDices(value, index) {
+      var _this2 = this;
+
+      if (value == null) {
+        return "";
+      }
+
+      if (this.state.selectedDice == index) {
+        return /*#__PURE__*/React.createElement("button", {
+          onClick: function onClick() {
+            return _this2.selectDice(index);
+          },
+          className: "diceSelected"
+        }, value);
+      } else {
+        return /*#__PURE__*/React.createElement("button", {
+          onClick: function onClick() {
+            return _this2.selectDice(index);
+          },
+          className: "dice"
+        }, value);
+      }
+    }
+  }, {
+    key: "rollDices",
+    value: function rollDices() {
+      var dice0 = Math.floor(Math.random() * (7 - 1)) + 1;
+      var dice1 = Math.floor(Math.random() * (7 - 1)) + 1;
+      var dice2 = Math.floor(Math.random() * (7 - 1)) + 1;
+      this.setState({
+        diceValues: [dice0, dice1, dice2]
+      });
+    }
+  }, {
+    key: "selectDice",
+    value: function selectDice(index) {
+      this.setState({
+        selectedDice: index
+      });
+    }
+  }, {
+    key: "errorlog",
+    value: function errorlog(value) {
+      this.setState({
+        errorlog: value
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this3 = this;
+
+      var array = this.state.diceValues;
+      return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+        "class": "center"
+      }, "Turno: ", this.state.currentTurn, /*#__PURE__*/React.createElement(App, null)), /*#__PURE__*/React.createElement("div", {
+        "class": "center"
+      }, "Tienes: ", this.state.currentPoints, " Puntos"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+        "class": "center"
+      }, /*#__PURE__*/React.createElement(Board, {
+        tileValues: this.state.tileValues,
+        selectedSquare: this.state.selectedSquare,
+        currentPosition: this.state.currentPosition,
+        sendBoardData: this.getBoardData
+      })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+        "class": "center"
+      }, "Dados"), /*#__PURE__*/React.createElement("div", {
+        "class": "center"
+      }, array.map(function (_, index) {
+        return _this3.renderDices(_, index);
+      })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+        "class": "center"
+      }, /*#__PURE__*/React.createElement("button", {
+        onClick: function onClick() {
+          return _this3.sail();
+        }
+      }, "Sail"), /*#__PURE__*/React.createElement("button", {
+        onClick: function onClick() {
+          return _this3.loot();
+        }
+      }, "Loot"), /*#__PURE__*/React.createElement("button", {
+        onClick: function onClick() {
+          return _this3.endTurn();
+        }
+      }, "End Turn")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+        "class": "center"
+      }, this.state.errorlog), this.state.showPopup ? /*#__PURE__*/React.createElement(Popup, {
+        currentPoints: this.state.currentPoints,
+        closePopup: this.togglePopup.bind(this),
+        playAgain: this.playAgain.bind(this)
+      }) : null);
+    }
+  }, {
+    key: "crearMapa",
+    value: function crearMapa() {
+      var size_x = 13;
+      var size_y = 13;
+      var n_isles = 10;
+      var min_dis = 3;
+      var loot_min = 2;
+      var loot_max = 10; //creamos el array con valores (100 - agua) y el tamaño correcto
+
+      var mapa = Array.apply(null, Array(size_y)).map(function () {
+        return Array.apply(null, Array(size_x)).map(function () {
+          return 100;
+        });
+      }); //las islas no pueden estar en los límites del mapa
+
+      var pos_islas = [];
+
+      for (var i = 1; i < size_x - 1; i++) {
+        for (var j = 1; j < size_y - 1; j++) {
+          pos_islas.push({
+            x: i,
+            y: j
+          });
+        }
+      }
+
+      this.shuffle(pos_islas); //asignamos las islas en el tablero
+
+      while (pos_islas.length > 0 && n_isles > 0) {
+        var pos = pos_islas.pop();
+        mapa[pos.y][pos.x] = this.getRandomInt(loot_min, loot_max);
+        n_isles--;
+        var temp = [];
+
+        for (var i = 1; i < pos_islas.length; i++) {
+          if (this.dist(pos_islas[i], pos) > min_dis) {
+            temp.push(pos_islas[i]);
           }
         }
-        this.shuffle(pos_islas)
-      
-        //asignamos las islas en el tablero
-        while (pos_islas.length > 0 && n_isles > 0){
-            var pos = pos_islas.pop();
-            mapa[pos.y][pos.x] = this.getRandomInt(loot_min, loot_max);
-            n_isles--;
-          
-      
-            var temp = [];
-            for (var i = 1; i < pos_islas.length; i++){
-                if ( this.dist( pos_islas[i], pos) > min_dis ){
-                temp.push(pos_islas[i])
-                }
-            }
-            pos_islas = temp
-        }
-      
-      //{x: xVal, y: yVal}
-      
-        return mapa;
+
+        pos_islas = temp;
+      } //{x: xVal, y: yVal}
+
+
+      return mapa;
     }
+  }, {
+    key: "pos_inicial",
+    value: function pos_inicial(mapa) {
+      while (true) {
+        var pos = [this.getRandomInt(1, 7) + this.getRandomInt(1, 7), this.getRandomInt(1, 7) + this.getRandomInt(1, 7)];
 
-    pos_inicial(mapa) {
-        while(true) {
-            var pos = [this.getRandomInt(1, 7) + this.getRandomInt(1, 7), this.getRandomInt(1, 7) + this.getRandomInt(1, 7)];
-            if (mapa[pos[1]][pos[0]] == 100) {
-                return pos;
-            }
-        }
-    }
-
-    dist(coord_1, coord_2) {
-        return Math.abs(coord_1.x - coord_2.x) + Math.abs(coord_1.y - coord_2.y)
-    }
-      
-    shuffle(array) {
-        //https://dev.to/codebubb/how-to-shuffle-an-array-in-javascript-2ikj
-        for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          const temp = array[i];
-          array[i] = array[j];
-          array[j] = temp;
-        }
-    }
-      
-    getRandomInt(min, max) {
-        //https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-        return Math.floor(Math.random() * (max - min)) + min;
-    }
-}
-
-//clase Board la cual tiene de hijos a los cuadrados.
-class Board extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-        };
-        this.getSelectedSquare = this.getSelectedSquare.bind(this)
-    }
-
-    getSelectedSquare(childData) {
-        this.props.sendBoardData(childData);
-    }
-
-    renderSquare(value, row, index) {
-        return React.createElement(Square, {
-            id: [index, row], 
-            value: value, 
-            selectedSquare: this.props.selectedSquare, 
-            currentPosition: this.props.currentPosition, 
-            sendData: this.getSelectedSquare}
-        )
-    }
-
-    renderRow(array, row) {
-        return React.createElement("div", {className: "board-row"}, 
-                    array.map((_, index) => this.renderSquare(_, row, index))
-                )
-    }
-
-    render() {
-        const tiles=this.props.tileValues;
-        return (
-            React.createElement("div", null, 
-                tiles.map((_, index) => this.renderRow(_, index))
-            )
-
-          );
-    }
-}
-
-class Square extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-        };
-    }
-
-    squareType() {
-        let Type;
-        let selected;
-        let className;
-        let value;
-
-        if (this.props.selectedSquare[0]==this.props.id[0] && this.props.selectedSquare[1]==this.props.id[1]) {
-            selected ="Selected";
-        } else {
-            selected ="";
-        }
-
-        if (this.props.value == 100) {
-            Type = "sea";           
-        } else if (this.props.value < 10) {
-            Type = "island";
-        }
-
-        if (this.props.currentPosition[0]==this.props.id[0] && this.props.currentPosition[1]==this.props.id[1]) {
-            Type = "ship";
-        }
-        className = Type+selected;
-
-        if (this.props.value!=100) {
-            value = this.props.value;
-        } else {
-            value =null;
-        }
-        
-        return (
-                React.createElement("button", {
-                    className: className, 
-                    onClick:  () => this.select()
-                }, " ", value
-                )
-        );
-    }
-
-    select() {
-        if (this.props.selectedSquare[0]!=this.props.id[0] || this.props.selectedSquare[1]!=this.props.id[1]) {
-            this.props.sendData(this.props.id);
-        } else {
-            this.props.sendData([null,null]);
+        if (mapa[pos[1]][pos[0]] == 100) {
+          return pos;
         }
       }
-  
-    render() {
-        return (
-            this.squareType()
-        )
-
     }
-}
-
-
-class Popup extends React.Component {
-    render() {
-      return (
-        React.createElement("div", {className: "popup"}, 
-          React.createElement("div", {className: "popup_inner"}, 
-                React.createElement("div", {class: "center"}, 
-                    "Total Points: ", this.props.currentPoints
-                ), 
-                React.createElement("br", null), 
-                React.createElement("br", null), 
-                React.createElement("div", {class: "center"}, 
-                    React.createElement("button", {onClick: this.props.playAgain}, "Play Again"), 
-                    React.createElement("button", {onClick: this.props.closePopup}, "Go to Main Menu")
-                )
-          )
-        )
-      );
+  }, {
+    key: "dist",
+    value: function dist(coord_1, coord_2) {
+      return Math.abs(coord_1.x - coord_2.x) + Math.abs(coord_1.y - coord_2.y);
     }
+  }, {
+    key: "shuffle",
+    value: function shuffle(array) {
+      //https://dev.to/codebubb/how-to-shuffle-an-array-in-javascript-2ikj
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+    }
+  }, {
+    key: "getRandomInt",
+    value: function getRandomInt(min, max) {
+      //https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+      return Math.floor(Math.random() * (max - min)) + min;
+    }
+  }]);
+
+  return Game;
+}(React.Component); //clase Board la cual tiene de hijos a los cuadrados.
+
+
+var Board = /*#__PURE__*/function (_React$Component2) {
+  _inherits(Board, _React$Component2);
+
+  var _super2 = _createSuper(Board);
+
+  function Board(props) {
+    var _this4;
+
+    _classCallCheck(this, Board);
+
+    _this4 = _super2.call(this, props);
+    _this4.state = {};
+    _this4.getSelectedSquare = _this4.getSelectedSquare.bind(_assertThisInitialized(_this4));
+    return _this4;
   }
 
+  _createClass(Board, [{
+    key: "getSelectedSquare",
+    value: function getSelectedSquare(childData) {
+      this.props.sendBoardData(childData);
+    }
+  }, {
+    key: "renderSquare",
+    value: function renderSquare(value, row, index) {
+      return /*#__PURE__*/React.createElement(Square, {
+        id: [index, row],
+        value: value,
+        selectedSquare: this.props.selectedSquare,
+        currentPosition: this.props.currentPosition,
+        sendData: this.getSelectedSquare
+      });
+    }
+  }, {
+    key: "renderRow",
+    value: function renderRow(array, row) {
+      var _this5 = this;
 
-//comando necesario para importar la clase Game en main.js
+      return /*#__PURE__*/React.createElement("div", {
+        className: "board-row"
+      }, array.map(function (_, index) {
+        return _this5.renderSquare(_, row, index);
+      }));
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this6 = this;
+
+      var tiles = this.props.tileValues;
+      return /*#__PURE__*/React.createElement("div", null, tiles.map(function (_, index) {
+        return _this6.renderRow(_, index);
+      }));
+    }
+  }]);
+
+  return Board;
+}(React.Component);
+
+var Square = /*#__PURE__*/function (_React$Component3) {
+  _inherits(Square, _React$Component3);
+
+  var _super3 = _createSuper(Square);
+
+  function Square(props) {
+    var _this7;
+
+    _classCallCheck(this, Square);
+
+    _this7 = _super3.call(this, props);
+    _this7.state = {};
+    return _this7;
+  }
+
+  _createClass(Square, [{
+    key: "squareType",
+    value: function squareType() {
+      var _this8 = this;
+
+      var Type;
+      var selected;
+      var className;
+      var value;
+
+      if (this.props.selectedSquare[0] == this.props.id[0] && this.props.selectedSquare[1] == this.props.id[1]) {
+        selected = "Selected";
+      } else {
+        selected = "";
+      }
+
+      if (this.props.value == 100) {
+        Type = "sea";
+      } else if (this.props.value < 10) {
+        Type = "island";
+      }
+
+      if (this.props.currentPosition[0] == this.props.id[0] && this.props.currentPosition[1] == this.props.id[1]) {
+        Type = "ship";
+      }
+
+      className = Type + selected;
+
+      if (this.props.value != 100) {
+        value = this.props.value;
+      } else {
+        value = null;
+      }
+
+      return /*#__PURE__*/React.createElement("button", {
+        className: className,
+        onClick: function onClick() {
+          return _this8.select();
+        }
+      }, " ", value);
+    }
+  }, {
+    key: "select",
+    value: function select() {
+      if (this.props.selectedSquare[0] != this.props.id[0] || this.props.selectedSquare[1] != this.props.id[1]) {
+        this.props.sendData(this.props.id);
+      } else {
+        this.props.sendData([null, null]);
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return this.squareType();
+    }
+  }]);
+
+  return Square;
+}(React.Component);
+
+var Popup = /*#__PURE__*/function (_React$Component4) {
+  _inherits(Popup, _React$Component4);
+
+  var _super4 = _createSuper(Popup);
+
+  function Popup() {
+    _classCallCheck(this, Popup);
+
+    return _super4.apply(this, arguments);
+  }
+
+  _createClass(Popup, [{
+    key: "render",
+    value: function render() {
+      return /*#__PURE__*/React.createElement("div", {
+        className: "popup"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "popup_inner"
+      }, /*#__PURE__*/React.createElement("div", {
+        "class": "center"
+      }, "Total Points: ", this.props.currentPoints), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+        "class": "center"
+      }, /*#__PURE__*/React.createElement("button", {
+        onClick: this.props.playAgain
+      }, "Play Again"), /*#__PURE__*/React.createElement("button", {
+        onClick: this.props.closePopup
+      }, "Go to Main Menu"))));
+    }
+  }]);
+
+  return Popup;
+}(React.Component);
+
+var App = /*#__PURE__*/function (_React$Component5) {
+  _inherits(App, _React$Component5);
+
+  var _super5 = _createSuper(App);
+
+  function App() {
+    _classCallCheck(this, App);
+
+    return _super5.apply(this, arguments);
+  }
+
+  _createClass(App, [{
+    key: "render",
+    value: function render() {
+      return /*#__PURE__*/React.createElement(_reactHexgrid.HexGrid, {
+        width: 1200,
+        height: 800,
+        viewBox: "-50 -50 100 100"
+      }, /*#__PURE__*/React.createElement(_reactHexgrid.Layout, {
+        size: {
+          x: 10,
+          y: 10
+        },
+        flat: true,
+        spacing: 1.1,
+        origin: {
+          x: 0,
+          y: 0
+        }
+      }, /*#__PURE__*/React.createElement(_reactHexgrid.Hexagon, {
+        q: 0,
+        r: 0,
+        s: 0
+      })));
+    }
+  }]);
+
+  return App;
+}(React.Component); //comando necesario para importar la clase Game en main.js
+
+
 module.exports.Game = Game;
 
-},{"react":8,"react-dom":5}],16:[function(require,module,exports){
+},{"react":29,"react-dom":11,"react-hexgrid":20}],37:[function(require,module,exports){
+"use strict";
 
-const game = require("./game.js");
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var game = require("./game.js");
+
 var React = require('react');
-var ReactDOM = require('react-dom');
 
-//Funcion de inicializacion de la pagina
-const initialize = async () => {
-    ReactDOM.render(
-        React.createElement(game.Game, null),
-        document.getElementById('game')
-    );
-}
+var ReactDOM = require('react-dom'); //Funcion de inicializacion de la pagina
+
+
+var initialize = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            ReactDOM.render( /*#__PURE__*/React.createElement(game.Game, null), document.getElementById('game'));
+
+          case 1:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+
+  return function initialize() {
+    return _ref.apply(this, arguments);
+  };
+}();
 
 window.addEventListener('DOMContentLoaded', initialize);
 
-},{"./game.js":15,"react":8,"react-dom":5}]},{},[16])(16)
-});
+},{"./game.js":36,"react":29,"react-dom":11}]},{},[37]);
