@@ -21,6 +21,7 @@ class Game extends React.Component {
             tileValues: [[1,0],[1,100]],
             diceValues: [null, null, null],
             selectedSquare: [null,null],
+            selectedHexagon: [null,null,null],
             selectedDice: null,
             currentPosition: [null, null],
         };
@@ -46,7 +47,7 @@ class Game extends React.Component {
       }
 
     getBoardData(childData) {
-        this.setState({selectedSquare: childData})
+        this.setState({selectedHexagon: childData})
     }
 
     positionValue(position) {
@@ -321,24 +322,47 @@ class Board extends React.Component {
         />
     }
 
+    renderHexagon(value, q,r,s) {
+        return <BoardHexagon 
+                        q={q} 
+                        r={r} 
+                        s={s} 
+                        value = {value} 
+                        selectedHexagon = {this.props.selectedHexagon} 
+                        currentPosition = {this.props.currentPosition} 
+                        sendData={this.getSelectedHexagon}/>
+    }
+
     renderRow(array, row) {
         return <div className="board-row">
                     {array.map((_, index) => this.renderSquare(_, row, index))}
                 </div>
     }
 
+    renderR(array, q){
+        return array.map((_, index) => this.renderHexagon(_, q, index, -q-index ))
+
+    }
+
+    renderBoard(array) {
+        return <div>
+                    {array.map((_, index) => this.renderR(array, index) )}
+                </div>
+    }
+
     render() {
-        const tiles=this.props.tileValues;
+        var tiles = this.props.tileValues;
+        //var tiles = [[100,100],[100,5]];
+        //var tiles = [[100]];
         return (
             <HexGrid width={1200} height={800} viewBox="-50 -50 100 100">
-                <Layout size={{ x: 10, y: 10 }} flat={true} spacing={1} origin={{ x: 0, y: 0 }}>
-                    <BoardHexagon q={0} r={0} s={0} value = {100} selectedHexagon = {this.props.selectedHexagon} currentPosition = {this.props.currentPosition} sendData={this.getSelectedHexagon}/>
-                    <BoardHexagon q={0} r={1} s={0} value = {100} selectedHexagon = {this.props.selectedHexagon} currentPosition = {this.props.currentPosition} sendData={this.getSelectedHexagon}/>
+                <Layout size={{ x: 3, y: 3 }} flat={true} spacing={1} origin={{ x: 0, y: 0 }}>
+                    {tiles.map((_, index) => this.renderR(_, index))}
                 </Layout>
                 <Pattern id="island" link="src/island.png" />
+                <Pattern id="islandSelected" link="src/islandSelected.png" />
                 <Pattern id="sea" link="src/sea.png" />
-
-
+                <Pattern id="seaSelected" link="src/seaSelected.png" />
             </HexGrid>
         )
     }
@@ -413,11 +437,6 @@ class BoardHexagon extends React.Component {
         };
     }
     select() {
-        if (this.state.value == 100) {
-            this.setState({value: 1 })       
-        } else if (this.state.value < 10) {
-            this.setState({value: 100 })
-        }
         if (this.props.selectedHexagon[0]!=this.props.q || this.props.selectedHexagon[1]!=this.props.r || this.props.selectedHexagon[2]!=this.props.s) {
             this.props.sendData([this.props.q, this.props.r, this.props.s]);
         } else {
@@ -428,13 +447,27 @@ class BoardHexagon extends React.Component {
 
     render() {
         let Type;
+        let value;
+        let classType;
+        let selected;
         if (this.state.value == 100) {
             Type = "sea";           
         } else if (this.state.value < 10) {
             Type = "island";
         }
+        if (this.props.selectedHexagon[0]==this.props.q && this.props.selectedHexagon[1]==this.props.r && this.props.selectedHexagon[2]==this.props.s) {
+            selected ="Selected";
+        } else {
+            selected ="";
+        }
+        if (this.state.value!=100) {
+            value = this.state.value;
+        } else {
+            value =null;
+        }
+        classType = Type+selected;
         return(
-            <Hexagon q={this.props.q} r={this.props.r} s={this.props.s} fill={Type} onClick={ () => this.select()}
+            <Hexagon q={this.props.q} r={this.props.r} s={this.props.s} fill={classType} onClick={ () => this.select()}
             >
             </Hexagon>
         )
@@ -462,17 +495,7 @@ class Popup extends React.Component {
     }
   }
 
-class App extends React.Component {
-    render() {
-        return (
-            <HexGrid width={1200} height={800} viewBox="-50 -50 100 100">
-                <Layout size={{ x: 10, y: 10 }} flat={true} spacing={1.1} origin={{ x: 0, y: 0 }}>
-                    <Hexagon q={0} r={0} s={0} />
-                </Layout>
-            </HexGrid>
-        );
-    }
-}
+
 
 
 //comando necesario para importar la clase Game en main.js

@@ -93,17 +93,7 @@ h1 {
     margin-top: -1px;
   }
 
-  .seaSelected {
-    position: relative;
-    box-sizing: border-box;
-    background: #00CED1;
-    border: 1px solid black;
-    float: left;
-    height: 30px;
-    width: 30px;
-    margin-right: -1px;
-    margin-top: -1px;
-  }
+
 
   .island {
     background: #228B22;

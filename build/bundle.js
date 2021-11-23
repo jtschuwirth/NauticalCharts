@@ -32908,6 +32908,7 @@ var Game = /*#__PURE__*/function (_React$Component) {
       tileValues: [[1, 0], [1, 100]],
       diceValues: [null, null, null],
       selectedSquare: [null, null],
+      selectedHexagon: [null, null, null],
       selectedDice: null,
       currentPosition: [null, null]
     };
@@ -32941,7 +32942,7 @@ var Game = /*#__PURE__*/function (_React$Component) {
     key: "getBoardData",
     value: function getBoardData(childData) {
       this.setState({
-        selectedSquare: childData
+        selectedHexagon: childData
       });
     }
   }, {
@@ -33271,6 +33272,19 @@ var Board = /*#__PURE__*/function (_React$Component2) {
       });
     }
   }, {
+    key: "renderHexagon",
+    value: function renderHexagon(value, q, r, s) {
+      return /*#__PURE__*/React.createElement(BoardHexagon, {
+        q: q,
+        r: r,
+        s: s,
+        value: value,
+        selectedHexagon: this.props.selectedHexagon,
+        currentPosition: this.props.currentPosition,
+        sendData: this.getSelectedHexagon
+      });
+    }
+  }, {
     key: "renderRow",
     value: function renderRow(array, row) {
       var _this5 = this;
@@ -33282,17 +33296,39 @@ var Board = /*#__PURE__*/function (_React$Component2) {
       }));
     }
   }, {
+    key: "renderR",
+    value: function renderR(array, q) {
+      var _this6 = this;
+
+      return array.map(function (_, index) {
+        return _this6.renderHexagon(_, q, index, -q - index);
+      });
+    }
+  }, {
+    key: "renderBoard",
+    value: function renderBoard(array) {
+      var _this7 = this;
+
+      return /*#__PURE__*/React.createElement("div", null, array.map(function (_, index) {
+        return _this7.renderR(array, index);
+      }));
+    }
+  }, {
     key: "render",
     value: function render() {
-      var tiles = this.props.tileValues;
+      var _this8 = this;
+
+      var tiles = this.props.tileValues; //var tiles = [[100,100],[100,5]];
+      //var tiles = [[100]];
+
       return /*#__PURE__*/React.createElement(_reactHexgrid.HexGrid, {
         width: 1200,
         height: 800,
         viewBox: "-50 -50 100 100"
       }, /*#__PURE__*/React.createElement(_reactHexgrid.Layout, {
         size: {
-          x: 10,
-          y: 10
+          x: 3,
+          y: 3
         },
         flat: true,
         spacing: 1,
@@ -33300,28 +33336,20 @@ var Board = /*#__PURE__*/function (_React$Component2) {
           x: 0,
           y: 0
         }
-      }, /*#__PURE__*/React.createElement(BoardHexagon, {
-        q: 0,
-        r: 0,
-        s: 0,
-        value: 100,
-        selectedHexagon: this.props.selectedHexagon,
-        currentPosition: this.props.currentPosition,
-        sendData: this.getSelectedHexagon
-      }), /*#__PURE__*/React.createElement(BoardHexagon, {
-        q: 0,
-        r: 1,
-        s: 0,
-        value: 100,
-        selectedHexagon: this.props.selectedHexagon,
-        currentPosition: this.props.currentPosition,
-        sendData: this.getSelectedHexagon
+      }, tiles.map(function (_, index) {
+        return _this8.renderR(_, index);
       })), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
         id: "island",
         link: "src/island.png"
       }), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
+        id: "islandSelected",
+        link: "src/islandSelected.png"
+      }), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
         id: "sea",
         link: "src/sea.png"
+      }), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
+        id: "seaSelected",
+        link: "src/seaSelected.png"
       }));
     }
   }]);
@@ -33335,19 +33363,19 @@ var Square = /*#__PURE__*/function (_React$Component3) {
   var _super3 = _createSuper(Square);
 
   function Square(props) {
-    var _this6;
+    var _this9;
 
     _classCallCheck(this, Square);
 
-    _this6 = _super3.call(this, props);
-    _this6.state = {};
-    return _this6;
+    _this9 = _super3.call(this, props);
+    _this9.state = {};
+    return _this9;
   }
 
   _createClass(Square, [{
     key: "squareType",
     value: function squareType() {
-      var _this7 = this;
+      var _this10 = this;
 
       var Type;
       var selected;
@@ -33381,7 +33409,7 @@ var Square = /*#__PURE__*/function (_React$Component3) {
       return /*#__PURE__*/React.createElement("button", {
         className: className,
         onClick: function onClick() {
-          return _this7.select();
+          return _this10.select();
         }
       }, " ", value);
     }
@@ -33410,30 +33438,20 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
   var _super4 = _createSuper(BoardHexagon);
 
   function BoardHexagon(props) {
-    var _this8;
+    var _this11;
 
     _classCallCheck(this, BoardHexagon);
 
-    _this8 = _super4.call(this, props);
-    _this8.state = {
-      value: _this8.props.value
+    _this11 = _super4.call(this, props);
+    _this11.state = {
+      value: _this11.props.value
     };
-    return _this8;
+    return _this11;
   }
 
   _createClass(BoardHexagon, [{
     key: "select",
     value: function select() {
-      if (this.state.value == 100) {
-        this.setState({
-          value: 1
-        });
-      } else if (this.state.value < 10) {
-        this.setState({
-          value: 100
-        });
-      }
-
       if (this.props.selectedHexagon[0] != this.props.q || this.props.selectedHexagon[1] != this.props.r || this.props.selectedHexagon[2] != this.props.s) {
         this.props.sendData([this.props.q, this.props.r, this.props.s]);
       } else {
@@ -33443,9 +33461,12 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
   }, {
     key: "render",
     value: function render() {
-      var _this9 = this;
+      var _this12 = this;
 
       var Type;
+      var value;
+      var classType;
+      var selected;
 
       if (this.state.value == 100) {
         Type = "sea";
@@ -33453,13 +33474,26 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
         Type = "island";
       }
 
+      if (this.props.selectedHexagon[0] == this.props.q && this.props.selectedHexagon[1] == this.props.r && this.props.selectedHexagon[2] == this.props.s) {
+        selected = "Selected";
+      } else {
+        selected = "";
+      }
+
+      if (this.state.value != 100) {
+        value = this.state.value;
+      } else {
+        value = null;
+      }
+
+      classType = Type + selected;
       return /*#__PURE__*/React.createElement(_reactHexgrid.Hexagon, {
         q: this.props.q,
         r: this.props.r,
         s: this.props.s,
-        fill: Type,
+        fill: classType,
         onClick: function onClick() {
-          return _this9.select();
+          return _this12.select();
         }
       });
     }
@@ -33499,46 +33533,6 @@ var Popup = /*#__PURE__*/function (_React$Component5) {
   }]);
 
   return Popup;
-}(React.Component);
-
-var App = /*#__PURE__*/function (_React$Component6) {
-  _inherits(App, _React$Component6);
-
-  var _super6 = _createSuper(App);
-
-  function App() {
-    _classCallCheck(this, App);
-
-    return _super6.apply(this, arguments);
-  }
-
-  _createClass(App, [{
-    key: "render",
-    value: function render() {
-      return /*#__PURE__*/React.createElement(_reactHexgrid.HexGrid, {
-        width: 1200,
-        height: 800,
-        viewBox: "-50 -50 100 100"
-      }, /*#__PURE__*/React.createElement(_reactHexgrid.Layout, {
-        size: {
-          x: 10,
-          y: 10
-        },
-        flat: true,
-        spacing: 1.1,
-        origin: {
-          x: 0,
-          y: 0
-        }
-      }, /*#__PURE__*/React.createElement(_reactHexgrid.Hexagon, {
-        q: 0,
-        r: 0,
-        s: 0
-      })));
-    }
-  }]);
-
-  return App;
 }(React.Component); //comando necesario para importar la clase Game en main.js
 
 
