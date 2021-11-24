@@ -68769,26 +68769,30 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 var provider = new ethers.providers.Web3Provider(window.ethereum);
-var signer = provider.getSigner();
+var signer = provider.getSigner(); //Funcion de inicializacion de la pagina
 
-var cuenta_actual = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    var accounts, account;
+window.onload = /*#__PURE__*/function () {
+  var _initialize = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    var onboardButton, MetaMaskClientCheck;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
-            return ethereum.request({
-              method: 'eth_requestAccounts'
-            });
+            onboardButton = document.getElementById('connectButton');
 
-          case 2:
-            accounts = _context.sent;
-            account = accounts[0];
-            return _context.abrupt("return", account);
+            MetaMaskClientCheck = function MetaMaskClientCheck() {
+              //Now we check to see if MetaMask is installed
+              if (ethereum.isMetaMask == true) {
+                onboardButton.innerText = 'Connect Metamask';
+                onboardButton.onclick = onClickConnect;
+                onboardButton.disabled = false;
+              }
+            };
 
-          case 5:
+            MetaMaskClientCheck();
+            playButton();
+
+          case 4:
           case "end":
             return _context.stop();
         }
@@ -68796,94 +68800,92 @@ var cuenta_actual = /*#__PURE__*/function () {
     }, _callee);
   }));
 
-  return function cuenta_actual() {
+  function initialize() {
+    return _initialize.apply(this, arguments);
+  }
+
+  return initialize;
+}();
+
+var currentAddress = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+    var accounts, account;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return ethereum.request({
+              method: 'eth_requestAccounts'
+            });
+
+          case 2:
+            accounts = _context2.sent;
+            account = accounts[0];
+            return _context2.abrupt("return", account);
+
+          case 5:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+
+  return function currentAddress() {
     return _ref.apply(this, arguments);
   };
-}(); //Funcion de inicializacion de la pagina
+}();
 
+var onClickConnect = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.prev = 0;
+            _context3.next = 3;
+            return ethereum.request({
+              method: 'eth_requestAccounts'
+            });
 
-var initialize = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-    var MetaMaskClientCheck, onClickConnect, playButton;
+          case 3:
+            _context3.next = 8;
+            break;
+
+          case 5:
+            _context3.prev = 5;
+            _context3.t0 = _context3["catch"](0);
+            console.error(_context3.t0);
+
+          case 8:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3, null, [[0, 5]]);
+  }));
+
+  return function onClickConnect() {
+    return _ref2.apply(this, arguments);
+  };
+}();
+
+var playButton = /*#__PURE__*/function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+    var address;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            MetaMaskClientCheck = function MetaMaskClientCheck() {
-              var onboardButton = document.getElementById('connectButton'); //Now we check to see if MetaMask is installed
+            _context4.next = 2;
+            return currentAddress();
 
-              if (ethereum.isMetaMask == true) {
-                onboardButton.innerText = 'Connect Metamask';
-                onboardButton.onclick = onClickConnect;
-                onboardButton.disabled = false;
-                playButton();
-              }
-            };
-
-            onClickConnect = /*#__PURE__*/function () {
-              var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-                return regeneratorRuntime.wrap(function _callee2$(_context2) {
-                  while (1) {
-                    switch (_context2.prev = _context2.next) {
-                      case 0:
-                        _context2.prev = 0;
-                        _context2.next = 3;
-                        return ethereum.request({
-                          method: 'eth_requestAccounts'
-                        });
-
-                      case 3:
-                        _context2.next = 8;
-                        break;
-
-                      case 5:
-                        _context2.prev = 5;
-                        _context2.t0 = _context2["catch"](0);
-                        console.error(_context2.t0);
-
-                      case 8:
-                      case "end":
-                        return _context2.stop();
-                    }
-                  }
-                }, _callee2, null, [[0, 5]]);
-              }));
-
-              return function onClickConnect() {
-                return _ref3.apply(this, arguments);
-              };
-            }();
-
-            playButton = /*#__PURE__*/function () {
-              var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-                var address;
-                return regeneratorRuntime.wrap(function _callee3$(_context3) {
-                  while (1) {
-                    switch (_context3.prev = _context3.next) {
-                      case 0:
-                        _context3.next = 2;
-                        return cuenta_actual();
-
-                      case 2:
-                        address = _context3.sent;
-                        ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
-                          userAddress: address
-                        }), document.getElementById('playButton'));
-
-                      case 4:
-                      case "end":
-                        return _context3.stop();
-                    }
-                  }
-                }, _callee3);
-              }));
-
-              return function playButton() {
-                return _ref4.apply(this, arguments);
-              };
-            }();
-
-            MetaMaskClientCheck();
+          case 2:
+            address = _context4.sent;
+            ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
+              userAddress: address
+            }), document.getElementById('playButton'));
 
           case 4:
           case "end":
@@ -68893,11 +68895,9 @@ var initialize = /*#__PURE__*/function () {
     }, _callee4);
   }));
 
-  return function initialize() {
-    return _ref2.apply(this, arguments);
+  return function playButton() {
+    return _ref3.apply(this, arguments);
   };
 }();
-
-window.addEventListener('DOMContentLoaded', initialize);
 
 },{"./game.js":236,"ethers":168,"react":218,"react-dom":200}]},{},[237]);
