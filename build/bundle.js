@@ -39405,15 +39405,21 @@ var Game = /*#__PURE__*/function (_React$Component2) {
   _createClass(Game, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var map = this.crearMapa();
-      var pos = this.pos_inicial();
-      this.setState({
-        tileValues: map
+      var _this5 = this;
+
+      socket.on("startInfo", function (data) {
+        _this5.setState({
+          diceValues: data.dices
+        });
+
+        _this5.setState({
+          currentPosition: data.pos
+        });
+
+        _this5.setState({
+          tileValues: data.map
+        });
       });
-      this.setState({
-        currentPosition: pos
-      });
-      this.rollDices();
     }
   }, {
     key: "togglePopup",
@@ -39519,19 +39525,19 @@ var Game = /*#__PURE__*/function (_React$Component2) {
   }, {
     key: "endTurn",
     value: function endTurn() {
-      var _this5 = this;
+      var _this6 = this;
 
-      socket.on("endTurn", function (data) {
-        if (data == "New Round") {
-          if (_this5.state.currentTurn == 5) {
-            _this5.endGame();
-          } else {
-            _this5.rollDices();
+      socket.on("newRound", function (data) {
+        if (_this6.state.currentTurn == 5) {
+          _this6.endGame();
+        } else {
+          _this6.setState({
+            diceValues: data.dices
+          });
 
-            _this5.setState({
-              currentTurn: _this5.state.currentTurn + 1
-            });
-          }
+          _this6.setState({
+            currentTurn: _this6.state.currentTurn + 1
+          });
         }
       });
       socket.emit("endTurn", {
@@ -39551,7 +39557,7 @@ var Game = /*#__PURE__*/function (_React$Component2) {
   }, {
     key: "renderDices",
     value: function renderDices(value, index) {
-      var _this6 = this;
+      var _this7 = this;
 
       if (value == null) {
         return "";
@@ -39560,28 +39566,18 @@ var Game = /*#__PURE__*/function (_React$Component2) {
       if (this.state.selectedDice == index) {
         return /*#__PURE__*/React.createElement("button", {
           onClick: function onClick() {
-            return _this6.selectDice(index);
+            return _this7.selectDice(index);
           },
           className: "diceSelected"
         }, value);
       } else {
         return /*#__PURE__*/React.createElement("button", {
           onClick: function onClick() {
-            return _this6.selectDice(index);
+            return _this7.selectDice(index);
           },
           className: "dice"
         }, value);
       }
-    }
-  }, {
-    key: "rollDices",
-    value: function rollDices() {
-      var dice0 = Math.floor(Math.random() * (7 - 1)) + 1;
-      var dice1 = Math.floor(Math.random() * (7 - 1)) + 1;
-      var dice2 = Math.floor(Math.random() * (7 - 1)) + 1;
-      this.setState({
-        diceValues: [dice0, dice1, dice2]
-      });
     }
   }, {
     key: "selectDice",
@@ -39598,84 +39594,9 @@ var Game = /*#__PURE__*/function (_React$Component2) {
       });
     }
   }, {
-    key: "crearMapa",
-    value: function crearMapa() {
-      var size_x = 13;
-      var size_y = 13;
-      var n_isles = 10;
-      var min_dis = 3;
-      var loot_min = 2;
-      var loot_max = 10; //creamos el array con valores (100 - agua) y el tamaño correcto
-
-      var mapa = Array.apply(null, Array(size_y)).map(function () {
-        return Array.apply(null, Array(size_x)).map(function () {
-          return 100;
-        });
-      }); //las islas no pueden estar en los límites del mapa
-
-      var pos_islas = [];
-
-      for (var i = 1; i < size_x - 1; i++) {
-        for (var j = 1; j < size_y - 1; j++) {
-          pos_islas.push({
-            x: i,
-            y: j
-          });
-        }
-      }
-
-      this.shuffle(pos_islas); //asignamos las islas en el tablero
-
-      while (pos_islas.length > 0 && n_isles > 0) {
-        var pos = pos_islas.pop();
-        mapa[pos.y][pos.x] = this.getRandomInt(loot_min, loot_max);
-        n_isles--;
-        var temp = [];
-
-        for (var i = 1; i < pos_islas.length; i++) {
-          if (this.dist(pos_islas[i], pos) > min_dis) {
-            temp.push(pos_islas[i]);
-          }
-        }
-
-        pos_islas = temp;
-      } //{x: xVal, y: yVal}
-
-
-      return mapa;
-    }
-  }, {
-    key: "pos_inicial",
-    value: function pos_inicial() {
-      var pos = [0, 0, 0];
-      return pos;
-    }
-  }, {
-    key: "dist",
-    value: function dist(coord_1, coord_2) {
-      return Math.abs(coord_1.x - coord_2.x) + Math.abs(coord_1.y - coord_2.y);
-    }
-  }, {
-    key: "shuffle",
-    value: function shuffle(array) {
-      //https://dev.to/codebubb/how-to-shuffle-an-array-in-javascript-2ikj
-      for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-      }
-    }
-  }, {
-    key: "getRandomInt",
-    value: function getRandomInt(min, max) {
-      //https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-      return Math.floor(Math.random() * (max - min)) + min;
-    }
-  }, {
     key: "render",
     value: function render() {
-      var _this7 = this;
+      var _this8 = this;
 
       var array = this.state.diceValues;
       return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
@@ -39696,20 +39617,20 @@ var Game = /*#__PURE__*/function (_React$Component2) {
       }, "Dados"), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, array.map(function (_, index) {
-        return _this7.renderDices(_, index);
+        return _this8.renderDices(_, index);
       })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
-          return _this7.sail();
+          return _this8.sail();
         }
       }, "Sail"), /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
-          return _this7.loot();
+          return _this8.loot();
         }
       }, "Loot"), /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
-          return _this7.endTurn();
+          return _this8.endTurn();
         }
       }, "End Turn")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
@@ -39731,14 +39652,14 @@ var Board = /*#__PURE__*/function (_React$Component3) {
   var _super3 = _createSuper(Board);
 
   function Board(props) {
-    var _this8;
+    var _this9;
 
     _classCallCheck(this, Board);
 
-    _this8 = _super3.call(this, props);
-    _this8.state = {};
-    _this8.getSelectedHexagon = _this8.getSelectedHexagon.bind(_assertThisInitialized(_this8));
-    return _this8;
+    _this9 = _super3.call(this, props);
+    _this9.state = {};
+    _this9.getSelectedHexagon = _this9.getSelectedHexagon.bind(_assertThisInitialized(_this9));
+    return _this9;
   }
 
   _createClass(Board, [{
@@ -39762,16 +39683,16 @@ var Board = /*#__PURE__*/function (_React$Component3) {
   }, {
     key: "renderR",
     value: function renderR(array, q) {
-      var _this9 = this;
+      var _this10 = this;
 
       return array.map(function (_, index) {
-        return _this9.renderHexagon(_, q, index, -q - index);
+        return _this10.renderHexagon(_, q, index, -q - index);
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this10 = this;
+      var _this11 = this;
 
       var tiles = this.props.tileValues;
       return /*#__PURE__*/React.createElement(_reactHexgrid.HexGrid, {
@@ -39790,7 +39711,7 @@ var Board = /*#__PURE__*/function (_React$Component3) {
           y: 0
         }
       }, tiles.map(function (_, index) {
-        return _this10.renderR(_, index);
+        return _this11.renderR(_, index);
       })), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
         id: "island",
         link: "src/island.png"
@@ -39822,13 +39743,13 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
   var _super4 = _createSuper(BoardHexagon);
 
   function BoardHexagon(props) {
-    var _this11;
+    var _this12;
 
     _classCallCheck(this, BoardHexagon);
 
-    _this11 = _super4.call(this, props);
-    _this11.state = {};
-    return _this11;
+    _this12 = _super4.call(this, props);
+    _this12.state = {};
+    return _this12;
   }
 
   _createClass(BoardHexagon, [{
@@ -39843,7 +39764,7 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
   }, {
     key: "render",
     value: function render() {
-      var _this12 = this;
+      var _this13 = this;
 
       var Type;
       var value;
@@ -39879,7 +39800,7 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
         s: this.props.s,
         fill: classType,
         onClick: function onClick() {
-          return _this12.select();
+          return _this13.select();
         }
       }, /*#__PURE__*/React.createElement(_reactHexgrid.Text, {
         className: "hexagonText"

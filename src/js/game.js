@@ -84,11 +84,11 @@ class Game extends React.Component {
 
     //funcion que correr cuando el componente es creado
     componentDidMount() {
-        const map = this.crearMapa();
-        const pos = this.pos_inicial();
-        this.setState({tileValues: map});
-        this.setState({currentPosition: pos});
-        this.rollDices();
+        socket.on("startInfo", (data) => {
+            this.setState({diceValues: data.dices});
+            this.setState({currentPosition: data.pos});
+            this.setState({tileValues: data.map});
+        });
     }
 
     togglePopup() {
@@ -175,15 +175,14 @@ class Game extends React.Component {
     }
 
     endTurn() {
-        socket.on("endTurn", (data) => {
-            if (data == "New Round") {
-                if (this.state.currentTurn == 5) {
-                    this.endGame();
-                } else {
-                    this.rollDices();
-                    this.setState({currentTurn: this.state.currentTurn+1});
-                }
+        socket.on("newRound", (data) => {
+            if (this.state.currentTurn == 5) {
+                this.endGame();
+            } else {
+                this.setState({diceValues: data.dices});
+                this.setState({currentTurn: this.state.currentTurn+1});
             }
+            
         });
         socket.emit("endTurn", {userAddress: this.props.userAddress});
     }
@@ -218,85 +217,12 @@ class Game extends React.Component {
         }
     }
 
-    rollDices() {
-        const dice0 = Math.floor(Math.random() * (7 - 1)) + 1;
-        const dice1 = Math.floor(Math.random() * (7 - 1)) + 1;
-        const dice2 = Math.floor(Math.random() * (7 - 1)) + 1;
-        this.setState({diceValues: [dice0, dice1, dice2]});
-    }
-
     selectDice(index) {
         this.setState({selectedDice: index})
     }
 
     errorlog(value) {
         this.setState({errorlog: value});
-    }
-
-    crearMapa() {
-        const size_x = 13;
-        const size_y = 13;
-        var n_isles = 10;
-        const min_dis = 3;
-        const loot_min = 2;
-        const loot_max = 10;
-        //creamos el array con valores (100 - agua) y el tamaño correcto
-        var mapa = Array.apply(null, Array(size_y)).map( () => {
-            return Array.apply(null, Array(size_x)).map( () => {return 100} )
-        });
-      
-        //las islas no pueden estar en los límites del mapa
-        var pos_islas = []
-        for (var i = 1; i < size_x - 1; i++) {
-          for (var j = 1; j < size_y - 1; j++) {
-            pos_islas.push({x: i, y: j});
-          }
-        }
-        this.shuffle(pos_islas)
-      
-        //asignamos las islas en el tablero
-        while (pos_islas.length > 0 && n_isles > 0){
-            var pos = pos_islas.pop();
-            mapa[pos.y][pos.x] = this.getRandomInt(loot_min, loot_max);
-            n_isles--;
-          
-      
-            var temp = [];
-            for (var i = 1; i < pos_islas.length; i++){
-                if ( this.dist( pos_islas[i], pos) > min_dis ){
-                temp.push(pos_islas[i])
-                }
-            }
-            pos_islas = temp
-        }
-      
-      //{x: xVal, y: yVal}
-      
-        return mapa;
-    }
-
-    pos_inicial() {
-        var pos = [0,0,0];
-        return pos
-    }
-
-    dist(coord_1, coord_2) {
-        return Math.abs(coord_1.x - coord_2.x) + Math.abs(coord_1.y - coord_2.y)
-    }
-      
-    shuffle(array) {
-        //https://dev.to/codebubb/how-to-shuffle-an-array-in-javascript-2ikj
-        for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          const temp = array[i];
-          array[i] = array[j];
-          array[j] = temp;
-        }
-    }
-      
-    getRandomInt(min, max) {
-        //https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-        return Math.floor(Math.random() * (max - min)) + min;
     }
 
     render() {
