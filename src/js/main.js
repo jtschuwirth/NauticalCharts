@@ -23,6 +23,7 @@ const initialize = async () => {
           onboardButton.innerText = 'Connect Metamask';
           onboardButton.onclick = onClickConnect;
           onboardButton.disabled = false;
+          playButton();
         }
     }
     const onClickConnect = async () => {
@@ -34,13 +35,14 @@ const initialize = async () => {
           console.error(error);
         }
     }
+    const playButton = async () => {
+        const address = await cuenta_actual();
+        ReactDOM.render(
+            <game.PlayButton userAddress = {address} />,
+            document.getElementById('playButton'));
+    }
 
     MetaMaskClientCheck();
-    const address = await cuenta_actual();
-    ReactDOM.render(
-        <game.PlayButton userAddress = {address} />,
-        document.getElementById('playButton')
-    );
 }
 
 

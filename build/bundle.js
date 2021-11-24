@@ -68803,11 +68803,11 @@ var cuenta_actual = /*#__PURE__*/function () {
 
 
 var initialize = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-    var MetaMaskClientCheck, onClickConnect, address;
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+    var MetaMaskClientCheck, onClickConnect, playButton;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context3.prev = _context3.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
             MetaMaskClientCheck = function MetaMaskClientCheck() {
               var onboardButton = document.getElementById('connectButton'); //Now we check to see if MetaMask is installed
@@ -68816,6 +68816,7 @@ var initialize = /*#__PURE__*/function () {
                 onboardButton.innerText = 'Connect Metamask';
                 onboardButton.onclick = onClickConnect;
                 onboardButton.disabled = false;
+                playButton();
               }
             };
 
@@ -68853,22 +68854,43 @@ var initialize = /*#__PURE__*/function () {
               };
             }();
 
+            playButton = /*#__PURE__*/function () {
+              var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+                var address;
+                return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                  while (1) {
+                    switch (_context3.prev = _context3.next) {
+                      case 0:
+                        _context3.next = 2;
+                        return cuenta_actual();
+
+                      case 2:
+                        address = _context3.sent;
+                        ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
+                          userAddress: address
+                        }), document.getElementById('playButton'));
+
+                      case 4:
+                      case "end":
+                        return _context3.stop();
+                    }
+                  }
+                }, _callee3);
+              }));
+
+              return function playButton() {
+                return _ref4.apply(this, arguments);
+              };
+            }();
+
             MetaMaskClientCheck();
-            _context3.next = 5;
-            return cuenta_actual();
 
-          case 5:
-            address = _context3.sent;
-            ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
-              userAddress: address
-            }), document.getElementById('playButton'));
-
-          case 7:
+          case 4:
           case "end":
-            return _context3.stop();
+            return _context4.stop();
         }
       }
-    }, _callee3);
+    }, _callee4);
   }));
 
   return function initialize() {
