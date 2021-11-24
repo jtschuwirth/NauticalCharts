@@ -45,3 +45,4 @@ const playButton = async () => {
         <game.PlayButton userAddress = {address} />,
         document.getElementById('playButton'));
 }
+
