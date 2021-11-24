@@ -25,35 +25,66 @@ const foundGame = (id, userAddress) => {
     );
 }
 
+class QueueMessage extends React.Component {
+    render() {
+        if (this.props.inQueue == true) {
+            return(
+                <p>On Queue</p>
+            );
+        } else {
+            return(
+                <div></div>
+            )
+        }
+    }
+}
+
 class PlayButton extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showButton: true,
+            showQueue: true,
+            inQueue: false,
         };
     }
-    searchGame() {
+    joinQueue() {
         socket.on("connect", () => {
         });
         socket.emit("enter", this.props.userAddress);
+        this.setState({inQueue: true});
         socket.on("statusQueue", (data) => {
             for (let i=0; i<data.players.length; i++) {
                 if (this.props.userAddress == data.players[i]) {
                     const id = "id"+data.players.join("-")
                     socket.emit("foundGame", {id: id, player: data.players[i], players: data.players})
                     foundGame(id, this.props.userAddress)
-                    this.setState({showButton: false});
+                    this.setState({showQueue: false});
+                    this.setState({inQueue: false});
                 }
             }
         });
     }
+    cancelQueue() {
+        socket.emit("out", this.props.userAddress);
+        this.setState({inQueue: false});
+    }
     render() {
-        if (this.state.showButton == true) {
-            return (
-                <div className="center">
-                    <button onClick={ () => this.searchGame()}>Play!</button>
-                </div>
-            );
+        if (this.state.showQueue == true) {
+            if (this.state.inQueue == false) {
+                return (
+                    <div className="center">
+                            <button onClick={ () => this.joinQueue()}>Play!</button>
+                    </div>)
+            } else {
+                return (
+                    <div>
+                        <div className="center">
+                            <button onClick={ () => this.cancelQueue()}>Cancel Queue</button>
+                        </div>
+                        <div className="center">
+                            <QueueMessage inQueue={this.state.inQueue}/>
+                        </div>
+                    </div>)}
         } else {
             return (
                 <div></div>

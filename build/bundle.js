@@ -69133,29 +69133,56 @@ var foundGame = function foundGame(id, userAddress) {
   }), document.getElementById('game'));
 };
 
-var PlayButton = /*#__PURE__*/function (_React$Component) {
-  (0, _inherits2["default"])(PlayButton, _React$Component);
+var QueueMessage = /*#__PURE__*/function (_React$Component) {
+  (0, _inherits2["default"])(QueueMessage, _React$Component);
 
-  var _super = _createSuper(PlayButton);
+  var _super = _createSuper(QueueMessage);
+
+  function QueueMessage() {
+    (0, _classCallCheck2["default"])(this, QueueMessage);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2["default"])(QueueMessage, [{
+    key: "render",
+    value: function render() {
+      if (this.props.inQueue == true) {
+        return /*#__PURE__*/React.createElement("p", null, "On Queue");
+      } else {
+        return /*#__PURE__*/React.createElement("div", null);
+      }
+    }
+  }]);
+  return QueueMessage;
+}(React.Component);
+
+var PlayButton = /*#__PURE__*/function (_React$Component2) {
+  (0, _inherits2["default"])(PlayButton, _React$Component2);
+
+  var _super2 = _createSuper(PlayButton);
 
   function PlayButton(props) {
     var _this;
 
     (0, _classCallCheck2["default"])(this, PlayButton);
-    _this = _super.call(this, props);
+    _this = _super2.call(this, props);
     _this.state = {
-      showButton: true
+      showQueue: true,
+      inQueue: false
     };
     return _this;
   }
 
   (0, _createClass2["default"])(PlayButton, [{
-    key: "searchGame",
-    value: function searchGame() {
+    key: "joinQueue",
+    value: function joinQueue() {
       var _this2 = this;
 
       socket.on("connect", function () {});
       socket.emit("enter", this.props.userAddress);
+      this.setState({
+        inQueue: true
+      });
       socket.on("statusQueue", function (data) {
         for (var i = 0; i < data.players.length; i++) {
           if (_this2.props.userAddress == data.players[i]) {
@@ -69168,10 +69195,22 @@ var PlayButton = /*#__PURE__*/function (_React$Component) {
             foundGame(id, _this2.props.userAddress);
 
             _this2.setState({
-              showButton: false
+              showQueue: false
+            });
+
+            _this2.setState({
+              inQueue: false
             });
           }
         }
+      });
+    }
+  }, {
+    key: "cancelQueue",
+    value: function cancelQueue() {
+      socket.emit("out", this.props.userAddress);
+      this.setState({
+        inQueue: false
       });
     }
   }, {
@@ -69179,14 +69218,28 @@ var PlayButton = /*#__PURE__*/function (_React$Component) {
     value: function render() {
       var _this3 = this;
 
-      if (this.state.showButton == true) {
-        return /*#__PURE__*/React.createElement("div", {
-          className: "center"
-        }, /*#__PURE__*/React.createElement("button", {
-          onClick: function onClick() {
-            return _this3.searchGame();
-          }
-        }, "Play!"));
+      if (this.state.showQueue == true) {
+        if (this.state.inQueue == false) {
+          return /*#__PURE__*/React.createElement("div", {
+            className: "center"
+          }, /*#__PURE__*/React.createElement("button", {
+            onClick: function onClick() {
+              return _this3.joinQueue();
+            }
+          }, "Play!"));
+        } else {
+          return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+            className: "center"
+          }, /*#__PURE__*/React.createElement("button", {
+            onClick: function onClick() {
+              return _this3.cancelQueue();
+            }
+          }, "Cancel Queue")), /*#__PURE__*/React.createElement("div", {
+            className: "center"
+          }, /*#__PURE__*/React.createElement(QueueMessage, {
+            inQueue: this.state.inQueue
+          })));
+        }
       } else {
         return /*#__PURE__*/React.createElement("div", null);
       }
@@ -69196,16 +69249,16 @@ var PlayButton = /*#__PURE__*/function (_React$Component) {
 }(React.Component); //Clase Game clase superior donde se guardan los estados de la partida
 
 
-var Game = /*#__PURE__*/function (_React$Component2) {
-  (0, _inherits2["default"])(Game, _React$Component2);
+var Game = /*#__PURE__*/function (_React$Component3) {
+  (0, _inherits2["default"])(Game, _React$Component3);
 
-  var _super2 = _createSuper(Game);
+  var _super3 = _createSuper(Game);
 
   function Game(props) {
     var _this4;
 
     (0, _classCallCheck2["default"])(this, Game);
-    _this4 = _super2.call(this, props);
+    _this4 = _super3.call(this, props);
     _this4.state = {
       showPopup: false,
       errorlog: null,
@@ -69471,16 +69524,16 @@ var Game = /*#__PURE__*/function (_React$Component2) {
 }(React.Component); //clase Board la cual tiene de hijos a los cuadrados.
 
 
-var Board = /*#__PURE__*/function (_React$Component3) {
-  (0, _inherits2["default"])(Board, _React$Component3);
+var Board = /*#__PURE__*/function (_React$Component4) {
+  (0, _inherits2["default"])(Board, _React$Component4);
 
-  var _super3 = _createSuper(Board);
+  var _super4 = _createSuper(Board);
 
   function Board(props) {
     var _this9;
 
     (0, _classCallCheck2["default"])(this, Board);
-    _this9 = _super3.call(this, props);
+    _this9 = _super4.call(this, props);
     _this9.state = {};
     _this9.getSelectedHexagon = _this9.getSelectedHexagon.bind((0, _assertThisInitialized2["default"])(_this9));
     return _this9;
@@ -69560,16 +69613,16 @@ var Board = /*#__PURE__*/function (_React$Component3) {
   return Board;
 }(React.Component);
 
-var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
-  (0, _inherits2["default"])(BoardHexagon, _React$Component4);
+var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
+  (0, _inherits2["default"])(BoardHexagon, _React$Component5);
 
-  var _super4 = _createSuper(BoardHexagon);
+  var _super5 = _createSuper(BoardHexagon);
 
   function BoardHexagon(props) {
     var _this12;
 
     (0, _classCallCheck2["default"])(this, BoardHexagon);
-    _this12 = _super4.call(this, props);
+    _this12 = _super5.call(this, props);
     _this12.state = {};
     return _this12;
   }
@@ -69632,14 +69685,14 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
   return BoardHexagon;
 }(React.Component);
 
-var Popup = /*#__PURE__*/function (_React$Component5) {
-  (0, _inherits2["default"])(Popup, _React$Component5);
+var Popup = /*#__PURE__*/function (_React$Component6) {
+  (0, _inherits2["default"])(Popup, _React$Component6);
 
-  var _super5 = _createSuper(Popup);
+  var _super6 = _createSuper(Popup);
 
   function Popup() {
     (0, _classCallCheck2["default"])(this, Popup);
-    return _super5.apply(this, arguments);
+    return _super6.apply(this, arguments);
   }
 
   (0, _createClass2["default"])(Popup, [{
