@@ -50,7 +50,7 @@ class PlayButton extends React.Component {
     render() {
         if (this.state.showButton == true) {
             return (
-                <div class="center">
+                <div className="center">
                     <button onClick={ () => this.searchGame()}>Play!</button>
                 </div>
             );

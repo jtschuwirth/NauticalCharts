@@ -9,7 +9,7 @@ const signer = provider.getSigner();
 
 
 //Funcion de inicializacion de la pagina
-window.onload = function initialize() {
+window.onload = async function initialize() {
     let userAddress;
     const onboardButton = document.getElementById('connectButton');
     const MetaMaskClientCheck = () => {
@@ -28,7 +28,7 @@ window.onload = function initialize() {
     }
 
     MetaMaskClientCheck();
-    userAddress = currentAddress();
+    userAddress = await currentAddress();
     playButton(userAddress);
 }
 
