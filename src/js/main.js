@@ -9,7 +9,7 @@ const signer = provider.getSigner();
 
 
 //Funcion de inicializacion de la pagina
-window.onload = async function initialize() {
+window.onload = function initialize() {
     const onboardButton = document.getElementById('connectButton');
     const MetaMaskClientCheck = () => {
         //Now we check to see if MetaMask is installed
@@ -21,7 +21,6 @@ window.onload = async function initialize() {
         }
     }
     MetaMaskClientCheck();
-    playButton();
 }
 
 const currentAddress = async () => {

@@ -68771,65 +68771,44 @@ var ReactDOM = require('react-dom');
 var provider = new ethers.providers.Web3Provider(window.ethereum);
 var signer = provider.getSigner(); //Funcion de inicializacion de la pagina
 
-window.onload = /*#__PURE__*/function () {
-  var _initialize = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    var onboardButton, MetaMaskClientCheck;
+window.onload = function initialize() {
+  var onboardButton = document.getElementById('connectButton');
+
+  var MetaMaskClientCheck = function MetaMaskClientCheck() {
+    //Now we check to see if MetaMask is installed
+    if (ethereum.isMetaMask == true) {
+      onboardButton.innerText = 'Connect Metamask';
+      onboardButton.onclick = onClickConnect;
+      onboardButton.disabled = false;
+    }
+  };
+
+  MetaMaskClientCheck();
+};
+
+var currentAddress = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    var accounts, account;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            onboardButton = document.getElementById('connectButton');
-
-            MetaMaskClientCheck = function MetaMaskClientCheck() {
-              //Now we check to see if MetaMask is installed
-              if (ethereum.isMetaMask == true) {
-                onboardButton.innerText = 'Connect Metamask';
-                onboardButton.onclick = onClickConnect;
-                onboardButton.disabled = false;
-              }
-            };
-
-            MetaMaskClientCheck();
-            playButton();
-
-          case 4:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-
-  function initialize() {
-    return _initialize.apply(this, arguments);
-  }
-
-  return initialize;
-}();
-
-var currentAddress = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-    var accounts, account;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.next = 2;
+            _context.next = 2;
             return ethereum.request({
               method: 'eth_requestAccounts'
             });
 
           case 2:
-            accounts = _context2.sent;
+            accounts = _context.sent;
             account = accounts[0];
-            return _context2.abrupt("return", account);
+            return _context.abrupt("return", account);
 
           case 5:
           case "end":
-            return _context2.stop();
+            return _context.stop();
         }
       }
-    }, _callee2);
+    }, _callee);
   }));
 
   return function currentAddress() {
@@ -68838,32 +68817,32 @@ var currentAddress = /*#__PURE__*/function () {
 }();
 
 var onClickConnect = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context3.prev = _context3.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            _context3.prev = 0;
-            _context3.next = 3;
+            _context2.prev = 0;
+            _context2.next = 3;
             return ethereum.request({
               method: 'eth_requestAccounts'
             });
 
           case 3:
-            _context3.next = 8;
+            _context2.next = 8;
             break;
 
           case 5:
-            _context3.prev = 5;
-            _context3.t0 = _context3["catch"](0);
-            console.error(_context3.t0);
+            _context2.prev = 5;
+            _context2.t0 = _context2["catch"](0);
+            console.error(_context2.t0);
 
           case 8:
           case "end":
-            return _context3.stop();
+            return _context2.stop();
         }
       }
-    }, _callee3, null, [[0, 5]]);
+    }, _callee2, null, [[0, 5]]);
   }));
 
   return function onClickConnect() {
@@ -68872,27 +68851,27 @@ var onClickConnect = /*#__PURE__*/function () {
 }();
 
 var playButton = /*#__PURE__*/function () {
-  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
     var address;
-    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context4.prev = _context4.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
-            _context4.next = 2;
+            _context3.next = 2;
             return currentAddress();
 
           case 2:
-            address = _context4.sent;
+            address = _context3.sent;
             ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
               userAddress: address
             }), document.getElementById('playButton'));
 
           case 4:
           case "end":
-            return _context4.stop();
+            return _context3.stop();
         }
       }
-    }, _callee4);
+    }, _callee3);
   }));
 
   return function playButton() {
