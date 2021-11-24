@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/jtschuwirth/NauticalCharts#readme",
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.16.4",
     "@openzeppelin/contracts": "^4.3.2",
     "browserify": "^17.0.0",
     "browserify-shim": "^3.8.14",
