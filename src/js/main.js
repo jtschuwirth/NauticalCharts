@@ -10,6 +10,7 @@ const signer = provider.getSigner();
 
 //Funcion de inicializacion de la pagina
 window.onload = function initialize() {
+    let userAddress;
     const onboardButton = document.getElementById('connectButton');
     const MetaMaskClientCheck = () => {
         //Now we check to see if MetaMask is installed
@@ -20,13 +21,15 @@ window.onload = function initialize() {
           onboardButton.disabled = false;
         }
     }
-    MetaMaskClientCheck();
-}
+    const playButton = (address) => {
+        ReactDOM.render(
+            <game.PlayButton userAddress = {address} />,
+            document.getElementById('playButton'));
+    }
 
-const currentAddress = async () => {
-    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-    return account;
+    MetaMaskClientCheck();
+    userAddress = currentAddress();
+    playButton(userAddress);
 }
 
 const onClickConnect = async () => {
@@ -39,10 +42,11 @@ const onClickConnect = async () => {
     }
 }
 
-const playButton = async () => {
-    const address = await currentAddress();
-    ReactDOM.render(
-        <game.PlayButton userAddress = {address} />,
-        document.getElementById('playButton'));
+async function currentAddress() {
+    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+    const account = accounts[0];
+    return account;
 }
+
+
 

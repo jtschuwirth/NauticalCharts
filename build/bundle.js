@@ -68772,6 +68772,7 @@ var provider = new ethers.providers.Web3Provider(window.ethereum);
 var signer = provider.getSigner(); //Funcion de inicializacion de la pagina
 
 window.onload = function initialize() {
+  var userAddress;
   var onboardButton = document.getElementById('connectButton');
 
   var MetaMaskClientCheck = function MetaMaskClientCheck() {
@@ -68783,100 +68784,81 @@ window.onload = function initialize() {
     }
   };
 
+  var playButton = function playButton(address) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
+      userAddress: address
+    }), document.getElementById('playButton'));
+  };
+
   MetaMaskClientCheck();
+  userAddress = currentAddress();
+  playButton(userAddress);
+  console.log(userAddress);
 };
 
-var currentAddress = /*#__PURE__*/function () {
+var onClickConnect = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    var accounts, account;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
-            return ethereum.request({
-              method: 'eth_requestAccounts'
-            });
-
-          case 2:
-            accounts = _context.sent;
-            account = accounts[0];
-            return _context.abrupt("return", account);
-
-          case 5:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-
-  return function currentAddress() {
-    return _ref.apply(this, arguments);
-  };
-}();
-
-var onClickConnect = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.prev = 0;
-            _context2.next = 3;
+            _context.prev = 0;
+            _context.next = 3;
             return ethereum.request({
               method: 'eth_requestAccounts'
             });
 
           case 3:
-            _context2.next = 8;
+            _context.next = 8;
             break;
 
           case 5:
-            _context2.prev = 5;
-            _context2.t0 = _context2["catch"](0);
-            console.error(_context2.t0);
+            _context.prev = 5;
+            _context.t0 = _context["catch"](0);
+            console.error(_context.t0);
 
           case 8:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 5]]);
+  }));
+
+  return function onClickConnect() {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+function currentAddress() {
+  return _currentAddress.apply(this, arguments);
+}
+
+function _currentAddress() {
+  _currentAddress = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+    var accounts, account;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return ethereum.request({
+              method: 'eth_requestAccounts'
+            });
+
+          case 2:
+            accounts = _context2.sent;
+            account = accounts[0];
+            return _context2.abrupt("return", account);
+
+          case 5:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 5]]);
+    }, _callee2);
   }));
-
-  return function onClickConnect() {
-    return _ref2.apply(this, arguments);
-  };
-}();
-
-var playButton = /*#__PURE__*/function () {
-  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-    var address;
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
-      while (1) {
-        switch (_context3.prev = _context3.next) {
-          case 0:
-            _context3.next = 2;
-            return currentAddress();
-
-          case 2:
-            address = _context3.sent;
-            ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
-              userAddress: address
-            }), document.getElementById('playButton'));
-
-          case 4:
-          case "end":
-            return _context3.stop();
-        }
-      }
-    }, _callee3);
-  }));
-
-  return function playButton() {
-    return _ref3.apply(this, arguments);
-  };
-}();
+  return _currentAddress.apply(this, arguments);
+}
 
 },{"./game.js":236,"ethers":168,"react":218,"react-dom":200}]},{},[237]);
