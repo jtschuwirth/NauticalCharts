@@ -6,7 +6,61 @@
 
 var React = require('react');
 var ReactDOM = require('react-dom');
+const { io } = require("socket.io-client");
 import { HexGrid, Layout, Hexagon, Text, Pattern, Path, Hex } from 'react-hexgrid';
+
+const SERVER = "http://localhost:8000"
+//const SERVER = "https://jtschuwirth.xyz"
+
+const socket = io(SERVER, {  
+    cors: {
+    origin: SERVER,
+    credentials: true
+  },transports : ['websocket'] });
+
+const foundGame = (id, userAddress) => {
+    ReactDOM.render(
+        <Game gameId={id} userAddress={userAddress}/>,
+        document.getElementById('game')
+    );
+}
+
+class PlayButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showButton: true,
+        };
+    }
+    searchGame() {
+        socket.on("connect", () => {
+        });
+        socket.emit("enter", this.props.userAddress);
+        socket.on("statusQueue", (data) => {
+            for (let i=0; i<data.players.length; i++) {
+                if (this.props.userAddress == data.players[i]) {
+                    const id = "id"+data.players.join("-")
+                    socket.emit("foundGame", {id: id, player: data.players[i], players: data.players})
+                    foundGame(id, this.props.userAddress)
+                    this.setState({showButton: false});
+                }
+            }
+        });
+    }
+    render() {
+        if (this.state.showButton == true) {
+            return (
+                <div class="center">
+                    <button onClick={ () => this.searchGame()}>Play!</button>
+                </div>
+            );
+        } else {
+            return (
+                <div></div>
+            );
+        }
+    }
+}
 
 //Clase Game clase superior donde se guardan los estados de la partida
 class Game extends React.Component {
@@ -121,12 +175,17 @@ class Game extends React.Component {
     }
 
     endTurn() {
-        if (this.state.currentTurn == 5) {
-            this.endGame();
-        } else {
-            this.rollDices();
-            this.setState({currentTurn: this.state.currentTurn+1});
-        }
+        socket.on("endTurn", (data) => {
+            if (data == "New Round") {
+                if (this.state.currentTurn == 5) {
+                    this.endGame();
+                } else {
+                    this.rollDices();
+                    this.setState({currentTurn: this.state.currentTurn+1});
+                }
+            }
+        });
+        socket.emit("endTurn", {userAddress: this.props.userAddress});
     }
 
     endGame() {
@@ -410,3 +469,4 @@ class Popup extends React.Component {
 
 //comando necesario para importar la clase Game en main.js
 module.exports.Game = Game;
+module.exports.PlayButton = PlayButton;

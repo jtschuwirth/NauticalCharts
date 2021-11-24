@@ -39288,19 +39288,103 @@ var React = require('react');
 
 var ReactDOM = require('react-dom');
 
-//Clase Game clase superior donde se guardan los estados de la partida
-var Game = /*#__PURE__*/function (_React$Component) {
-  _inherits(Game, _React$Component);
+var _require = require("socket.io-client"),
+    io = _require.io;
 
-  var _super = _createSuper(Game);
+var SERVER = "http://localhost:8000"; //const SERVER = "https://jtschuwirth.xyz"
 
-  function Game(props) {
+var socket = io(SERVER, {
+  cors: {
+    origin: SERVER,
+    credentials: true
+  },
+  transports: ['websocket']
+});
+
+var foundGame = function foundGame(id, userAddress) {
+  ReactDOM.render( /*#__PURE__*/React.createElement(Game, {
+    gameId: id,
+    userAddress: userAddress
+  }), document.getElementById('game'));
+};
+
+var PlayButton = /*#__PURE__*/function (_React$Component) {
+  _inherits(PlayButton, _React$Component);
+
+  var _super = _createSuper(PlayButton);
+
+  function PlayButton(props) {
     var _this;
 
-    _classCallCheck(this, Game);
+    _classCallCheck(this, PlayButton);
 
     _this = _super.call(this, props);
     _this.state = {
+      showButton: true
+    };
+    return _this;
+  }
+
+  _createClass(PlayButton, [{
+    key: "searchGame",
+    value: function searchGame() {
+      var _this2 = this;
+
+      socket.on("connect", function () {});
+      socket.emit("enter", this.props.userAddress);
+      socket.on("statusQueue", function (data) {
+        for (var i = 0; i < data.players.length; i++) {
+          if (_this2.props.userAddress == data.players[i]) {
+            var id = "id" + data.players.join("-");
+            socket.emit("foundGame", {
+              id: id,
+              player: data.players[i],
+              players: data.players
+            });
+            foundGame(id, _this2.props.userAddress);
+
+            _this2.setState({
+              showButton: false
+            });
+          }
+        }
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this3 = this;
+
+      if (this.state.showButton == true) {
+        return /*#__PURE__*/React.createElement("div", {
+          "class": "center"
+        }, /*#__PURE__*/React.createElement("button", {
+          onClick: function onClick() {
+            return _this3.searchGame();
+          }
+        }, "Play!"));
+      } else {
+        return /*#__PURE__*/React.createElement("div", null);
+      }
+    }
+  }]);
+
+  return PlayButton;
+}(React.Component); //Clase Game clase superior donde se guardan los estados de la partida
+
+
+var Game = /*#__PURE__*/function (_React$Component2) {
+  _inherits(Game, _React$Component2);
+
+  var _super2 = _createSuper(Game);
+
+  function Game(props) {
+    var _this4;
+
+    _classCallCheck(this, Game);
+
+    _this4 = _super2.call(this, props);
+    _this4.state = {
       showPopup: false,
       errorlog: null,
       currentPoints: 0,
@@ -39312,9 +39396,9 @@ var Game = /*#__PURE__*/function (_React$Component) {
       selectedDice: null,
       currentPosition: [null, null, null]
     };
-    _this.getBoardData = _this.getBoardData.bind(_assertThisInitialized(_this));
-    _this.togglePopup = _this.togglePopup.bind(_assertThisInitialized(_this));
-    return _this;
+    _this4.getBoardData = _this4.getBoardData.bind(_assertThisInitialized(_this4));
+    _this4.togglePopup = _this4.togglePopup.bind(_assertThisInitialized(_this4));
+    return _this4;
   } //funcion que correr cuando el componente es creado
 
 
@@ -39435,14 +39519,24 @@ var Game = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "endTurn",
     value: function endTurn() {
-      if (this.state.currentTurn == 5) {
-        this.endGame();
-      } else {
-        this.rollDices();
-        this.setState({
-          currentTurn: this.state.currentTurn + 1
-        });
-      }
+      var _this5 = this;
+
+      socket.on("endTurn", function (data) {
+        if (data == "New Round") {
+          if (_this5.state.currentTurn == 5) {
+            _this5.endGame();
+          } else {
+            _this5.rollDices();
+
+            _this5.setState({
+              currentTurn: _this5.state.currentTurn + 1
+            });
+          }
+        }
+      });
+      socket.emit("endTurn", {
+        userAddress: this.props.userAddress
+      });
     }
   }, {
     key: "endGame",
@@ -39457,7 +39551,7 @@ var Game = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "renderDices",
     value: function renderDices(value, index) {
-      var _this2 = this;
+      var _this6 = this;
 
       if (value == null) {
         return "";
@@ -39466,14 +39560,14 @@ var Game = /*#__PURE__*/function (_React$Component) {
       if (this.state.selectedDice == index) {
         return /*#__PURE__*/React.createElement("button", {
           onClick: function onClick() {
-            return _this2.selectDice(index);
+            return _this6.selectDice(index);
           },
           className: "diceSelected"
         }, value);
       } else {
         return /*#__PURE__*/React.createElement("button", {
           onClick: function onClick() {
-            return _this2.selectDice(index);
+            return _this6.selectDice(index);
           },
           className: "dice"
         }, value);
@@ -39581,7 +39675,7 @@ var Game = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this7 = this;
 
       var array = this.state.diceValues;
       return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
@@ -39602,20 +39696,20 @@ var Game = /*#__PURE__*/function (_React$Component) {
       }, "Dados"), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, array.map(function (_, index) {
-        return _this3.renderDices(_, index);
+        return _this7.renderDices(_, index);
       })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
-          return _this3.sail();
+          return _this7.sail();
         }
       }, "Sail"), /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
-          return _this3.loot();
+          return _this7.loot();
         }
       }, "Loot"), /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
-          return _this3.endTurn();
+          return _this7.endTurn();
         }
       }, "End Turn")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
@@ -39631,20 +39725,20 @@ var Game = /*#__PURE__*/function (_React$Component) {
 }(React.Component); //clase Board la cual tiene de hijos a los cuadrados.
 
 
-var Board = /*#__PURE__*/function (_React$Component2) {
-  _inherits(Board, _React$Component2);
+var Board = /*#__PURE__*/function (_React$Component3) {
+  _inherits(Board, _React$Component3);
 
-  var _super2 = _createSuper(Board);
+  var _super3 = _createSuper(Board);
 
   function Board(props) {
-    var _this4;
+    var _this8;
 
     _classCallCheck(this, Board);
 
-    _this4 = _super2.call(this, props);
-    _this4.state = {};
-    _this4.getSelectedHexagon = _this4.getSelectedHexagon.bind(_assertThisInitialized(_this4));
-    return _this4;
+    _this8 = _super3.call(this, props);
+    _this8.state = {};
+    _this8.getSelectedHexagon = _this8.getSelectedHexagon.bind(_assertThisInitialized(_this8));
+    return _this8;
   }
 
   _createClass(Board, [{
@@ -39668,16 +39762,16 @@ var Board = /*#__PURE__*/function (_React$Component2) {
   }, {
     key: "renderR",
     value: function renderR(array, q) {
-      var _this5 = this;
+      var _this9 = this;
 
       return array.map(function (_, index) {
-        return _this5.renderHexagon(_, q, index, -q - index);
+        return _this9.renderHexagon(_, q, index, -q - index);
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this6 = this;
+      var _this10 = this;
 
       var tiles = this.props.tileValues;
       return /*#__PURE__*/React.createElement(_reactHexgrid.HexGrid, {
@@ -39696,7 +39790,7 @@ var Board = /*#__PURE__*/function (_React$Component2) {
           y: 0
         }
       }, tiles.map(function (_, index) {
-        return _this6.renderR(_, index);
+        return _this10.renderR(_, index);
       })), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
         id: "island",
         link: "src/island.png"
@@ -39722,19 +39816,19 @@ var Board = /*#__PURE__*/function (_React$Component2) {
   return Board;
 }(React.Component);
 
-var BoardHexagon = /*#__PURE__*/function (_React$Component3) {
-  _inherits(BoardHexagon, _React$Component3);
+var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
+  _inherits(BoardHexagon, _React$Component4);
 
-  var _super3 = _createSuper(BoardHexagon);
+  var _super4 = _createSuper(BoardHexagon);
 
   function BoardHexagon(props) {
-    var _this7;
+    var _this11;
 
     _classCallCheck(this, BoardHexagon);
 
-    _this7 = _super3.call(this, props);
-    _this7.state = {};
-    return _this7;
+    _this11 = _super4.call(this, props);
+    _this11.state = {};
+    return _this11;
   }
 
   _createClass(BoardHexagon, [{
@@ -39749,7 +39843,7 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component3) {
   }, {
     key: "render",
     value: function render() {
-      var _this8 = this;
+      var _this12 = this;
 
       var Type;
       var value;
@@ -39785,7 +39879,7 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component3) {
         s: this.props.s,
         fill: classType,
         onClick: function onClick() {
-          return _this8.select();
+          return _this12.select();
         }
       }, /*#__PURE__*/React.createElement(_reactHexgrid.Text, {
         className: "hexagonText"
@@ -39796,15 +39890,15 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component3) {
   return BoardHexagon;
 }(React.Component);
 
-var Popup = /*#__PURE__*/function (_React$Component4) {
-  _inherits(Popup, _React$Component4);
+var Popup = /*#__PURE__*/function (_React$Component5) {
+  _inherits(Popup, _React$Component5);
 
-  var _super4 = _createSuper(Popup);
+  var _super5 = _createSuper(Popup);
 
   function Popup() {
     _classCallCheck(this, Popup);
 
-    return _super4.apply(this, arguments);
+    return _super5.apply(this, arguments);
   }
 
   _createClass(Popup, [{
@@ -39831,168 +39925,24 @@ var Popup = /*#__PURE__*/function (_React$Component4) {
 
 
 module.exports.Game = Game;
+module.exports.PlayButton = PlayButton;
 
-},{"react":56,"react-dom":38,"react-hexgrid":47}],73:[function(require,module,exports){
+},{"react":56,"react-dom":38,"react-hexgrid":47,"socket.io-client":63}],73:[function(require,module,exports){
 "use strict";
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 var game = require("./game.js");
 
 var React = require('react');
 
-var ReactDOM = require('react-dom');
+var ReactDOM = require('react-dom'); //Funcion de inicializacion de la pagina
 
-var _require = require("socket.io-client"),
-    io = _require.io;
-
-var SERVER = "http://localhost:8000"; //const SERVER = "https://jtschuwirth.xyz"
-
-var socket = io(SERVER, {
-  cors: {
-    origin: SERVER,
-    credentials: true
-  },
-  transports: ['websocket']
-}); //Funcion de inicializacion de la pagina
 
 var initialize = function initialize() {
-  ReactDOM.render( /*#__PURE__*/React.createElement(PlayButton, {
+  ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
     userAddress: "Address"
   }), document.getElementById('playButton'));
 };
 
-var foundGame = function foundGame(id) {
-  ReactDOM.render( /*#__PURE__*/React.createElement(game.Game, {
-    gameId: id
-  }), document.getElementById('game'));
-  ReactDOM.render( /*#__PURE__*/React.createElement(QuitButton, {
-    userAddress: "Address"
-  }), document.getElementById('quitButton'));
-};
-
-var PlayButton = /*#__PURE__*/function (_React$Component) {
-  _inherits(PlayButton, _React$Component);
-
-  var _super = _createSuper(PlayButton);
-
-  function PlayButton(props) {
-    var _this;
-
-    _classCallCheck(this, PlayButton);
-
-    _this = _super.call(this, props);
-    _this.state = {
-      showButton: true
-    };
-    return _this;
-  }
-
-  _createClass(PlayButton, [{
-    key: "searchGame",
-    value: function searchGame() {
-      var _this2 = this;
-
-      socket.on("connect", function () {});
-      socket.emit("enter", this.props.userAddress);
-      socket.on("statusQueue", function (data) {
-        if (_this2.props.userAddress == data.players[0]) {
-          var id = "idx" + data.players[0];
-          socket.emit("foundGame", {
-            players: data.players
-          });
-          foundGame(id);
-
-          _this2.setState({
-            showButton: false
-          });
-        }
-      });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this3 = this;
-
-      if (this.state.showButton == true) {
-        return /*#__PURE__*/React.createElement("div", {
-          "class": "center"
-        }, /*#__PURE__*/React.createElement("button", {
-          onClick: function onClick() {
-            return _this3.searchGame();
-          }
-        }, "Play!"));
-      } else {
-        return /*#__PURE__*/React.createElement("div", null);
-      }
-    }
-  }]);
-
-  return PlayButton;
-}(React.Component);
-
-var QuitButton = /*#__PURE__*/function (_React$Component2) {
-  _inherits(QuitButton, _React$Component2);
-
-  var _super2 = _createSuper(QuitButton);
-
-  function QuitButton(props) {
-    var _this4;
-
-    _classCallCheck(this, QuitButton);
-
-    _this4 = _super2.call(this, props);
-    _this4.state = {
-      showButton: true
-    };
-    return _this4;
-  }
-
-  _createClass(QuitButton, [{
-    key: "quitGame",
-    value: function quitGame() {}
-  }, {
-    key: "render",
-    value: function render() {
-      var _this5 = this;
-
-      if (this.state.showButton == true) {
-        return /*#__PURE__*/React.createElement("div", {
-          "class": "center"
-        }, /*#__PURE__*/React.createElement("button", {
-          onClick: function onClick() {
-            return _this5.quitGame();
-          }
-        }, "Quit"));
-      } else {
-        return /*#__PURE__*/React.createElement("div", null);
-      }
-    }
-  }]);
-
-  return QuitButton;
-}(React.Component);
-
 window.addEventListener('DOMContentLoaded', initialize);
 
-},{"./game.js":72,"react":56,"react-dom":38,"socket.io-client":63}]},{},[73]);
+},{"./game.js":72,"react":56,"react-dom":38}]},{},[73]);
