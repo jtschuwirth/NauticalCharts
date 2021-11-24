@@ -4,9 +4,6 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 
-
-
-
 //Funcion de inicializacion de la pagina
 const initialize = () => {
     ReactDOM.render(
@@ -14,7 +11,6 @@ const initialize = () => {
         document.getElementById('playButton')
     );
 }
-
 
 
 

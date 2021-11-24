@@ -39291,8 +39291,8 @@ var ReactDOM = require('react-dom');
 var _require = require("socket.io-client"),
     io = _require.io;
 
-var SERVER = "http://localhost:8000"; //const SERVER = "https://jtschuwirth.xyz"
-
+//const SERVER = "http://localhost:8000"
+var SERVER = "https://jtschuwirth.xyz";
 var socket = io(SERVER, {
   cors: {
     origin: SERVER,
@@ -39527,6 +39527,7 @@ var Game = /*#__PURE__*/function (_React$Component2) {
     value: function endTurn() {
       var _this6 = this;
 
+      var waiting = false;
       socket.on("newRound", function (data) {
         if (_this6.state.currentTurn == 5) {
           _this6.endGame();
@@ -39538,11 +39539,14 @@ var Game = /*#__PURE__*/function (_React$Component2) {
           _this6.setState({
             currentTurn: _this6.state.currentTurn + 1
           });
+
+          waiting = false;
         }
       });
-      socket.emit("endTurn", {
+      if (waiting == false) socket.emit("endTurn", {
         userAddress: this.props.userAddress
       });
+      waiting = true;
     }
   }, {
     key: "endGame",
