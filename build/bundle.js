@@ -69416,12 +69416,15 @@ var Game = /*#__PURE__*/function (_React$Component3) {
           });
 
           waiting = false;
+
+          _this6.errorlog("");
         }
       });
       if (waiting == false) socket.emit("endTurn", {
         userAddress: this.props.userAddress
       });
       waiting = true;
+      this.errorlog("Esperando a los demas Jugadores");
     }
   }, {
     key: "endGame",

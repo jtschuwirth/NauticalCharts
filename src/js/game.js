@@ -215,12 +215,14 @@ class Game extends React.Component {
                 this.setState({diceValues: data.dices});
                 this.setState({currentTurn: this.state.currentTurn+1});
                 waiting = false;
+                this.errorlog("")
             }
             
         });
         if (waiting == false)
             socket.emit("endTurn", {userAddress: this.props.userAddress});
             waiting = true;
+            this.errorlog("Esperando a los demas Jugadores")
     }
 
     endGame() {
