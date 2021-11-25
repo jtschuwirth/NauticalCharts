@@ -236,10 +236,6 @@ class Game extends React.Component {
         this.togglePopup();
     }
 
-    playAgain() {
-        window.location.reload()
-     }
-
     renderDices(value, index) {
         if (value == null) {
             return ""
@@ -268,6 +264,10 @@ class Game extends React.Component {
 
     errorlog(value) {
         this.setState({errorlog: value});
+    }
+
+    quitGame() {
+        window.location.reload()
     }
 
     render() {
@@ -310,11 +310,14 @@ class Game extends React.Component {
                 <div class="center">
                     {this.state.errorlog}
                 </div>
+                <div class="center">
+                <button onClick={ () => this.quitGame()}>Quit Game</button>
+                </div>
                 {this.state.showPopup ? 
                     <Popup
                     currentPoints={this.state.currentPoints}
                     closePopup={this.togglePopup.bind(this)}
-                    playAgain={this.playAgain.bind(this)}
+                    quitGame={this.quitGame.bind(this)}
                     />
                 : null
                 }
@@ -428,7 +431,7 @@ class Popup extends React.Component {
                 <br></br>
                 <br></br>
                 <div class="center">
-                    <button onClick={this.props.playAgain}>Play Again</button>
+                    <button onClick={this.props.quitGame}>Play Again</button>
                     <button onClick={this.props.closePopup}>Go to Main Menu</button>
                 </div>
           </div>

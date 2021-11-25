@@ -69447,11 +69447,6 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       this.togglePopup();
     }
   }, {
-    key: "playAgain",
-    value: function playAgain() {
-      window.location.reload();
-    }
-  }, {
     key: "renderDices",
     value: function renderDices(value, index) {
       var _this6 = this;
@@ -69489,6 +69484,11 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       this.setState({
         errorlog: value
       });
+    }
+  }, {
+    key: "quitGame",
+    value: function quitGame() {
+      window.location.reload();
     }
   }, {
     key: "render",
@@ -69531,10 +69531,16 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         }
       }, "End Turn")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
-      }, this.state.errorlog), this.state.showPopup ? /*#__PURE__*/React.createElement(Popup, {
+      }, this.state.errorlog), /*#__PURE__*/React.createElement("div", {
+        "class": "center"
+      }, /*#__PURE__*/React.createElement("button", {
+        onClick: function onClick() {
+          return _this7.quitGame();
+        }
+      }, "Quit Game")), this.state.showPopup ? /*#__PURE__*/React.createElement(Popup, {
         currentPoints: this.state.currentPoints,
         closePopup: this.togglePopup.bind(this),
-        playAgain: this.playAgain.bind(this)
+        quitGame: this.quitGame.bind(this)
       }) : null);
     }
   }]);
@@ -69725,7 +69731,7 @@ var Popup = /*#__PURE__*/function (_React$Component6) {
       }, "Total Points: ", this.props.currentPoints), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, /*#__PURE__*/React.createElement("button", {
-        onClick: this.props.playAgain
+        onClick: this.props.quitGame
       }, "Play Again"), /*#__PURE__*/React.createElement("button", {
         onClick: this.props.closePopup
       }, "Go to Main Menu"))));
