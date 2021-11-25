@@ -121,6 +121,16 @@ class Game extends React.Component {
             this.setState({currentPosition: data.pos});
             this.setState({tileValues: data.map});
         });
+
+        socket.on("endGame", (data) => {
+            this.endGame();
+        });
+
+        socket.on("newRound", (data) => {
+            this.setState({diceValues: data.dices});
+            this.setState({currentTurn: this.state.currentTurn+1});
+            this.errorlog("")
+        });
     }
 
     togglePopup() {
@@ -207,22 +217,8 @@ class Game extends React.Component {
     }
 
     endTurn() {
-        let waiting = false;
-        socket.on("endGame", (data) => {
-            this.endGame();
-        });
-        
-        socket.on("newRound", (data) => {
-            this.setState({diceValues: data.dices});
-            this.setState({currentTurn: this.state.currentTurn+1});
-            waiting = false;
-            this.errorlog("")
-            
-        });
-        if (waiting == false)
-            socket.emit("endTurn", {userAddress: this.props.userAddress});
-            waiting = true;
-            this.errorlog("Esperando a los demas Jugadores")
+        socket.emit("endTurn", {userAddress: this.props.userAddress});
+        this.errorlog("Esperando a los demas Jugadores")
     }
 
     endGame() {
