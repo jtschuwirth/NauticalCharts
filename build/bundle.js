@@ -69403,22 +69403,21 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       var _this6 = this;
 
       var waiting = false;
+      socket.on("endGame", function (data) {
+        _this6.endGame();
+      });
       socket.on("newRound", function (data) {
-        if (_this6.state.currentTurn == 5) {
-          _this6.endGame();
-        } else {
-          _this6.setState({
-            diceValues: data.dices
-          });
+        _this6.setState({
+          diceValues: data.dices
+        });
 
-          _this6.setState({
-            currentTurn: _this6.state.currentTurn + 1
-          });
+        _this6.setState({
+          currentTurn: _this6.state.currentTurn + 1
+        });
 
-          waiting = false;
+        waiting = false;
 
-          _this6.errorlog("");
-        }
+        _this6.errorlog("");
       });
       if (waiting == false) socket.emit("endTurn", {
         userAddress: this.props.userAddress

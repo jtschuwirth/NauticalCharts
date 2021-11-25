@@ -208,15 +208,15 @@ class Game extends React.Component {
 
     endTurn() {
         let waiting = false;
+        socket.on("endGame", (data) => {
+            this.endGame();
+        });
+        
         socket.on("newRound", (data) => {
-            if (this.state.currentTurn == 5) {
-                this.endGame();
-            } else {
-                this.setState({diceValues: data.dices});
-                this.setState({currentTurn: this.state.currentTurn+1});
-                waiting = false;
-                this.errorlog("")
-            }
+            this.setState({diceValues: data.dices});
+            this.setState({currentTurn: this.state.currentTurn+1});
+            waiting = false;
+            this.errorlog("")
             
         });
         if (waiting == false)
