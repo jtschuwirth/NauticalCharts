@@ -69295,6 +69295,24 @@ var Game = /*#__PURE__*/function (_React$Component3) {
           tileValues: data.map
         });
       });
+      socket.on("endGame", function (data) {
+        if (data.player == _this5.props.userAddress) {
+          _this5.endGame();
+        }
+      });
+      socket.on("newRound", function (data) {
+        if (data.player == _this5.props.userAddress) {
+          _this5.setState({
+            diceValues: data.dices
+          });
+
+          _this5.setState({
+            currentTurn: _this5.state.currentTurn + 1
+          });
+
+          _this5.errorlog("");
+        }
+      });
     }
   }, {
     key: "togglePopup",
@@ -69400,29 +69418,9 @@ var Game = /*#__PURE__*/function (_React$Component3) {
   }, {
     key: "endTurn",
     value: function endTurn() {
-      var _this6 = this;
-
-      var waiting = false;
-      socket.on("endGame", function (data) {
-        _this6.endGame();
-      });
-      socket.on("newRound", function (data) {
-        _this6.setState({
-          diceValues: data.dices
-        });
-
-        _this6.setState({
-          currentTurn: _this6.state.currentTurn + 1
-        });
-
-        waiting = false;
-
-        _this6.errorlog("");
-      });
-      if (waiting == false) socket.emit("endTurn", {
+      socket.emit("endTurn", {
         userAddress: this.props.userAddress
       });
-      waiting = true;
       this.errorlog("Esperando a los demas Jugadores");
     }
   }, {
@@ -69438,7 +69436,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
   }, {
     key: "renderDices",
     value: function renderDices(value, index) {
-      var _this7 = this;
+      var _this6 = this;
 
       if (value == null) {
         return "";
@@ -69447,14 +69445,14 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       if (this.state.selectedDice == index) {
         return /*#__PURE__*/React.createElement("button", {
           onClick: function onClick() {
-            return _this7.selectDice(index);
+            return _this6.selectDice(index);
           },
           className: "diceSelected"
         }, value);
       } else {
         return /*#__PURE__*/React.createElement("button", {
           onClick: function onClick() {
-            return _this7.selectDice(index);
+            return _this6.selectDice(index);
           },
           className: "dice"
         }, value);
@@ -69477,7 +69475,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
   }, {
     key: "render",
     value: function render() {
-      var _this8 = this;
+      var _this7 = this;
 
       var array = this.state.diceValues;
       return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
@@ -69498,20 +69496,20 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       }, "Dados"), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, array.map(function (_, index) {
-        return _this8.renderDices(_, index);
+        return _this7.renderDices(_, index);
       })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
-          return _this8.sail();
+          return _this7.sail();
         }
       }, "Sail"), /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
-          return _this8.loot();
+          return _this7.loot();
         }
       }, "Loot"), /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
-          return _this8.endTurn();
+          return _this7.endTurn();
         }
       }, "End Turn")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
@@ -69532,13 +69530,13 @@ var Board = /*#__PURE__*/function (_React$Component4) {
   var _super4 = _createSuper(Board);
 
   function Board(props) {
-    var _this9;
+    var _this8;
 
     (0, _classCallCheck2["default"])(this, Board);
-    _this9 = _super4.call(this, props);
-    _this9.state = {};
-    _this9.getSelectedHexagon = _this9.getSelectedHexagon.bind((0, _assertThisInitialized2["default"])(_this9));
-    return _this9;
+    _this8 = _super4.call(this, props);
+    _this8.state = {};
+    _this8.getSelectedHexagon = _this8.getSelectedHexagon.bind((0, _assertThisInitialized2["default"])(_this8));
+    return _this8;
   }
 
   (0, _createClass2["default"])(Board, [{
@@ -69562,16 +69560,16 @@ var Board = /*#__PURE__*/function (_React$Component4) {
   }, {
     key: "renderR",
     value: function renderR(array, q) {
-      var _this10 = this;
+      var _this9 = this;
 
       return array.map(function (_, index) {
-        return _this10.renderHexagon(_, q, index, -q - index);
+        return _this9.renderHexagon(_, q, index, -q - index);
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this11 = this;
+      var _this10 = this;
 
       var tiles = this.props.tileValues;
       return /*#__PURE__*/React.createElement(_reactHexgrid.HexGrid, {
@@ -69590,7 +69588,7 @@ var Board = /*#__PURE__*/function (_React$Component4) {
           y: 0
         }
       }, tiles.map(function (_, index) {
-        return _this11.renderR(_, index);
+        return _this10.renderR(_, index);
       })), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
         id: "island",
         link: "src/island.png"
@@ -69621,12 +69619,12 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
   var _super5 = _createSuper(BoardHexagon);
 
   function BoardHexagon(props) {
-    var _this12;
+    var _this11;
 
     (0, _classCallCheck2["default"])(this, BoardHexagon);
-    _this12 = _super5.call(this, props);
-    _this12.state = {};
-    return _this12;
+    _this11 = _super5.call(this, props);
+    _this11.state = {};
+    return _this11;
   }
 
   (0, _createClass2["default"])(BoardHexagon, [{
@@ -69641,7 +69639,7 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
   }, {
     key: "render",
     value: function render() {
-      var _this13 = this;
+      var _this12 = this;
 
       var Type;
       var value;
@@ -69677,7 +69675,7 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
         s: this.props.s,
         fill: classType,
         onClick: function onClick() {
-          return _this13.select();
+          return _this12.select();
         }
       }, /*#__PURE__*/React.createElement(_reactHexgrid.Text, {
         className: "hexagonText"
