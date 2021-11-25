@@ -130,8 +130,7 @@ class Game extends React.Component {
         socket.on("newRound", (data) => {
             this.setState({diceValues: data.dices});
             this.setState({currentTurn: data.currentTurn});
-            this.errorlog("")
-            
+            this.errorlog("")  
         });
     }
 

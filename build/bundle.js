@@ -69296,22 +69296,18 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         });
       });
       socket.on("endGame", function (data) {
-        if (data.player == _this5.props.userAddress) {
-          _this5.endGame();
-        }
+        _this5.endGame();
       });
       socket.on("newRound", function (data) {
-        if (data.player == _this5.props.userAddress) {
-          _this5.setState({
-            diceValues: data.dices
-          });
+        _this5.setState({
+          diceValues: data.dices
+        });
 
-          _this5.setState({
-            currentTurn: _this5.state.currentTurn + 1
-          });
+        _this5.setState({
+          currentTurn: data.currentTurn
+        });
 
-          _this5.errorlog("");
-        }
+        _this5.errorlog("");
       });
     }
   }, {
