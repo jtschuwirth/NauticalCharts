@@ -23,8 +23,8 @@ window.onload = async function initialize() {
     }
     const playButton = (address) => {
         ReactDOM.render(
-            <game.PlayButton userAddress = {address} type={"MP"} />,
-            document.getElementById('playButtonMP'));
+            <game.PlayButton userAddress = {address}/>,
+            document.getElementById('playButton'));
     }
 
     MetaMaskClientCheck();

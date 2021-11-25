@@ -18,10 +18,10 @@ const socket = io(SERVER, {
     credentials: true
   },transports : ['websocket'] });
 
-const foundGame = (id, userAddress, type) => {
+const foundGame = (id, userAddress, size) => {
     ReactDOM.render(
-        <Game gameId={id} userAddress={userAddress}/>,
-        document.getElementById('gameMP')
+        <Game gameId={id} userAddress={userAddress} size={size}/>,
+        document.getElementById('game')
     );
 
 }
@@ -48,17 +48,17 @@ class PlayButton extends React.Component {
             inQueue: false,
         };
     }
-    joinQueue() {
+    joinQueue(size) {
         socket.on("connect", () => {
         });
-        socket.emit("enter", this.props.userAddress);
+        socket.emit("enter"+size.toString(), this.props.userAddress);
         this.setState({inQueue: true});
-        socket.on("statusQueue", (data) => {
+        socket.on("statusQueue"+size.toString(), (data) => {
             for (let i=0; i<data.players.length; i++) {
                 if (this.props.userAddress == data.players[i]) {
                     const id = data.lastId+1;
-                    socket.emit("foundGame", {id: id, player: data.players[i], players: data.players})
-                    foundGame(id, this.props.userAddress, this.props.type)
+                    socket.emit("foundGame"+size.toString(), {id: id, player: data.players[i], players: data.players})
+                    foundGame(id, this.props.userAddress, size)
                     this.setState({showQueue: false});
                     this.setState({inQueue: false});
                 }
@@ -66,16 +66,26 @@ class PlayButton extends React.Component {
         });
     }
     cancelQueue() {
-        socket.emit("out", this.props.userAddress);
+        socket.emit("out1", this.props.userAddress);
+        socket.emit("out2", this.props.userAddress);
+        socket.emit("out3", this.props.userAddress);
+        socket.emit("out4", this.props.userAddress);
         this.setState({inQueue: false});
     }
     render() {
         if (this.state.showQueue == true) {
             if (this.state.inQueue == false) {
                 return (
-                    <div className="center">
-                            <button onClick={ () => this.joinQueue()}>Play!</button>
+                    <div >
+                        <div className="center"><button onClick={ () => this.joinQueue(1)}>Single Player</button></div>
+                        <br></br>
+                        <div className="center"><button onClick={ () => this.joinQueue(2)}>2 Players</button></div>
+                        <br></br>
+                        <div className="center"><button onClick={ () => this.joinQueue(3)}>3 Players</button></div>
+                        <br></br>
+                        <div className="center"><button onClick={ () => this.joinQueue(4)}>4 Players</button></div>
                     </div>)
+                    
             } else {
                 return (
                     <div>
@@ -103,7 +113,7 @@ class Game extends React.Component {
             errorlog: null,
             currentPoints: 0,
             currentTurn: 1,
-            tileValues: [[1,0],[1,100]],
+            tileValues: [[100]],
             diceValues: [null, null, null],
             selectedSquare: [null,null],
             selectedHexagon: [null,null,null],

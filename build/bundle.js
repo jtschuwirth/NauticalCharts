@@ -69126,11 +69126,12 @@ var socket = io(SERVER, {
   transports: ['websocket']
 });
 
-var foundGame = function foundGame(id, userAddress, type) {
+var foundGame = function foundGame(id, userAddress, size) {
   ReactDOM.render( /*#__PURE__*/React.createElement(Game, {
     gameId: id,
-    userAddress: userAddress
-  }), document.getElementById('gameMP'));
+    userAddress: userAddress,
+    size: size
+  }), document.getElementById('game'));
 };
 
 var QueueMessage = /*#__PURE__*/function (_React$Component) {
@@ -69175,24 +69176,24 @@ var PlayButton = /*#__PURE__*/function (_React$Component2) {
 
   (0, _createClass2["default"])(PlayButton, [{
     key: "joinQueue",
-    value: function joinQueue() {
+    value: function joinQueue(size) {
       var _this2 = this;
 
       socket.on("connect", function () {});
-      socket.emit("enter", this.props.userAddress);
+      socket.emit("enter" + size.toString(), this.props.userAddress);
       this.setState({
         inQueue: true
       });
-      socket.on("statusQueue", function (data) {
+      socket.on("statusQueue" + size.toString(), function (data) {
         for (var i = 0; i < data.players.length; i++) {
           if (_this2.props.userAddress == data.players[i]) {
             var id = data.lastId + 1;
-            socket.emit("foundGame", {
+            socket.emit("foundGame" + size.toString(), {
               id: id,
               player: data.players[i],
               players: data.players
             });
-            foundGame(id, _this2.props.userAddress, _this2.props.type);
+            foundGame(id, _this2.props.userAddress, size);
 
             _this2.setState({
               showQueue: false
@@ -69208,7 +69209,10 @@ var PlayButton = /*#__PURE__*/function (_React$Component2) {
   }, {
     key: "cancelQueue",
     value: function cancelQueue() {
-      socket.emit("out", this.props.userAddress);
+      socket.emit("out1", this.props.userAddress);
+      socket.emit("out2", this.props.userAddress);
+      socket.emit("out3", this.props.userAddress);
+      socket.emit("out4", this.props.userAddress);
       this.setState({
         inQueue: false
       });
@@ -69220,13 +69224,31 @@ var PlayButton = /*#__PURE__*/function (_React$Component2) {
 
       if (this.state.showQueue == true) {
         if (this.state.inQueue == false) {
-          return /*#__PURE__*/React.createElement("div", {
+          return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
             className: "center"
           }, /*#__PURE__*/React.createElement("button", {
             onClick: function onClick() {
-              return _this3.joinQueue();
+              return _this3.joinQueue(1);
             }
-          }, "Play!"));
+          }, "Single Player")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+            className: "center"
+          }, /*#__PURE__*/React.createElement("button", {
+            onClick: function onClick() {
+              return _this3.joinQueue(2);
+            }
+          }, "2 Players")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+            className: "center"
+          }, /*#__PURE__*/React.createElement("button", {
+            onClick: function onClick() {
+              return _this3.joinQueue(3);
+            }
+          }, "3 Players")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+            className: "center"
+          }, /*#__PURE__*/React.createElement("button", {
+            onClick: function onClick() {
+              return _this3.joinQueue(4);
+            }
+          }, "4 Players")));
         } else {
           return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
             className: "center"
@@ -69264,7 +69286,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       errorlog: null,
       currentPoints: 0,
       currentTurn: 1,
-      tileValues: [[1, 0], [1, 100]],
+      tileValues: [[100]],
       diceValues: [null, null, null],
       selectedSquare: [null, null],
       selectedHexagon: [null, null, null],
@@ -69758,9 +69780,8 @@ window.onload = /*#__PURE__*/function () {
 
             playButton = function playButton(address) {
               ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
-                userAddress: address,
-                type: "MP"
-              }), document.getElementById('playButtonMP'));
+                userAddress: address
+              }), document.getElementById('playButton'));
             };
 
             MetaMaskClientCheck();
