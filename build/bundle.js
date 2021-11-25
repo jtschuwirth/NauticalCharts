@@ -69116,8 +69116,8 @@ var ReactDOM = require('react-dom');
 var _require = require("socket.io-client"),
     io = _require.io;
 
-//const SERVER = "http://localhost:8000"
-var SERVER = "https://jtschuwirth.xyz";
+var SERVER = "http://localhost:8000"; //const SERVER = "https://jtschuwirth.xyz"
+
 var socket = io(SERVER, {
   cors: {
     origin: SERVER,
@@ -69186,7 +69186,7 @@ var PlayButton = /*#__PURE__*/function (_React$Component2) {
       socket.on("statusQueue", function (data) {
         for (var i = 0; i < data.players.length; i++) {
           if (_this2.props.userAddress == data.players[i]) {
-            var id = "id" + data.players.join("-");
+            var id = data.lastId + 1;
             socket.emit("foundGame", {
               id: id,
               player: data.players[i],

@@ -9,8 +9,8 @@ var ReactDOM = require('react-dom');
 const { io } = require("socket.io-client");
 import { HexGrid, Layout, Hexagon, Text, Pattern, Path, Hex } from 'react-hexgrid';
 
-//const SERVER = "http://localhost:8000"
-const SERVER = "https://jtschuwirth.xyz"
+const SERVER = "http://localhost:8000"
+//const SERVER = "https://jtschuwirth.xyz"
 
 const socket = io(SERVER, {  
     cors: {
@@ -55,7 +55,7 @@ class PlayButton extends React.Component {
         socket.on("statusQueue", (data) => {
             for (let i=0; i<data.players.length; i++) {
                 if (this.props.userAddress == data.players[i]) {
-                    const id = "id"+data.players.join("-")
+                    const id = data.lastId+1;
                     socket.emit("foundGame", {id: id, player: data.players[i], players: data.players})
                     foundGame(id, this.props.userAddress)
                     this.setState({showQueue: false});
