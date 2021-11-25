@@ -69116,8 +69116,8 @@ var ReactDOM = require('react-dom');
 var _require = require("socket.io-client"),
     io = _require.io;
 
-//const SERVER = "http://localhost:8000"
-var SERVER = "https://jtschuwirth.xyz";
+var SERVER = "http://localhost:8000"; //const SERVER = "https://jtschuwirth.xyz"
+
 var socket = io(SERVER, {
   cors: {
     origin: SERVER,
@@ -69126,11 +69126,11 @@ var socket = io(SERVER, {
   transports: ['websocket']
 });
 
-var foundGame = function foundGame(id, userAddress) {
+var foundGame = function foundGame(id, userAddress, type) {
   ReactDOM.render( /*#__PURE__*/React.createElement(Game, {
     gameId: id,
     userAddress: userAddress
-  }), document.getElementById('game'));
+  }), document.getElementById('gameMP'));
 };
 
 var QueueMessage = /*#__PURE__*/function (_React$Component) {
@@ -69192,7 +69192,7 @@ var PlayButton = /*#__PURE__*/function (_React$Component2) {
               player: data.players[i],
               players: data.players
             });
-            foundGame(id, _this2.props.userAddress);
+            foundGame(id, _this2.props.userAddress, _this2.props.type);
 
             _this2.setState({
               showQueue: false
@@ -69762,8 +69762,9 @@ window.onload = /*#__PURE__*/function () {
 
             playButton = function playButton(address) {
               ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
-                userAddress: address
-              }), document.getElementById('playButton'));
+                userAddress: address,
+                type: "MP"
+              }), document.getElementById('playButtonMP'));
             };
 
             MetaMaskClientCheck();

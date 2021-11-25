@@ -18,11 +18,12 @@ const socket = io(SERVER, {
     credentials: true
   },transports : ['websocket'] });
 
-const foundGame = (id, userAddress) => {
+const foundGame = (id, userAddress, type) => {
     ReactDOM.render(
         <Game gameId={id} userAddress={userAddress}/>,
-        document.getElementById('game')
+        document.getElementById('gameMP')
     );
+
 }
 
 class QueueMessage extends React.Component {
@@ -57,7 +58,7 @@ class PlayButton extends React.Component {
                 if (this.props.userAddress == data.players[i]) {
                     const id = data.lastId+1;
                     socket.emit("foundGame", {id: id, player: data.players[i], players: data.players})
-                    foundGame(id, this.props.userAddress)
+                    foundGame(id, this.props.userAddress, this.props.type)
                     this.setState({showQueue: false});
                     this.setState({inQueue: false});
                 }
