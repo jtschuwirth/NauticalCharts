@@ -123,17 +123,15 @@ class Game extends React.Component {
         });
 
         socket.on("endGame", (data) => {
-            if (data.player == this.props.userAddress) {
-                this.endGame();
-            }
+            this.endGame();
+            
         });
 
         socket.on("newRound", (data) => {
-            if (data.player == this.props.userAddress) {
-                this.setState({diceValues: data.dices});
-                this.setState({currentTurn: this.state.currentTurn+1});
-                this.errorlog("")
-            }
+            this.setState({diceValues: data.dices});
+            this.setState({currentTurn: data.currentTurn});
+            this.errorlog("")
+            
         });
     }
 
