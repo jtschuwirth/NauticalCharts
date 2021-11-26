@@ -69291,7 +69291,8 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       selectedSquare: [null, null],
       selectedHexagon: [null, null, null],
       selectedDice: null,
-      currentPosition: [null, null, null]
+      currentPosition: [null, null],
+      boardSize: 6
     };
     _this4.getBoardData = _this4.getBoardData.bind((0, _assertThisInitialized2["default"])(_this4));
     _this4.togglePopup = _this4.togglePopup.bind((0, _assertThisInitialized2["default"])(_this4));
@@ -69349,7 +69350,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
   }, {
     key: "positionValue",
     value: function positionValue(position) {
-      return this.state.tileValues[position[0]][position[1]];
+      return this.state.tileValues[position[0] + this.state.boardSize][position[1] + this.state.boardSize];
     }
   }, {
     key: "changeTileValues",
@@ -69358,7 +69359,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       var new_tiles = old_tiles.map(function (_) {
         return _;
       });
-      new_tiles[this.state.currentPosition[0]][this.state.currentPosition[1]] = new_tiles[this.state.currentPosition[0]][this.state.currentPosition[1]] + change;
+      new_tiles[this.state.currentPosition[0] + this.state.boardSize][this.state.currentPosition[1] + this.state.boardSize] = new_tiles[this.state.currentPosition[0] + this.state.boardSize][this.state.currentPosition[1] + this.state.boardSize] + change;
       this.setState({
         tileValues: new_tiles
       });
@@ -69508,7 +69509,8 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         tileValues: this.state.tileValues,
         selectedHexagon: this.state.selectedHexagon,
         currentPosition: this.state.currentPosition,
-        sendBoardData: this.getBoardData
+        sendBoardData: this.getBoardData,
+        boardSize: this.state.boardSize
       })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, "Dados"), /*#__PURE__*/React.createElement("div", {
@@ -69571,15 +69573,17 @@ var Board = /*#__PURE__*/function (_React$Component4) {
   }, {
     key: "renderHexagon",
     value: function renderHexagon(value, q, r, s) {
-      return /*#__PURE__*/React.createElement(BoardHexagon, {
-        q: q,
-        r: r,
-        s: s,
-        value: value,
-        selectedHexagon: this.props.selectedHexagon,
-        currentPosition: this.props.currentPosition,
-        sendData: this.getSelectedHexagon
-      });
+      if (value != 200) {
+        return /*#__PURE__*/React.createElement(BoardHexagon, {
+          q: q,
+          r: r,
+          s: s,
+          value: value,
+          selectedHexagon: this.props.selectedHexagon,
+          currentPosition: this.props.currentPosition,
+          sendData: this.getSelectedHexagon
+        });
+      }
     }
   }, {
     key: "renderR",
@@ -69587,7 +69591,7 @@ var Board = /*#__PURE__*/function (_React$Component4) {
       var _this9 = this;
 
       return array.map(function (_, index) {
-        return _this9.renderHexagon(_, q, index, -q - index);
+        return _this9.renderHexagon(_, q - _this9.props.boardSize, index - _this9.props.boardSize, -q - index + _this9.props.boardSize * 2);
       });
     }
   }, {
@@ -69597,8 +69601,8 @@ var Board = /*#__PURE__*/function (_React$Component4) {
 
       var tiles = this.props.tileValues;
       return /*#__PURE__*/React.createElement(_reactHexgrid.HexGrid, {
-        width: 1200,
-        height: 800,
+        width: 800,
+        height: 600,
         viewBox: "-50 -50 100 100"
       }, /*#__PURE__*/React.createElement(_reactHexgrid.Layout, {
         size: {
@@ -69676,13 +69680,13 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
         Type = "island";
       }
 
-      if (this.props.selectedHexagon[0] == this.props.q && this.props.selectedHexagon[1] == this.props.r && this.props.selectedHexagon[2] == this.props.s) {
+      if (this.props.selectedHexagon[0] == this.props.q && this.props.selectedHexagon[1] == this.props.r) {
         selected = "Selected";
       } else {
         selected = "";
       }
 
-      if (this.props.currentPosition[0] == this.props.q && this.props.currentPosition[1] == this.props.r && this.props.currentPosition[2] == this.props.s) {
+      if (this.props.currentPosition[0] == this.props.q && this.props.currentPosition[1] == this.props.r) {
         Type = "ship";
       }
 

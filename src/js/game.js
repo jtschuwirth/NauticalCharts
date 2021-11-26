@@ -118,7 +118,8 @@ class Game extends React.Component {
             selectedSquare: [null,null],
             selectedHexagon: [null,null,null],
             selectedDice: null,
-            currentPosition: [null, null, null],
+            currentPosition: [null, null],
+            boardSize: 6,
         };
         this.getBoardData = this.getBoardData.bind(this)
         this.togglePopup = this.togglePopup.bind(this)
@@ -155,14 +156,14 @@ class Game extends React.Component {
     }
 
     positionValue(position) {
-        return this.state.tileValues[position[0]][position[1]]
+        return this.state.tileValues[position[0]+this.state.boardSize][position[1]+this.state.boardSize]
     }
 
     changeTileValues(change) {
         const old_tiles = this.state.tileValues;
         const new_tiles = old_tiles.map((_) => _ );
 
-        new_tiles[this.state.currentPosition[0]][this.state.currentPosition[1]]= new_tiles[this.state.currentPosition[0]][this.state.currentPosition[1]]+change;    
+        new_tiles[this.state.currentPosition[0]+this.state.boardSize][this.state.currentPosition[1]+this.state.boardSize]= new_tiles[this.state.currentPosition[0]+this.state.boardSize][this.state.currentPosition[1]+this.state.boardSize]+change;    
         this.setState({tileValues: new_tiles});
     }
 
@@ -291,6 +292,7 @@ class Game extends React.Component {
                         selectedHexagon = {this.state.selectedHexagon}
                         currentPosition = {this.state.currentPosition}
                         sendBoardData={this.getBoardData}
+                        boardSize = {this.state.boardSize}
                     />
                 </div>
                 <br></br>
@@ -340,7 +342,8 @@ class Board extends React.Component {
     }
 
     renderHexagon(value, q,r,s) {
-        return <BoardHexagon 
+        if (value != 200) {
+            return <BoardHexagon 
                         q={q} 
                         r={r} 
                         s={s} 
@@ -348,17 +351,18 @@ class Board extends React.Component {
                         selectedHexagon = {this.props.selectedHexagon} 
                         currentPosition = {this.props.currentPosition} 
                         sendData={this.getSelectedHexagon}/>
+        }
     }
 
     renderR(array, q){
-        return array.map((_, index) => this.renderHexagon(_, q, index, -q-index ))
+        return array.map((_, index) => this.renderHexagon(_, (q-this.props.boardSize), (index-this.props.boardSize), -q-index+(this.props.boardSize*2) ))
 
     }
 
     render() {
         var tiles = this.props.tileValues;
         return (
-            <HexGrid width={1200} height={800} viewBox="-50 -50 100 100">
+            <HexGrid width={800} height={600} viewBox="-50 -50 100 100">
                 <Layout size={{ x: 3, y: 3 }} flat={true} spacing={1} origin={{ x: 0, y: 0 }}>
                     {tiles.map((_, index) => this.renderR(_, index))}
                 </Layout>
@@ -398,12 +402,12 @@ class BoardHexagon extends React.Component {
         } else if (this.props.value < 10) {
             Type = "island";
         }
-        if (this.props.selectedHexagon[0]==this.props.q && this.props.selectedHexagon[1]==this.props.r && this.props.selectedHexagon[2]==this.props.s) {
+        if (this.props.selectedHexagon[0]==this.props.q && this.props.selectedHexagon[1]==this.props.r) {
             selected ="Selected";
         } else {
             selected ="";
         }
-        if (this.props.currentPosition[0]==this.props.q && this.props.currentPosition[1]==this.props.r && this.props.currentPosition[2]==this.props.s) {
+        if (this.props.currentPosition[0]==this.props.q && this.props.currentPosition[1]==this.props.r) {
             Type = "ship";
         }
         if (this.props.value!=100) {
