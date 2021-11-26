@@ -9,8 +9,8 @@ var ReactDOM = require('react-dom');
 const { io } = require("socket.io-client");
 import { HexGrid, Layout, Hexagon, Text, Pattern, Path, Hex } from 'react-hexgrid';
 
-//const SERVER = "http://localhost:8000"
-const SERVER = "https://jtschuwirth.xyz"
+const SERVER = "http://localhost:8000"
+//const SERVER = "https://jtschuwirth.xyz"
 
 const socket = io(SERVER, {  
     cors: {
