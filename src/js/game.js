@@ -191,11 +191,11 @@ class Game extends React.Component {
 
     sail() {
         this.setState({errorlog: null});
-        if (this.state.currentPosition[0] != this.state.selectedHexagon[0] && this.state.currentPosition[1] != this.state.selectedHexagon[1] && this.state.currentPosition[2] != this.state.selectedHexagon[2]) {
+        if (this.state.currentPosition[0] != this.state.selectedHexagon[0] && this.state.currentPosition[1] != this.state.selectedHexagon[1]) {
             this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
         } else if (this.state.selectedDice == null) {
             this.errorlog("Debes seleccionar un dado para utilizar");
-        } else if (this.state.currentPosition[0] == this.state.selectedHexagon[0] && this.state.currentPosition[1] == this.state.selectedHexagon[1] && this.state.currentPosition[2] == this.state.selectedHexagon[2]) {
+        } else if (this.state.currentPosition[0] == this.state.selectedHexagon[0] && this.state.currentPosition[1] == this.state.selectedHexagon[1]) {
             this.errorlog("No puedes navegar a la casilla en la que estas");
         } else if (
         this.state.currentPosition[0]-this.state.selectedHexagon[0] > this.state.diceValues[this.state.selectedDice] ||
