@@ -398,10 +398,10 @@ class BoardHexagon extends React.Component {
         };
     }
     select() {
-        if (this.props.selectedHexagon[0]!=this.props.q || this.props.selectedHexagon[1]!=this.props.r || this.props.selectedHexagon[2]!=this.props.s) {
-            this.props.sendData([this.props.q, this.props.r, this.props.s]);
+        if (this.props.selectedHexagon[0]!=this.props.q || this.props.selectedHexagon[1]!=this.props.r) {
+            this.props.sendData([this.props.q, this.props.r]);
         } else {
-            this.props.sendData([null,null, null]);
+            this.props.sendData([null,null]);
         }
 
     }
