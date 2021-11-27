@@ -132,7 +132,7 @@ class Game extends React.Component {
             selectedSquare: [null,null],
             selectedHexagon: [null,null,null],
             selectedDice: null,
-            currentPosition: [null, null],
+            currentPosition: [null,null,null],
             boardSize: 6,
         };
         this.getBoardData = this.getBoardData.bind(this)
@@ -191,7 +191,7 @@ class Game extends React.Component {
 
     sail() {
         this.setState({errorlog: null});
-        if (this.state.currentPosition[0] != this.state.selectedHexagon[0] && this.state.currentPosition[1] != this.state.selectedHexagon[1]) {
+        if (this.state.currentPosition[0] != this.state.selectedHexagon[0] && this.state.currentPosition[1] != this.state.selectedHexagon[1] && this.state.currentPosition[2] != this.state.selectedHexagon[2]) {
             this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
         } else if (this.state.selectedDice == null) {
             this.errorlog("Debes seleccionar un dado para utilizar");
@@ -399,9 +399,9 @@ class BoardHexagon extends React.Component {
     }
     select() {
         if (this.props.selectedHexagon[0]!=this.props.q || this.props.selectedHexagon[1]!=this.props.r) {
-            this.props.sendData([this.props.q, this.props.r]);
+            this.props.sendData([this.props.q, this.props.r, this.props.s]);
         } else {
-            this.props.sendData([null,null]);
+            this.props.sendData([null, null, null]);
         }
 
     }
