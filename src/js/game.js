@@ -7,16 +7,24 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 const { io } = require("socket.io-client");
+
 import { HexGrid, Layout, Hexagon, Text, Pattern, Path, Hex } from 'react-hexgrid';
 
-const SERVER = "http://localhost:8000"
-//const SERVER = "https://jtschuwirth.xyz"
+
+
+
+
+
+
+//const SERVER = "http://localhost:8000"
+const SERVER = "https://jtschuwirth.xyz"
 
 const socket = io(SERVER, {  
     cors: {
     origin: SERVER,
     credentials: true
-  },transports : ['websocket'] });
+  },transports : ['websocket'],
+    });
 
 const foundGame = (id, userAddress, size) => {
     ReactDOM.render(
@@ -46,11 +54,16 @@ class PlayButton extends React.Component {
         this.state = {
             showQueue: true,
             inQueue: false,
+            errorlog: null,
         };
     }
-    joinQueue(size) {
-        socket.on("connect", () => {
+    componentDidMount() {
+        socket.on('connect', function() {
+
         });
+    }
+
+    joinQueue(size) {  
         socket.emit("enter"+size.toString(), this.props.userAddress);
         this.setState({inQueue: true});
         socket.on("statusQueue"+size.toString(), (data) => {
@@ -77,6 +90,7 @@ class PlayButton extends React.Component {
             if (this.state.inQueue == false) {
                 return (
                     <div >
+                        <div className="center">{this.state.errorlog}</div>
                         <div className="center"><button onClick={ () => this.joinQueue(1)}>Single Player</button></div>
                         <br></br>
                         <div className="center"><button onClick={ () => this.joinQueue(2)}>2 Players</button></div>
