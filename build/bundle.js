@@ -69298,7 +69298,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       selectedSquare: [null, null],
       selectedHexagon: [null, null, null],
       selectedDice: null,
-      currentPosition: [null, null],
+      currentPosition: [null, null, null],
       boardSize: 6
     };
     _this4.getBoardData = _this4.getBoardData.bind((0, _assertThisInitialized2["default"])(_this4));
@@ -69390,7 +69390,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         errorlog: null
       });
 
-      if (this.state.currentPosition[0] != this.state.selectedHexagon[0] && this.state.currentPosition[1] != this.state.selectedHexagon[1]) {
+      if (this.state.currentPosition[0] != this.state.selectedHexagon[0] && this.state.currentPosition[1] != this.state.selectedHexagon[1] && this.state.currentPosition[2] != this.state.selectedHexagon[2]) {
         this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
       } else if (this.state.selectedDice == null) {
         this.errorlog("Debes seleccionar un dado para utilizar");
@@ -69666,9 +69666,9 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
     key: "select",
     value: function select() {
       if (this.props.selectedHexagon[0] != this.props.q || this.props.selectedHexagon[1] != this.props.r) {
-        this.props.sendData([this.props.q, this.props.r]);
+        this.props.sendData([this.props.q, this.props.r, this.props.s]);
       } else {
-        this.props.sendData([null, null]);
+        this.props.sendData([null, null, null]);
       }
     }
   }, {
