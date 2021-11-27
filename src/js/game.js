@@ -290,9 +290,11 @@ class Game extends React.Component {
         return (
             <div>
                 <div class="center">
+                    {this.state.selectedHexagon}
                     Game ID: {this.props.gameId}
                 </div>
                 <div class="center">
+                    {this.state.currentPosition}
                     Turno: {this.state.currentTurn}        
                 </div>
                 <div class="center">

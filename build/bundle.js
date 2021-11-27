@@ -69506,9 +69506,9 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       var array = this.state.diceValues;
       return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
         "class": "center"
-      }, "Game ID: ", this.props.gameId), /*#__PURE__*/React.createElement("div", {
+      }, this.state.selectedHexagon, "Game ID: ", this.props.gameId), /*#__PURE__*/React.createElement("div", {
         "class": "center"
-      }, "Turno: ", this.state.currentTurn), /*#__PURE__*/React.createElement("div", {
+      }, this.state.currentPosition, "Turno: ", this.state.currentTurn), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, "Tienes: ", this.state.currentPoints, " Puntos"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
