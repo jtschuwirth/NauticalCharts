@@ -22,8 +22,9 @@ const SERVER = "https://jtschuwirth.xyz"
 const socket = io(SERVER, {  
     cors: {
     origin: SERVER,
-    credentials: true
-  },transports : ['websocket'],
+    credentials: true},
+    transports : ['websocket'],
+    reconnect: true,
     });
 
 const foundGame = (id, userAddress, size) => {
