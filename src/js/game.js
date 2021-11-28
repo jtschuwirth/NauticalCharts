@@ -16,8 +16,8 @@ import { HexGrid, Layout, Hexagon, Text, Pattern, Path, Hex } from 'react-hexgri
 
 
 
-//const SERVER = "http://localhost:8000"
-const SERVER = "https://jtschuwirth.xyz"
+const SERVER = "http://localhost:8000"
+//const SERVER = "https://jtschuwirth.xyz"
 
 const socket = io(SERVER, {  
     cors: {
@@ -147,7 +147,6 @@ class Game extends React.Component {
     componentDidMount() {
         socket.on("startInfo", (data) => {
             this.setState({currentPosition: data.pos});
-            this.setState({tileValues: data.map});
             this.endTurn();
         });
 
@@ -161,12 +160,25 @@ class Game extends React.Component {
             let new_state = [];
             this.setState({diceValues: data.dices});
             this.setState({currentTurn: data.currentTurn});
+            this.setState({tileValues: data.mapState});
             for (let i = 0; i<data.turnState.length; i++) {
                 if (data.turnState[i].userAddress != this.props.userAddress) {
                     new_state.push(data.turnState[i]);
                 }
             }
             this.setState({turnState: new_state});
+        });
+
+        socket.on("lootResult", (data) => {
+            if (data.result == "sea") {
+            this.errorlog("No puedes lootear esta casilla, es mar");   
+            } else if (data.result == "empty") {
+                this.errorlog("Ya no quedan recursos en esta isla");
+            } else {
+                this.setState({currentPoints: data.points});
+                this.changeTileValues(-data.looted);
+                this.changeDiceValues();
+            }
         });
 
     }
@@ -229,29 +241,15 @@ class Game extends React.Component {
 
     loot() {
         this.setState({errorlog: null});
-        let currentValue;
-        let change;
-        let looted;
-        currentValue = this.positionValue(this.state.currentPosition);
-        if (this.state.diceValues[this.state.selectedDice] > currentValue) {
-            looted = currentValue
-        } else {
-            looted = this.state.diceValues[this.state.selectedDice]
-        }
-        
-        if (currentValue == 100) {
-            this.errorlog("No puedes lootear esta casilla, es mar");         
-        } else if (this.state.diceValues[this.state.selectedDice] == null) {
+        if (this.state.diceValues[this.state.selectedDice] == null) {
             this.errorlog("Debes seleccionar un dado para lootear"); 
-        } else if (currentValue == 0) {
-            this.errorlog("Ya no quedan recursos en esta isla");
         } else {
-            this.setState({currentPoints: this.state.currentPoints+looted});
-            change = -looted;
-            this.changeTileValues(change);
-            this.changeDiceValues();
+            socket.emit("loot", {
+                userAddress: this.props.userAddress,
+                currentPosition: this.state.currentPosition,
+                lootValue: this.state.diceValues[this.state.selectedDice],
+            });
         }
-
     }
 
     endTurn() {

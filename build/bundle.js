@@ -69116,8 +69116,8 @@ var ReactDOM = require('react-dom');
 var _require = require("socket.io-client"),
     io = _require.io;
 
-//const SERVER = "http://localhost:8000"
-var SERVER = "https://jtschuwirth.xyz";
+var SERVER = "http://localhost:8000"; //const SERVER = "https://jtschuwirth.xyz"
+
 var socket = io(SERVER, {
   cors: {
     origin: SERVER,
@@ -69319,10 +69319,6 @@ var Game = /*#__PURE__*/function (_React$Component3) {
           currentPosition: data.pos
         });
 
-        _this5.setState({
-          tileValues: data.map
-        });
-
         _this5.endTurn();
       });
       socket.on("endGame", function (data) {
@@ -69341,6 +69337,10 @@ var Game = /*#__PURE__*/function (_React$Component3) {
           currentTurn: data.currentTurn
         });
 
+        _this5.setState({
+          tileValues: data.mapState
+        });
+
         for (var i = 0; i < data.turnState.length; i++) {
           if (data.turnState[i].userAddress != _this5.props.userAddress) {
             new_state.push(data.turnState[i]);
@@ -69350,6 +69350,21 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         _this5.setState({
           turnState: new_state
         });
+      });
+      socket.on("lootResult", function (data) {
+        if (data.result == "sea") {
+          _this5.errorlog("No puedes lootear esta casilla, es mar");
+        } else if (data.result == "empty") {
+          _this5.errorlog("Ya no quedan recursos en esta isla");
+        } else {
+          _this5.setState({
+            currentPoints: data.points
+          });
+
+          _this5.changeTileValues(-data.looted);
+
+          _this5.changeDiceValues();
+        }
       });
     }
   }, {
@@ -69427,30 +69442,15 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       this.setState({
         errorlog: null
       });
-      var currentValue;
-      var change;
-      var looted;
-      currentValue = this.positionValue(this.state.currentPosition);
 
-      if (this.state.diceValues[this.state.selectedDice] > currentValue) {
-        looted = currentValue;
-      } else {
-        looted = this.state.diceValues[this.state.selectedDice];
-      }
-
-      if (currentValue == 100) {
-        this.errorlog("No puedes lootear esta casilla, es mar");
-      } else if (this.state.diceValues[this.state.selectedDice] == null) {
+      if (this.state.diceValues[this.state.selectedDice] == null) {
         this.errorlog("Debes seleccionar un dado para lootear");
-      } else if (currentValue == 0) {
-        this.errorlog("Ya no quedan recursos en esta isla");
       } else {
-        this.setState({
-          currentPoints: this.state.currentPoints + looted
+        socket.emit("loot", {
+          userAddress: this.props.userAddress,
+          currentPosition: this.state.currentPosition,
+          lootValue: this.state.diceValues[this.state.selectedDice]
         });
-        change = -looted;
-        this.changeTileValues(change);
-        this.changeDiceValues();
       }
     }
   }, {
