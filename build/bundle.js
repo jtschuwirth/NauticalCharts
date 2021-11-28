@@ -69116,8 +69116,8 @@ var ReactDOM = require('react-dom');
 var _require = require("socket.io-client"),
     io = _require.io;
 
-var SERVER = "http://localhost:8000"; //const SERVER = "https://jtschuwirth.xyz"
-
+//const SERVER = "http://localhost:8000"
+var SERVER = "https://jtschuwirth.xyz";
 var socket = io(SERVER, {
   cors: {
     origin: SERVER,
