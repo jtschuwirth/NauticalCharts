@@ -160,7 +160,7 @@ class Game extends React.Component {
             let new_state = [];
             this.setState({diceValues: data.dices});
             this.setState({currentTurn: data.currentTurn});
-            this.setState({tileValues: data.map});
+            this.setState({tileValues: data.mapState});
             for (let i = 0; i<data.turnState.length; i++) {
                 if (data.turnState[i].userAddress != this.props.userAddress) {
                     new_state.push(data.turnState[i]);

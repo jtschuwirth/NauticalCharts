@@ -69338,7 +69338,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         });
 
         _this5.setState({
-          tileValues: data.map
+          tileValues: data.mapState
         });
 
         for (var i = 0; i < data.turnState.length; i++) {
