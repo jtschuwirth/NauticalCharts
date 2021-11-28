@@ -69116,8 +69116,8 @@ var ReactDOM = require('react-dom');
 var _require = require("socket.io-client"),
     io = _require.io;
 
-//const SERVER = "http://localhost:8000"
-var SERVER = "https://jtschuwirth.xyz";
+var SERVER = "http://localhost:8000"; //const SERVER = "https://jtschuwirth.xyz"
+
 var socket = io(SERVER, {
   cors: {
     origin: SERVER,
@@ -69338,7 +69338,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         });
 
         _this5.setState({
-          tileValues: data.mapState
+          tileValues: data.map
         });
 
         for (var i = 0; i < data.turnState.length; i++) {

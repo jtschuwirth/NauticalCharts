@@ -16,8 +16,8 @@ import { HexGrid, Layout, Hexagon, Text, Pattern, Path, Hex } from 'react-hexgri
 
 
 
-//const SERVER = "http://localhost:8000"
-const SERVER = "https://jtschuwirth.xyz"
+const SERVER = "http://localhost:8000"
+//const SERVER = "https://jtschuwirth.xyz"
 
 const socket = io(SERVER, {  
     cors: {
@@ -160,7 +160,7 @@ class Game extends React.Component {
             let new_state = [];
             this.setState({diceValues: data.dices});
             this.setState({currentTurn: data.currentTurn});
-            this.setState({tileValues: data.mapState});
+            this.setState({tileValues: data.map});
             for (let i = 0; i<data.turnState.length; i++) {
                 if (data.turnState[i].userAddress != this.props.userAddress) {
                     new_state.push(data.turnState[i]);
