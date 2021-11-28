@@ -69316,10 +69316,6 @@ var Game = /*#__PURE__*/function (_React$Component3) {
 
       socket.on("startInfo", function (data) {
         _this5.setState({
-          diceValues: data.dices
-        });
-
-        _this5.setState({
           currentPosition: data.pos
         });
 
@@ -69353,6 +69349,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
 
         _this5.errorlog("");
       });
+      this.endTurn();
     }
   }, {
     key: "togglePopup",
@@ -69717,14 +69714,14 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
       }
 
       if (this.props.value != 100) {
-        value = this.props.value;
+        value = this.props.value.toString();
       } else {
         value = null;
       }
 
       if (this.props.turnState != null) {
         for (var i = 0; i < this.props.turnState.length; i++) {
-          if (this.props.turnState[i].currentPosition[0] == this.props.q && this.props.turnState[i].currentPosition[0] == this.props.r) {
+          if (this.props.turnState[i].currentPosition[0] == this.props.q && this.props.turnState[i].currentPosition[1] == this.props.r) {
             Type = "ship";
           }
         }

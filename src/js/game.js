@@ -146,7 +146,6 @@ class Game extends React.Component {
     //funcion que correr cuando el componente es creado
     componentDidMount() {
         socket.on("startInfo", (data) => {
-            this.setState({diceValues: data.dices});
             this.setState({currentPosition: data.pos});
             this.setState({tileValues: data.map});
         });
@@ -168,6 +167,7 @@ class Game extends React.Component {
             this.setState({turnState: new_state});
             this.errorlog("")  
         });
+        this.endTurn();
     }
 
     togglePopup() {
@@ -443,13 +443,13 @@ class BoardHexagon extends React.Component {
             Type = "ship";
         }
         if (this.props.value!=100) {
-            value = this.props.value;
+            value = this.props.value.toString();
         } else {
             value =null;
         }
         if (this.props.turnState != null) {
             for (let i=0; i<this.props.turnState.length;i++) {
-                if (this.props.turnState[i].currentPosition[0] == this.props.q && this.props.turnState[i].currentPosition[0]==this.props.r) {
+                if (this.props.turnState[i].currentPosition[0] == this.props.q && this.props.turnState[i].currentPosition[1]==this.props.r) {
                     Type = "ship"
                 }
             }
