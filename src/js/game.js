@@ -132,7 +132,6 @@ class Game extends React.Component {
             currentTurn: 1,
             tileValues: [[100]],
             diceValues: [null, null, null],
-            selectedSquare: [null,null],
             selectedHexagon: [null,null,null],
             selectedDice: null,
             currentPosition: [null,null,null],
