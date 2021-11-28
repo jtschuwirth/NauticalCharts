@@ -69522,13 +69522,13 @@ var Game = /*#__PURE__*/function (_React$Component3) {
 
       var array = this.state.diceValues;
       return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, "Game ID: ", this.props.gameId), /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, "Turno: ", this.state.currentTurn), /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, "Tienes: ", this.state.currentPoints, " Puntos"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, /*#__PURE__*/React.createElement(Board, {
         tileValues: this.state.tileValues,
         selectedHexagon: this.state.selectedHexagon,
@@ -69537,13 +69537,13 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         boardSize: this.state.boardSize,
         turnState: this.state.turnState
       })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, "Dados"), /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, array.map(function (_, index) {
         return _this7.renderDices(_, index);
       })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
           return _this7.sail();
@@ -69557,9 +69557,9 @@ var Game = /*#__PURE__*/function (_React$Component3) {
           return _this7.endTurn();
         }
       }, "End Turn")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, this.state.errorlog), /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, /*#__PURE__*/React.createElement("button", {
         onClick: function onClick() {
           return _this7.quitGame();
@@ -69722,9 +69722,11 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
         value = null;
       }
 
-      for (var i = 0; i < this.props.turnState.length; i++) {
-        if (this.props.turnState[i].currentPosition[0] == this.props.q && this.props.turnState[i].currentPosition[0] == this.props.r) {
-          Type = "ship";
+      if (this.props.turnState != null) {
+        for (var i = 0; i < this.props.turnState.length; i++) {
+          if (this.props.turnState[i].currentPosition[0] == this.props.q && this.props.turnState[i].currentPosition[0] == this.props.r) {
+            Type = "ship";
+          }
         }
       }
 
@@ -69763,9 +69765,9 @@ var Popup = /*#__PURE__*/function (_React$Component6) {
       }, /*#__PURE__*/React.createElement("div", {
         className: "popup_inner"
       }, /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, "Total Points: ", this.props.currentPoints), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
-        "class": "center"
+        className: "center"
       }, /*#__PURE__*/React.createElement("button", {
         onClick: this.props.quitGame
       }, "Play Again"), /*#__PURE__*/React.createElement("button", {

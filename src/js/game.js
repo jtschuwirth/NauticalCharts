@@ -305,18 +305,18 @@ class Game extends React.Component {
         let array = this.state.diceValues;
         return (
             <div>
-                <div class="center">
+                <div className="center">
                     Game ID: {this.props.gameId}
                 </div>
-                <div class="center">
+                <div className="center">
                     Turno: {this.state.currentTurn}        
                 </div>
-                <div class="center">
+                <div className="center">
                     Tienes: {this.state.currentPoints} Puntos
                 </div>
                 <br></br>
 
-                <div class="center">
+                <div className="center">
                     <Board 
                         tileValues={this.state.tileValues}
                         selectedHexagon = {this.state.selectedHexagon}
@@ -327,23 +327,23 @@ class Game extends React.Component {
                     />
                 </div>
                 <br></br>
-                <div class="center">
+                <div className="center">
                     Dados             
                 </div>
-                <div class="center">
+                <div className="center">
                     {array.map((_, index) => this.renderDices(_, index))}
                 </div>
                 <br></br>
-                <div class = "center">
+                <div className = "center">
                     <button onClick={ () => this.sail()}>Sail</button>
                     <button onClick={ () => this.loot()}>Loot</button>
                     <button onClick={ () => this.endTurn()}>End Turn</button>
                 </div>
                 <br></br>
-                <div class="center">
+                <div className="center">
                     {this.state.errorlog}
                 </div>
-                <div class="center">
+                <div className="center">
                 <button onClick={ () => this.quitGame()}>Quit Game</button>
                 </div>
                 {this.state.showPopup ? 
@@ -447,9 +447,11 @@ class BoardHexagon extends React.Component {
         } else {
             value =null;
         }
-        for (let i=0; i<this.props.turnState.length;i++) {
-            if (this.props.turnState[i].currentPosition[0] == this.props.q && this.props.turnState[i].currentPosition[0]==this.props.r) {
-                Type = "ship"
+        if (this.props.turnState != null) {
+            for (let i=0; i<this.props.turnState.length;i++) {
+                if (this.props.turnState[i].currentPosition[0] == this.props.q && this.props.turnState[i].currentPosition[0]==this.props.r) {
+                    Type = "ship"
+                }
             }
         }
         classType = Type+selected;
@@ -466,12 +468,12 @@ class Popup extends React.Component {
       return (
         <div className='popup'>
           <div className='popup_inner'>
-                <div class="center">
+                <div className="center">
                     Total Points: {this.props.currentPoints} 
                 </div>
                 <br></br>
                 <br></br>
-                <div class="center">
+                <div className="center">
                     <button onClick={this.props.quitGame}>Play Again</button>
                     <button onClick={this.props.closePopup}>Go to Main Menu</button>
                 </div>
