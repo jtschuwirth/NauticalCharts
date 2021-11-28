@@ -18,7 +18,7 @@ window.onload = async function initialize() {
         
         if (ethereum.isMetaMask == true) {
           onboardButton.innerText = 'Connect Metamask';
-          onboardButton.onclick = onClickConnect;
+          onboardButton.onclick = onClickConnect();
           onboardButton.disabled = false;
         }
     }

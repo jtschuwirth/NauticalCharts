@@ -69829,7 +69829,7 @@ window.onload = /*#__PURE__*/function () {
               //Now we check to see if MetaMask is installed
               if (ethereum.isMetaMask == true) {
                 onboardButton.innerText = 'Connect Metamask';
-                onboardButton.onclick = onClickConnect;
+                onboardButton.onclick = onClickConnect();
                 onboardButton.disabled = false;
               }
             };
