@@ -69301,7 +69301,8 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       currentPosition: [null, null, null],
       boardSize: 6,
       attackValue: 0,
-      turnState: null
+      turnState: null,
+      pass: false
     };
     _this4.getBoardData = _this4.getBoardData.bind((0, _assertThisInitialized2["default"])(_this4));
     _this4.togglePopup = _this4.togglePopup.bind((0, _assertThisInitialized2["default"])(_this4));
@@ -69349,6 +69350,10 @@ var Game = /*#__PURE__*/function (_React$Component3) {
 
         _this5.setState({
           turnState: new_state
+        });
+
+        _this5.setState({
+          pass: false
         });
       });
       socket.on("lootResult", function (data) {
@@ -69413,56 +69418,65 @@ var Game = /*#__PURE__*/function (_React$Component3) {
   }, {
     key: "sail",
     value: function sail() {
-      this.setState({
-        errorlog: null
-      });
-
-      if (this.state.currentPosition[0] != this.state.selectedHexagon[0] && this.state.currentPosition[1] != this.state.selectedHexagon[1] && this.state.currentPosition[2] != this.state.selectedHexagon[2]) {
-        this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
-      } else if (this.state.selectedDice == null) {
-        this.errorlog("Debes seleccionar un dado para utilizar");
-      } else if (this.state.currentPosition[0] == this.state.selectedHexagon[0] && this.state.currentPosition[1] == this.state.selectedHexagon[1]) {
-        this.errorlog("No puedes navegar a la casilla en la que estas");
-      } else if (this.state.currentPosition[0] - this.state.selectedHexagon[0] > this.state.diceValues[this.state.selectedDice] || this.state.selectedHexagon[0] - this.state.currentPosition[0] > this.state.diceValues[this.state.selectedDice]) {
-        this.errorlog("No puedes avanzar mas de lo que dice el dado");
-      } else if (this.state.currentPosition[1] - this.state.selectedHexagon[1] > this.state.diceValues[this.state.selectedDice] || this.state.selectedHexagon[1] - this.state.currentPosition[1] > this.state.diceValues[this.state.selectedDice]) {
-        this.errorlog("No puedes avanzar mas de lo que dice el dado");
-      } else if (this.state.currentPosition[2] - this.state.selectedHexagon[2] > this.state.diceValues[this.state.selectedDice] || this.state.selectedHexagon[2] - this.state.currentPosition[2] > this.state.diceValues[this.state.selectedDice]) {
-        this.errorlog("No puedes avanzar mas de lo que dice el dado");
-      } else {
+      if (this.state.pass == false) {
         this.setState({
-          currentPosition: this.state.selectedHexagon
+          errorlog: null
         });
-        this.changeDiceValues();
+
+        if (this.state.currentPosition[0] != this.state.selectedHexagon[0] && this.state.currentPosition[1] != this.state.selectedHexagon[1] && this.state.currentPosition[2] != this.state.selectedHexagon[2]) {
+          this.errorlog("Casilla no valida, solo puedes navegar en linea recta");
+        } else if (this.state.selectedDice == null) {
+          this.errorlog("Debes seleccionar un dado para utilizar");
+        } else if (this.state.currentPosition[0] == this.state.selectedHexagon[0] && this.state.currentPosition[1] == this.state.selectedHexagon[1]) {
+          this.errorlog("No puedes navegar a la casilla en la que estas");
+        } else if (this.state.currentPosition[0] - this.state.selectedHexagon[0] > this.state.diceValues[this.state.selectedDice] || this.state.selectedHexagon[0] - this.state.currentPosition[0] > this.state.diceValues[this.state.selectedDice]) {
+          this.errorlog("No puedes avanzar mas de lo que dice el dado");
+        } else if (this.state.currentPosition[1] - this.state.selectedHexagon[1] > this.state.diceValues[this.state.selectedDice] || this.state.selectedHexagon[1] - this.state.currentPosition[1] > this.state.diceValues[this.state.selectedDice]) {
+          this.errorlog("No puedes avanzar mas de lo que dice el dado");
+        } else if (this.state.currentPosition[2] - this.state.selectedHexagon[2] > this.state.diceValues[this.state.selectedDice] || this.state.selectedHexagon[2] - this.state.currentPosition[2] > this.state.diceValues[this.state.selectedDice]) {
+          this.errorlog("No puedes avanzar mas de lo que dice el dado");
+        } else {
+          this.setState({
+            currentPosition: this.state.selectedHexagon
+          });
+          this.changeDiceValues();
+        }
       }
     }
   }, {
     key: "loot",
     value: function loot() {
-      this.setState({
-        errorlog: null
-      });
-
-      if (this.state.diceValues[this.state.selectedDice] == null) {
-        this.errorlog("Debes seleccionar un dado para lootear");
-      } else {
-        socket.emit("loot", {
-          userAddress: this.props.userAddress,
-          currentPosition: this.state.currentPosition,
-          lootValue: this.state.diceValues[this.state.selectedDice]
+      if (this.state.pass == false) {
+        this.setState({
+          errorlog: null
         });
+
+        if (this.state.diceValues[this.state.selectedDice] == null) {
+          this.errorlog("Debes seleccionar un dado para lootear");
+        } else {
+          socket.emit("loot", {
+            userAddress: this.props.userAddress,
+            currentPosition: this.state.currentPosition,
+            lootValue: this.state.diceValues[this.state.selectedDice]
+          });
+        }
       }
     }
   }, {
     key: "endTurn",
     value: function endTurn() {
-      socket.emit("endTurn", {
-        userAddress: this.props.userAddress,
-        currentPosition: this.state.currentPosition,
-        currentPoints: this.state.currentPoints,
-        attackValue: this.state.attackValue
-      });
-      this.errorlog("Esperando a los demas Jugadores");
+      if (this.state.pass == false) {
+        socket.emit("endTurn", {
+          userAddress: this.props.userAddress,
+          currentPosition: this.state.currentPosition,
+          currentPoints: this.state.currentPoints,
+          attackValue: this.state.attackValue
+        });
+        this.errorlog("Esperando a los demas Jugadores");
+        this.setState({
+          pass: true
+        });
+      }
     }
   }, {
     key: "endGame",
