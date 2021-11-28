@@ -69180,11 +69180,6 @@ var PlayButton = /*#__PURE__*/function (_React$Component2) {
     key: "componentDidMount",
     value: function componentDidMount() {
       socket.on('connect', function () {});
-      socket.on('connect_failed', function () {
-        this.setState({
-          errorlog: "connect failed"
-        });
-      });
     }
   }, {
     key: "joinQueue",
@@ -69305,7 +69300,9 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       selectedHexagon: [null, null, null],
       selectedDice: null,
       currentPosition: [null, null, null],
-      boardSize: 6
+      boardSize: 6,
+      attackValue: 0,
+      turnState: null
     };
     _this4.getBoardData = _this4.getBoardData.bind((0, _assertThisInitialized2["default"])(_this4));
     _this4.togglePopup = _this4.togglePopup.bind((0, _assertThisInitialized2["default"])(_this4));
@@ -69335,12 +69332,24 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         _this5.endGame();
       });
       socket.on("newRound", function (data) {
+        var new_state = [];
+
         _this5.setState({
           diceValues: data.dices
         });
 
         _this5.setState({
           currentTurn: data.currentTurn
+        });
+
+        for (var i = 0; i < data.turnState.length; i++) {
+          if (data.turnState[i].userAddress != _this5.props.userAddress) {
+            new_state.push(data.turnState[i]);
+          }
+        }
+
+        _this5.setState({
+          turnState: new_state
         });
 
         _this5.errorlog("");
@@ -69451,7 +69460,10 @@ var Game = /*#__PURE__*/function (_React$Component3) {
     key: "endTurn",
     value: function endTurn() {
       socket.emit("endTurn", {
-        userAddress: this.props.userAddress
+        userAddress: this.props.userAddress,
+        currentPosition: this.state.currentPosition,
+        currentPoints: this.state.currentPoints,
+        attackValue: this.state.attackValue
       });
       this.errorlog("Esperando a los demas Jugadores");
     }
@@ -69459,6 +69471,25 @@ var Game = /*#__PURE__*/function (_React$Component3) {
     key: "endGame",
     value: function endGame() {
       this.togglePopup();
+    }
+  }, {
+    key: "selectDice",
+    value: function selectDice(index) {
+      this.setState({
+        selectedDice: index
+      });
+    }
+  }, {
+    key: "errorlog",
+    value: function errorlog(value) {
+      this.setState({
+        errorlog: value
+      });
+    }
+  }, {
+    key: "quitGame",
+    value: function quitGame() {
+      window.location.reload();
     }
   }, {
     key: "renderDices",
@@ -69486,25 +69517,6 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       }
     }
   }, {
-    key: "selectDice",
-    value: function selectDice(index) {
-      this.setState({
-        selectedDice: index
-      });
-    }
-  }, {
-    key: "errorlog",
-    value: function errorlog(value) {
-      this.setState({
-        errorlog: value
-      });
-    }
-  }, {
-    key: "quitGame",
-    value: function quitGame() {
-      window.location.reload();
-    }
-  }, {
     key: "render",
     value: function render() {
       var _this7 = this;
@@ -69523,7 +69535,8 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         selectedHexagon: this.state.selectedHexagon,
         currentPosition: this.state.currentPosition,
         sendBoardData: this.getBoardData,
-        boardSize: this.state.boardSize
+        boardSize: this.state.boardSize,
+        turnState: this.state.turnState
       })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, "Dados"), /*#__PURE__*/React.createElement("div", {
@@ -69594,6 +69607,7 @@ var Board = /*#__PURE__*/function (_React$Component4) {
           value: value,
           selectedHexagon: this.props.selectedHexagon,
           currentPosition: this.props.currentPosition,
+          turnState: this.props.turnState,
           sendData: this.getSelectedHexagon
         });
       }
@@ -69707,6 +69721,12 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
         value = this.props.value;
       } else {
         value = null;
+      }
+
+      for (var i = 0; i < this.props.turnState.length; i++) {
+        if (this.props.turnState[i].currentPosition[0] == this.props.q && this.props.turnState[i].currentPosition[0] == this.props.r) {
+          Type = "ship";
+        }
       }
 
       classType = Type + selected;

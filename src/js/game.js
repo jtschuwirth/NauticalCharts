@@ -137,6 +137,8 @@ class Game extends React.Component {
             selectedDice: null,
             currentPosition: [null,null,null],
             boardSize: 6,
+            attackValue: 0,
+            turnState: null,
         };
         this.getBoardData = this.getBoardData.bind(this)
         this.togglePopup = this.togglePopup.bind(this)
@@ -156,8 +158,15 @@ class Game extends React.Component {
         });
 
         socket.on("newRound", (data) => {
+            let new_state = [];
             this.setState({diceValues: data.dices});
             this.setState({currentTurn: data.currentTurn});
+            for (let i = 0; i<data.turnState.length; i++) {
+                if (data.turnState[i].userAddress != this.props.userAddress) {
+                    new_state.push(data.turnState[i]);
+                }
+            }
+            this.setState({turnState: new_state});
             this.errorlog("")  
         });
     }
@@ -246,12 +255,29 @@ class Game extends React.Component {
     }
 
     endTurn() {
-        socket.emit("endTurn", {userAddress: this.props.userAddress});
+        socket.emit("endTurn", {
+            userAddress: this.props.userAddress, 
+            currentPosition: this.state.currentPosition,
+            currentPoints: this.state.currentPoints,
+            attackValue: this.state.attackValue,
+        });
         this.errorlog("Esperando a los demas Jugadores")
     }
 
     endGame() {
         this.togglePopup();
+    }
+
+    selectDice(index) {
+        this.setState({selectedDice: index})
+    }
+
+    errorlog(value) {
+        this.setState({errorlog: value});
+    }
+
+    quitGame() {
+        window.location.reload()
     }
 
     renderDices(value, index) {
@@ -276,18 +302,6 @@ class Game extends React.Component {
         }
     }
 
-    selectDice(index) {
-        this.setState({selectedDice: index})
-    }
-
-    errorlog(value) {
-        this.setState({errorlog: value});
-    }
-
-    quitGame() {
-        window.location.reload()
-    }
-
     render() {
         let array = this.state.diceValues;
         return (
@@ -310,6 +324,7 @@ class Game extends React.Component {
                         currentPosition = {this.state.currentPosition}
                         sendBoardData={this.getBoardData}
                         boardSize = {this.state.boardSize}
+                        turnState = {this.state.turnState}
                     />
                 </div>
                 <br></br>
@@ -367,6 +382,7 @@ class Board extends React.Component {
                         value = {value} 
                         selectedHexagon = {this.props.selectedHexagon} 
                         currentPosition = {this.props.currentPosition} 
+                        turnState = {this.props.turnState}
                         sendData={this.getSelectedHexagon}/>
         }
     }
@@ -431,6 +447,11 @@ class BoardHexagon extends React.Component {
             value = this.props.value;
         } else {
             value =null;
+        }
+        for (let i=0; i<this.props.turnState.length;i++) {
+            if (this.props.turnState[i].currentPosition[0] == this.props.q && this.props.turnState[i].currentPosition[0]==this.props.r) {
+                Type = "ship"
+            }
         }
         classType = Type+selected;
         return(
