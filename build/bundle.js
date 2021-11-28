@@ -69801,7 +69801,23 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+
+var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
+
+var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
+
+var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
+
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = (0, _getPrototypeOf2["default"])(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2["default"])(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2["default"])(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
 var _require = require("ethers"),
     ethers = _require.ethers,
@@ -69818,37 +69834,13 @@ var signer = provider.getSigner(); //Funcion de inicializacion de la pagina
 
 window.onload = /*#__PURE__*/function () {
   var _initialize = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
-    var userAddress, onboardButton, MetaMaskClientCheck, playButton;
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            onboardButton = document.getElementById('connectButton');
+            ReactDOM.render( /*#__PURE__*/React.createElement(App, null), document.getElementById('app'));
 
-            MetaMaskClientCheck = function MetaMaskClientCheck() {
-              //Now we check to see if MetaMask is installed
-              if (ethereum.isMetaMask == true) {
-                onboardButton.innerText = 'Connect Metamask';
-                onboardButton.onclick = onClickConnect();
-                onboardButton.disabled = false;
-              }
-            };
-
-            playButton = function playButton(address) {
-              ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
-                userAddress: address
-              }), document.getElementById('playButton'));
-            };
-
-            MetaMaskClientCheck();
-            _context.next = 6;
-            return currentAddress();
-
-          case 6:
-            userAddress = _context.sent;
-            playButton(userAddress);
-
-          case 8:
+          case 1:
           case "end":
             return _context.stop();
         }
@@ -69863,69 +69855,204 @@ window.onload = /*#__PURE__*/function () {
   return initialize;
 }();
 
-var onClickConnect = /*#__PURE__*/function () {
-  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-    return _regenerator["default"].wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.prev = 0;
-            _context2.next = 3;
-            return ethereum.request({
-              method: 'eth_requestAccounts'
-            });
+var playButton = function playButton(address) {
+  ReactDOM.render( /*#__PURE__*/React.createElement(game.PlayButton, {
+    userAddress: address
+  }), document.getElementById('playButton'));
+};
 
-          case 3:
-            _context2.next = 8;
-            break;
+var App = /*#__PURE__*/function (_React$Component) {
+  (0, _inherits2["default"])(App, _React$Component);
 
-          case 5:
-            _context2.prev = 5;
-            _context2.t0 = _context2["catch"](0);
-            console.error(_context2.t0);
+  var _super = _createSuper(App);
 
-          case 8:
-          case "end":
-            return _context2.stop();
-        }
+  function App(props) {
+    var _this;
+
+    (0, _classCallCheck2["default"])(this, App);
+    _this = _super.call(this, props);
+    _this.state = {
+      currentAddress: null,
+      connected: false
+    };
+    _this.getAddress = _this.getAddress.bind((0, _assertThisInitialized2["default"])(_this));
+    _this.getConnection = _this.getConnection.bind((0, _assertThisInitialized2["default"])(_this));
+    return _this;
+  }
+
+  (0, _createClass2["default"])(App, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      if (this.state.currentAddress != null) {
+        playButton(this.state.currentAddress);
       }
-    }, _callee2, null, [[0, 5]]);
-  }));
-
-  return function onClickConnect() {
-    return _ref.apply(this, arguments);
-  };
-}();
-
-function currentAddress() {
-  return _currentAddress.apply(this, arguments);
-}
-
-function _currentAddress() {
-  _currentAddress = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
-    var accounts, account;
-    return _regenerator["default"].wrap(function _callee3$(_context3) {
-      while (1) {
-        switch (_context3.prev = _context3.next) {
-          case 0:
-            _context3.next = 2;
-            return ethereum.request({
-              method: 'eth_requestAccounts'
-            });
-
-          case 2:
-            accounts = _context3.sent;
-            account = accounts[0];
-            return _context3.abrupt("return", account);
-
-          case 5:
-          case "end":
-            return _context3.stop();
-        }
+    }
+  }, {
+    key: "getAddress",
+    value: function getAddress(childData) {
+      this.setState({
+        currentAddress: childData
+      });
+      playButton(this.state.currentAddress);
+    }
+  }, {
+    key: "getConnection",
+    value: function getConnection(childData) {
+      if (childData == "connected") {
+        this.setState({
+          connected: true
+        });
       }
-    }, _callee3);
-  }));
-  return _currentAddress.apply(this, arguments);
-}
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      if (this.state.connected == false) {
+        return /*#__PURE__*/React.createElement(MetamaskConnection, {
+          sendAddress: this.getAddress,
+          sendConnection: this.getConnection
+        });
+      } else {
+        return /*#__PURE__*/React.createElement("div", null);
+      }
+    }
+  }]);
+  return App;
+}(React.Component);
 
-},{"./game.js":248,"@babel/runtime/helpers/asyncToGenerator":2,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/regenerator":11,"ethers":179,"react":229,"react-dom":211}]},{},[249]);
+var MetamaskConnection = /*#__PURE__*/function (_React$Component2) {
+  (0, _inherits2["default"])(MetamaskConnection, _React$Component2);
+
+  var _super2 = _createSuper(MetamaskConnection);
+
+  function MetamaskConnection(props) {
+    var _this2;
+
+    (0, _classCallCheck2["default"])(this, MetamaskConnection);
+    _this2 = _super2.call(this, props);
+    _this2.state = {
+      connected: false
+    };
+    return _this2;
+  }
+
+  (0, _createClass2["default"])(MetamaskConnection, [{
+    key: "connectMetamask",
+    value: function () {
+      var _connectMetamask = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
+        var account;
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.prev = 0;
+                _context2.next = 3;
+                return ethereum.request({
+                  method: 'eth_requestAccounts'
+                });
+
+              case 3:
+                _context2.next = 5;
+                return this.currentAddress();
+
+              case 5:
+                account = _context2.sent;
+                this.setState({
+                  connected: true
+                });
+                this.props.sendAddress(account);
+                this.props.sendConnection("connected");
+                _context2.next = 15;
+                break;
+
+              case 11:
+                _context2.prev = 11;
+                _context2.t0 = _context2["catch"](0);
+                console.error(_context2.t0);
+                this.setState({
+                  connected: false
+                });
+
+              case 15:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this, [[0, 11]]);
+      }));
+
+      function connectMetamask() {
+        return _connectMetamask.apply(this, arguments);
+      }
+
+      return connectMetamask;
+    }()
+  }, {
+    key: "currentAddress",
+    value: function () {
+      var _currentAddress = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
+        var accounts, account;
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return ethereum.request({
+                  method: 'eth_requestAccounts'
+                });
+
+              case 2:
+                accounts = _context3.sent;
+                account = accounts[0];
+                return _context3.abrupt("return", account);
+
+              case 5:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      function currentAddress() {
+        return _currentAddress.apply(this, arguments);
+      }
+
+      return currentAddress;
+    }()
+  }, {
+    key: "installMetamask",
+    value: function installMetamask() {
+      window.open("https://metamask.io/");
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this3 = this;
+
+      if (ethereum.isMetaMask == true) {
+        return /*#__PURE__*/React.createElement("div", {
+          className: "center"
+        }, /*#__PURE__*/React.createElement("button", {
+          onClick: function onClick() {
+            return _this3.connectMetamask();
+          }
+        }, "Connect"));
+      } else {
+        this.setState({
+          connected: false
+        });
+        return /*#__PURE__*/React.createElement("div", {
+          className: "center"
+        }, /*#__PURE__*/React.createElement("button", {
+          onClick: function onClick() {
+            return _this3.installMetamask();
+          }
+        }, "Install Metamask"));
+      }
+    }
+  }]);
+  return MetamaskConnection;
+}(React.Component);
+
+},{"./game.js":248,"@babel/runtime/helpers/assertThisInitialized":1,"@babel/runtime/helpers/asyncToGenerator":2,"@babel/runtime/helpers/classCallCheck":3,"@babel/runtime/helpers/createClass":4,"@babel/runtime/helpers/getPrototypeOf":5,"@babel/runtime/helpers/inherits":6,"@babel/runtime/helpers/interopRequireDefault":7,"@babel/runtime/helpers/possibleConstructorReturn":8,"@babel/runtime/regenerator":11,"ethers":179,"react":229,"react-dom":211}]},{},[249]);
