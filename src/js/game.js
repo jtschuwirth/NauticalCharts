@@ -38,12 +38,12 @@ class QueueMessage extends React.Component {
     render() {
         if (this.props.inQueue == true) {
             return(
-                <p>On Queue</p>
+                <div>On Queue</div>
             );
         } else {
             return(
                 <div></div>
-            )
+            );
         }
     }
 }
@@ -98,7 +98,8 @@ class PlayButton extends React.Component {
                         <div className="center"><button onClick={ () => this.joinQueue(3)}>3 Players</button></div>
                         <br></br>
                         <div className="center"><button onClick={ () => this.joinQueue(4)}>4 Players</button></div>
-                    </div>)
+                    </div>
+                );
                     
             } else {
                 return (

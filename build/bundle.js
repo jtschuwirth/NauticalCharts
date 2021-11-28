@@ -69148,7 +69148,7 @@ var QueueMessage = /*#__PURE__*/function (_React$Component) {
     key: "render",
     value: function render() {
       if (this.props.inQueue == true) {
-        return /*#__PURE__*/React.createElement("p", null, "On Queue");
+        return /*#__PURE__*/React.createElement("div", null, "On Queue");
       } else {
         return /*#__PURE__*/React.createElement("div", null);
       }
@@ -69506,9 +69506,9 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       var array = this.state.diceValues;
       return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
         "class": "center"
-      }, this.state.selectedHexagon, "Game ID: ", this.props.gameId), /*#__PURE__*/React.createElement("div", {
+      }, "Game ID: ", this.props.gameId), /*#__PURE__*/React.createElement("div", {
         "class": "center"
-      }, this.state.currentPosition, "Turno: ", this.state.currentTurn), /*#__PURE__*/React.createElement("div", {
+      }, "Turno: ", this.state.currentTurn), /*#__PURE__*/React.createElement("div", {
         "class": "center"
       }, "Tienes: ", this.state.currentPoints, " Puntos"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
         "class": "center"
