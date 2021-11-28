@@ -148,6 +148,7 @@ class Game extends React.Component {
         socket.on("startInfo", (data) => {
             this.setState({currentPosition: data.pos});
             this.setState({tileValues: data.map});
+            this.endTurn();
         });
 
         socket.on("endGame", (data) => {
@@ -156,6 +157,7 @@ class Game extends React.Component {
         });
 
         socket.on("newRound", (data) => {
+            this.errorlog("") 
             let new_state = [];
             this.setState({diceValues: data.dices});
             this.setState({currentTurn: data.currentTurn});
@@ -165,9 +167,8 @@ class Game extends React.Component {
                 }
             }
             this.setState({turnState: new_state});
-            this.errorlog("")  
         });
-        this.endTurn();
+
     }
 
     togglePopup() {

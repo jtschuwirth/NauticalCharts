@@ -69322,11 +69322,15 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         _this5.setState({
           tileValues: data.map
         });
+
+        _this5.endTurn();
       });
       socket.on("endGame", function (data) {
         _this5.endGame();
       });
       socket.on("newRound", function (data) {
+        _this5.errorlog("");
+
         var new_state = [];
 
         _this5.setState({
@@ -69346,10 +69350,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
         _this5.setState({
           turnState: new_state
         });
-
-        _this5.errorlog("");
       });
-      this.endTurn();
     }
   }, {
     key: "togglePopup",
