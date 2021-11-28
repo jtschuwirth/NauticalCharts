@@ -69123,7 +69123,8 @@ var socket = io(SERVER, {
     origin: SERVER,
     credentials: true
   },
-  transports: ['websocket']
+  transports: ['websocket'],
+  reconnect: true
 });
 
 var foundGame = function foundGame(id, userAddress, size) {
@@ -69179,6 +69180,11 @@ var PlayButton = /*#__PURE__*/function (_React$Component2) {
     key: "componentDidMount",
     value: function componentDidMount() {
       socket.on('connect', function () {});
+      socket.on('connect_failed', function () {
+        this.setState({
+          errorlog: "connect failed"
+        });
+      });
     }
   }, {
     key: "joinQueue",

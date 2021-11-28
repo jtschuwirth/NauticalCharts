@@ -62,6 +62,7 @@ class PlayButton extends React.Component {
         socket.on('connect', function() {
 
         });
+
     }
 
     joinQueue(size) {  
