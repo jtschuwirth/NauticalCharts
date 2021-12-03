@@ -69116,8 +69116,8 @@ var ReactDOM = require('react-dom');
 var _require = require("socket.io-client"),
     io = _require.io;
 
-//const SERVER = "http://localhost:8000"
-var SERVER = "https://jtschuwirth.xyz";
+var SERVER = "http://localhost:8000"; //const SERVER = "https://jtschuwirth.xyz"
+
 var socket = io(SERVER, {
   cors: {
     origin: SERVER,
@@ -69135,39 +69135,16 @@ var foundGame = function foundGame(id, userAddress, size) {
   }), document.getElementById('game'));
 };
 
-var QueueMessage = /*#__PURE__*/function (_React$Component) {
-  (0, _inherits2["default"])(QueueMessage, _React$Component);
+var PlayButton = /*#__PURE__*/function (_React$Component) {
+  (0, _inherits2["default"])(PlayButton, _React$Component);
 
-  var _super = _createSuper(QueueMessage);
-
-  function QueueMessage() {
-    (0, _classCallCheck2["default"])(this, QueueMessage);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2["default"])(QueueMessage, [{
-    key: "render",
-    value: function render() {
-      if (this.props.inQueue == true) {
-        return /*#__PURE__*/React.createElement("div", null, "On Queue");
-      } else {
-        return /*#__PURE__*/React.createElement("div", null);
-      }
-    }
-  }]);
-  return QueueMessage;
-}(React.Component);
-
-var PlayButton = /*#__PURE__*/function (_React$Component2) {
-  (0, _inherits2["default"])(PlayButton, _React$Component2);
-
-  var _super2 = _createSuper(PlayButton);
+  var _super = _createSuper(PlayButton);
 
   function PlayButton(props) {
     var _this;
 
     (0, _classCallCheck2["default"])(this, PlayButton);
-    _this = _super2.call(this, props);
+    _this = _super.call(this, props);
     _this.state = {
       showQueue: true,
       inQueue: false,
@@ -69266,9 +69243,7 @@ var PlayButton = /*#__PURE__*/function (_React$Component2) {
             }
           }, "Cancel Queue")), /*#__PURE__*/React.createElement("div", {
             className: "center"
-          }, /*#__PURE__*/React.createElement(QueueMessage, {
-            inQueue: this.state.inQueue
-          })));
+          }, /*#__PURE__*/React.createElement("div", null, "On Queue")));
         }
       } else {
         return /*#__PURE__*/React.createElement("div", null);
@@ -69276,19 +69251,18 @@ var PlayButton = /*#__PURE__*/function (_React$Component2) {
     }
   }]);
   return PlayButton;
-}(React.Component); //Clase Game clase superior donde se guardan los estados de la partida
+}(React.Component);
 
+var Game = /*#__PURE__*/function (_React$Component2) {
+  (0, _inherits2["default"])(Game, _React$Component2);
 
-var Game = /*#__PURE__*/function (_React$Component3) {
-  (0, _inherits2["default"])(Game, _React$Component3);
-
-  var _super3 = _createSuper(Game);
+  var _super2 = _createSuper(Game);
 
   function Game(props) {
     var _this4;
 
     (0, _classCallCheck2["default"])(this, Game);
-    _this4 = _super3.call(this, props);
+    _this4 = _super2.call(this, props);
     _this4.state = {
       showPopup: false,
       errorlog: null,
@@ -69306,6 +69280,7 @@ var Game = /*#__PURE__*/function (_React$Component3) {
     };
     _this4.getBoardData = _this4.getBoardData.bind((0, _assertThisInitialized2["default"])(_this4));
     _this4.togglePopup = _this4.togglePopup.bind((0, _assertThisInitialized2["default"])(_this4));
+    _this4.getDice = _this4.getDice.bind((0, _assertThisInitialized2["default"])(_this4));
     return _this4;
   } //funcion que correr cuando el componente es creado
 
@@ -69384,6 +69359,13 @@ var Game = /*#__PURE__*/function (_React$Component3) {
     value: function getBoardData(childData) {
       this.setState({
         selectedHexagon: childData
+      });
+    }
+  }, {
+    key: "getDice",
+    value: function getDice(childData) {
+      this.setState({
+        selectedDice: childData
       });
     }
   }, {
@@ -69484,13 +69466,6 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       this.togglePopup();
     }
   }, {
-    key: "selectDice",
-    value: function selectDice(index) {
-      this.setState({
-        selectedDice: index
-      });
-    }
-  }, {
     key: "errorlog",
     value: function errorlog(value) {
       this.setState({
@@ -69503,36 +69478,8 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       window.location.reload();
     }
   }, {
-    key: "renderDices",
-    value: function renderDices(value, index) {
-      var _this6 = this;
-
-      if (value == null) {
-        return "";
-      }
-
-      if (this.state.selectedDice == index) {
-        return /*#__PURE__*/React.createElement("button", {
-          onClick: function onClick() {
-            return _this6.selectDice(index);
-          },
-          className: "diceSelected"
-        }, value);
-      } else {
-        return /*#__PURE__*/React.createElement("button", {
-          onClick: function onClick() {
-            return _this6.selectDice(index);
-          },
-          className: "dice"
-        }, value);
-      }
-    }
-  }, {
     key: "render",
     value: function render() {
-      var _this7 = this;
-
-      var array = this.state.diceValues;
       return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
         className: "center"
       }, "Game ID: ", this.props.gameId), /*#__PURE__*/React.createElement("div", {
@@ -69540,43 +69487,24 @@ var Game = /*#__PURE__*/function (_React$Component3) {
       }, "Turno: ", this.state.currentTurn), /*#__PURE__*/React.createElement("div", {
         className: "center"
       }, "Tienes: ", this.state.currentPoints, " Puntos"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
-        className: "center"
-      }, /*#__PURE__*/React.createElement(Board, {
+        className: "rowC"
+      }, /*#__PURE__*/React.createElement(SidePanelTurn, {
+        quitGame: this.quitGame.bind(this)
+      }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Board, {
         tileValues: this.state.tileValues,
         selectedHexagon: this.state.selectedHexagon,
         currentPosition: this.state.currentPosition,
         sendBoardData: this.getBoardData,
         boardSize: this.state.boardSize,
         turnState: this.state.turnState
-      })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
-        className: "center"
-      }, "Dados"), /*#__PURE__*/React.createElement("div", {
-        className: "center"
-      }, array.map(function (_, index) {
-        return _this7.renderDices(_, index);
-      })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
-        className: "center"
-      }, /*#__PURE__*/React.createElement("button", {
-        onClick: function onClick() {
-          return _this7.sail();
-        }
-      }, "Sail"), /*#__PURE__*/React.createElement("button", {
-        onClick: function onClick() {
-          return _this7.loot();
-        }
-      }, "Loot"), /*#__PURE__*/React.createElement("button", {
-        onClick: function onClick() {
-          return _this7.endTurn();
-        }
-      }, "End Turn")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
-        className: "center"
-      }, this.state.errorlog), /*#__PURE__*/React.createElement("div", {
-        className: "center"
-      }, /*#__PURE__*/React.createElement("button", {
-        onClick: function onClick() {
-          return _this7.quitGame();
-        }
-      }, "Quit Game")), this.state.showPopup ? /*#__PURE__*/React.createElement(Popup, {
+      })), /*#__PURE__*/React.createElement(SidePanelGame, {
+        selectedDice: this.state.selectedDice,
+        diceValues: this.state.diceValues,
+        sendDice: this.getDice,
+        sail: this.sail.bind(this),
+        loot: this.loot.bind(this),
+        endTurn: this.endTurn.bind(this)
+      })), this.state.showPopup ? /*#__PURE__*/React.createElement(Popup, {
         currentPoints: this.state.currentPoints,
         closePopup: this.togglePopup.bind(this),
         quitGame: this.quitGame.bind(this)
@@ -69584,22 +69512,21 @@ var Game = /*#__PURE__*/function (_React$Component3) {
     }
   }]);
   return Game;
-}(React.Component); //clase Board la cual tiene de hijos a los cuadrados.
+}(React.Component);
 
+var Board = /*#__PURE__*/function (_React$Component3) {
+  (0, _inherits2["default"])(Board, _React$Component3);
 
-var Board = /*#__PURE__*/function (_React$Component4) {
-  (0, _inherits2["default"])(Board, _React$Component4);
-
-  var _super4 = _createSuper(Board);
+  var _super3 = _createSuper(Board);
 
   function Board(props) {
-    var _this8;
+    var _this6;
 
     (0, _classCallCheck2["default"])(this, Board);
-    _this8 = _super4.call(this, props);
-    _this8.state = {};
-    _this8.getSelectedHexagon = _this8.getSelectedHexagon.bind((0, _assertThisInitialized2["default"])(_this8));
-    return _this8;
+    _this6 = _super3.call(this, props);
+    _this6.state = {};
+    _this6.getSelectedHexagon = _this6.getSelectedHexagon.bind((0, _assertThisInitialized2["default"])(_this6));
+    return _this6;
   }
 
   (0, _createClass2["default"])(Board, [{
@@ -69626,26 +69553,26 @@ var Board = /*#__PURE__*/function (_React$Component4) {
   }, {
     key: "renderR",
     value: function renderR(array, q) {
-      var _this9 = this;
+      var _this7 = this;
 
       return array.map(function (_, index) {
-        return _this9.renderHexagon(_, q - _this9.props.boardSize, index - _this9.props.boardSize, -q - index + _this9.props.boardSize * 2);
+        return _this7.renderHexagon(_, q - _this7.props.boardSize, index - _this7.props.boardSize, -q - index + _this7.props.boardSize * 2);
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this10 = this;
+      var _this8 = this;
 
       var tiles = this.props.tileValues;
       return /*#__PURE__*/React.createElement(_reactHexgrid.HexGrid, {
-        width: 800,
+        width: 600,
         height: 600,
         viewBox: "-50 -50 100 100"
       }, /*#__PURE__*/React.createElement(_reactHexgrid.Layout, {
         size: {
-          x: 3,
-          y: 3
+          x: 4,
+          y: 4
         },
         flat: true,
         spacing: 1,
@@ -69654,7 +69581,7 @@ var Board = /*#__PURE__*/function (_React$Component4) {
           y: 0
         }
       }, tiles.map(function (_, index) {
-        return _this10.renderR(_, index);
+        return _this8.renderR(_, index);
       })), /*#__PURE__*/React.createElement(_reactHexgrid.Pattern, {
         id: "island",
         link: "src/island.png"
@@ -69679,18 +69606,18 @@ var Board = /*#__PURE__*/function (_React$Component4) {
   return Board;
 }(React.Component);
 
-var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
-  (0, _inherits2["default"])(BoardHexagon, _React$Component5);
+var BoardHexagon = /*#__PURE__*/function (_React$Component4) {
+  (0, _inherits2["default"])(BoardHexagon, _React$Component4);
 
-  var _super5 = _createSuper(BoardHexagon);
+  var _super4 = _createSuper(BoardHexagon);
 
   function BoardHexagon(props) {
-    var _this11;
+    var _this9;
 
     (0, _classCallCheck2["default"])(this, BoardHexagon);
-    _this11 = _super5.call(this, props);
-    _this11.state = {};
-    return _this11;
+    _this9 = _super4.call(this, props);
+    _this9.state = {};
+    return _this9;
   }
 
   (0, _createClass2["default"])(BoardHexagon, [{
@@ -69705,7 +69632,7 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
   }, {
     key: "render",
     value: function render() {
-      var _this12 = this;
+      var _this10 = this;
 
       var Type;
       var value;
@@ -69749,7 +69676,7 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
         s: this.props.s,
         fill: classType,
         onClick: function onClick() {
-          return _this12.select();
+          return _this10.select();
         }
       }, /*#__PURE__*/React.createElement(_reactHexgrid.Text, {
         className: "hexagonText"
@@ -69759,14 +69686,14 @@ var BoardHexagon = /*#__PURE__*/function (_React$Component5) {
   return BoardHexagon;
 }(React.Component);
 
-var Popup = /*#__PURE__*/function (_React$Component6) {
-  (0, _inherits2["default"])(Popup, _React$Component6);
+var Popup = /*#__PURE__*/function (_React$Component5) {
+  (0, _inherits2["default"])(Popup, _React$Component5);
 
-  var _super6 = _createSuper(Popup);
+  var _super5 = _createSuper(Popup);
 
   function Popup() {
     (0, _classCallCheck2["default"])(this, Popup);
-    return _super6.apply(this, arguments);
+    return _super5.apply(this, arguments);
   }
 
   (0, _createClass2["default"])(Popup, [{
@@ -69788,6 +69715,119 @@ var Popup = /*#__PURE__*/function (_React$Component6) {
     }
   }]);
   return Popup;
+}(React.Component);
+
+var SidePanelGame = /*#__PURE__*/function (_React$Component6) {
+  (0, _inherits2["default"])(SidePanelGame, _React$Component6);
+
+  var _super6 = _createSuper(SidePanelGame);
+
+  function SidePanelGame(props) {
+    var _this11;
+
+    (0, _classCallCheck2["default"])(this, SidePanelGame);
+    _this11 = _super6.call(this, props);
+    _this11.state = {};
+    return _this11;
+  }
+
+  (0, _createClass2["default"])(SidePanelGame, [{
+    key: "selectDice",
+    value: function selectDice(index) {
+      this.props.sendDice(index);
+    }
+  }, {
+    key: "renderDices",
+    value: function renderDices(value, index) {
+      var _this12 = this;
+
+      if (value == null) {
+        return "";
+      }
+
+      if (this.props.selectedDice == index) {
+        return /*#__PURE__*/React.createElement("button", {
+          onClick: function onClick() {
+            return _this12.selectDice(index);
+          },
+          className: "diceSelected"
+        }, value);
+      } else {
+        return /*#__PURE__*/React.createElement("button", {
+          onClick: function onClick() {
+            return _this12.selectDice(index);
+          },
+          className: "dice"
+        }, value);
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this13 = this;
+
+      var dices = this.props.diceValues;
+      return /*#__PURE__*/React.createElement("div", {
+        className: "sidePanel"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "center"
+      }, "Dados"), /*#__PURE__*/React.createElement("div", {
+        className: "center"
+      }, dices.map(function (_, index) {
+        return _this13.renderDices(_, index);
+      })), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+        className: "center"
+      }, /*#__PURE__*/React.createElement("button", {
+        onClick: function onClick() {
+          return _this13.props.sail();
+        }
+      }, "Sail"), /*#__PURE__*/React.createElement("button", {
+        onClick: function onClick() {
+          return _this13.props.loot();
+        }
+      }, "Loot"), /*#__PURE__*/React.createElement("button", {
+        onClick: function onClick() {
+          return _this13.props.endTurn();
+        }
+      }, "End Turn")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+        className: "center"
+      }, this.state.errorlog));
+    }
+  }]);
+  return SidePanelGame;
+}(React.Component);
+
+var SidePanelTurn = /*#__PURE__*/function (_React$Component7) {
+  (0, _inherits2["default"])(SidePanelTurn, _React$Component7);
+
+  var _super7 = _createSuper(SidePanelTurn);
+
+  function SidePanelTurn(props) {
+    var _this14;
+
+    (0, _classCallCheck2["default"])(this, SidePanelTurn);
+    _this14 = _super7.call(this, props);
+    _this14.state = {};
+    return _this14;
+  }
+
+  (0, _createClass2["default"])(SidePanelTurn, [{
+    key: "render",
+    value: function render() {
+      var _this15 = this;
+
+      return /*#__PURE__*/React.createElement("div", {
+        className: "sidePanel"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "center"
+      }, /*#__PURE__*/React.createElement("button", {
+        onClick: function onClick() {
+          return _this15.props.quitGame();
+        }
+      }, "Quit Game")));
+    }
+  }]);
+  return SidePanelTurn;
 }(React.Component); //comando necesario para importar la clase Game en main.js
 
 

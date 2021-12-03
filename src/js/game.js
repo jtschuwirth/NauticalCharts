@@ -16,8 +16,8 @@ import { HexGrid, Layout, Hexagon, Text, Pattern, Path, Hex } from 'react-hexgri
 
 
 
-//const SERVER = "http://localhost:8000"
-const SERVER = "https://jtschuwirth.xyz"
+const SERVER = "http://localhost:8000"
+//const SERVER = "https://jtschuwirth.xyz"
 
 const socket = io(SERVER, {  
     cors: {
@@ -35,19 +35,6 @@ const foundGame = (id, userAddress, size) => {
 
 }
 
-class QueueMessage extends React.Component {
-    render() {
-        if (this.props.inQueue == true) {
-            return(
-                <div>On Queue</div>
-            );
-        } else {
-            return(
-                <div></div>
-            );
-        }
-    }
-}
 
 class PlayButton extends React.Component {
     constructor(props) {
@@ -110,7 +97,7 @@ class PlayButton extends React.Component {
                             <button onClick={ () => this.cancelQueue()}>Cancel Queue</button>
                         </div>
                         <div className="center">
-                            <QueueMessage inQueue={this.state.inQueue}/>
+                            <div>On Queue</div>
                         </div>
                     </div>)}
         } else {
@@ -121,7 +108,6 @@ class PlayButton extends React.Component {
     }
 }
 
-//Clase Game clase superior donde se guardan los estados de la partida
 class Game extends React.Component {
     constructor(props) {
         super(props);
@@ -142,6 +128,7 @@ class Game extends React.Component {
         };
         this.getBoardData = this.getBoardData.bind(this)
         this.togglePopup = this.togglePopup.bind(this)
+        this.getDice = this.getDice.bind(this)
     }
 
     //funcion que correr cuando el componente es creado
@@ -193,6 +180,10 @@ class Game extends React.Component {
 
     getBoardData(childData) {
         this.setState({selectedHexagon: childData})
+    }
+
+    getDice(childData) {
+        this.setState({selectedDice: childData})
     }
 
     positionValue(position) {
@@ -275,10 +266,6 @@ class Game extends React.Component {
         this.togglePopup();
     }
 
-    selectDice(index) {
-        this.setState({selectedDice: index})
-    }
-
     errorlog(value) {
         this.setState({errorlog: value});
     }
@@ -287,30 +274,7 @@ class Game extends React.Component {
         window.location.reload()
     }
 
-    renderDices(value, index) {
-        if (value == null) {
-            return ""
-        }
-        if (this.state.selectedDice == index) {
-            return <button 
-                onClick={ () => this.selectDice(index)}
-                className="diceSelected"
-                >
-                    {value}
-                </button>
-
-        } else {
-            return <button 
-                onClick={ () => this.selectDice(index)}
-                className="dice"
-                >
-                    {value}
-                </button>
-        }
-    }
-
     render() {
-        let array = this.state.diceValues;
         return (
             <div>
                 <div className="center">
@@ -323,36 +287,29 @@ class Game extends React.Component {
                     Tienes: {this.state.currentPoints} Puntos
                 </div>
                 <br></br>
-
-                <div className="center">
-                    <Board 
-                        tileValues={this.state.tileValues}
-                        selectedHexagon = {this.state.selectedHexagon}
-                        currentPosition = {this.state.currentPosition}
-                        sendBoardData={this.getBoardData}
-                        boardSize = {this.state.boardSize}
-                        turnState = {this.state.turnState}
+                <div className='rowC'>
+                    <SidePanelTurn 
+                        quitGame = {this.quitGame.bind(this)}
                     />
-                </div>
-                <br></br>
-                <div className="center">
-                    Dados             
-                </div>
-                <div className="center">
-                    {array.map((_, index) => this.renderDices(_, index))}
-                </div>
-                <br></br>
-                <div className = "center">
-                    <button onClick={ () => this.sail()}>Sail</button>
-                    <button onClick={ () => this.loot()}>Loot</button>
-                    <button onClick={ () => this.endTurn()}>End Turn</button>
-                </div>
-                <br></br>
-                <div className="center">
-                    {this.state.errorlog}
-                </div>
-                <div className="center">
-                <button onClick={ () => this.quitGame()}>Quit Game</button>
+                    <div>
+                        <Board 
+                            tileValues={this.state.tileValues}
+                            selectedHexagon = {this.state.selectedHexagon}
+                            currentPosition = {this.state.currentPosition}
+                            sendBoardData={this.getBoardData}
+                            boardSize = {this.state.boardSize}
+                            turnState = {this.state.turnState}
+                        />
+                    </div>
+                    <SidePanelGame 
+                        selectedDice = {this.state.selectedDice}
+                        diceValues = {this.state.diceValues}
+                        sendDice = {this.getDice}
+                        sail = {this.sail.bind(this)}
+                        loot = {this.loot.bind(this)}
+                        endTurn = {this.endTurn.bind(this)}
+                    />
+
                 </div>
                 {this.state.showPopup ? 
                     <Popup
@@ -367,7 +324,6 @@ class Game extends React.Component {
     }
 }
 
-//clase Board la cual tiene de hijos a los cuadrados.
 class Board extends React.Component {
     constructor(props) {
         super(props);
@@ -402,8 +358,8 @@ class Board extends React.Component {
     render() {
         var tiles = this.props.tileValues;
         return (
-            <HexGrid width={800} height={600} viewBox="-50 -50 100 100">
-                <Layout size={{ x: 3, y: 3 }} flat={true} spacing={1} origin={{ x: 0, y: 0 }}>
+            <HexGrid width={600} height={600} viewBox="-50 -50 100 100">
+                <Layout size={{ x: 4, y: 4 }} flat={true} spacing={1} origin={{ x: 0, y: 0 }}>
                     {tiles.map((_, index) => this.renderR(_, index))}
                 </Layout>
                 <Pattern id="island" link="src/island.png" />
@@ -488,6 +444,82 @@ class Popup extends React.Component {
           </div>
         </div>
       );
+    }
+}
+
+class SidePanelGame extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+    }
+
+    selectDice(index) {
+        this.props.sendDice(index);
+    }
+
+    renderDices(value, index) {
+        if (value == null) {
+            return ""
+        }
+        if (this.props.selectedDice == index) {
+            return <button 
+                onClick={ () => this.selectDice(index)}
+                className="diceSelected"
+                >
+                    {value}
+                </button>
+
+        } else {
+            return <button 
+                onClick={ () => this.selectDice(index)}
+                className="dice"
+                >
+                    {value}
+                </button>
+        }
+    }
+
+    render() {
+        let dices = this.props.diceValues;
+        return (
+            <div className = "sidePanel">
+                <div className="center">
+                    Dados             
+                </div>
+                <div className="center">
+                    {dices.map((_, index) => this.renderDices(_, index))}
+                </div>
+                <br></br>
+                <div className = "center">
+                    <button onClick={ () => this.props.sail()}>Sail</button>
+                    <button onClick={ () => this.props.loot()}>Loot</button>
+                    <button onClick={ () => this.props.endTurn()}>End Turn</button>
+                </div>
+                <br></br>
+                <div className="center">
+                    {this.state.errorlog}
+                </div>
+            </div>
+        )
+    }
+}
+
+class SidePanelTurn extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+    }
+
+    render() {
+        return (
+            <div className = "sidePanel">
+                <div className="center">
+                    <button onClick={ () => this.props.quitGame()}>Quit Game</button>
+                </div>
+            </div>
+        )
     }
 }
 

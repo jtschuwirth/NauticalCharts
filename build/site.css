@@ -87,8 +87,8 @@ h1 {
     background: #fff;
     border: 1px solid #999;
     float: left;
-    height: 30px;
-    width: 30px;
+    height: 50px;
+    width: 50px;
     margin-right: -1px;
     margin-top: -1px;
   }
@@ -99,8 +99,8 @@ h1 {
     background: #fff;
     border: 1px solid black;
     float: left;
-    height: 30px;
-    width: 30px;
+    height: 60px;
+    width: 60px;
     margin-right: -1px;
     margin-top: -1px;
   }
@@ -126,6 +126,23 @@ h1 {
     margin: auto;
     background: white;
   }
+
+  .sidePanel {
+    background: #fff;
+    border: 1px solid #999;
+    float: left;
+    height: 600px;
+    width: 300px;
+    margin-right: -1px;
+    margin-top: -1px;
+  }
+
+  .rowC{
+    display:flex; 
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;}
+
   .hexagonText {
     font-size: 4px;
   }
