@@ -69116,8 +69116,8 @@ var ReactDOM = require('react-dom');
 var _require = require("socket.io-client"),
     io = _require.io;
 
-var SERVER = "http://localhost:8000"; //const SERVER = "https://jtschuwirth.xyz"
-
+//const SERVER = "http://localhost:8000"
+var SERVER = "https://jtschuwirth.xyz";
 var socket = io(SERVER, {
   cors: {
     origin: SERVER,
@@ -69157,26 +69157,29 @@ var PlayButton = /*#__PURE__*/function (_React$Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       socket.on('connect', function () {});
+      socket.emit("on", {
+        userAddress: this.props.userAddress
+      });
     }
   }, {
     key: "joinQueue",
-    value: function joinQueue(size) {
+    value: function joinQueue(queueSize) {
       var _this2 = this;
 
-      socket.emit("enter" + size.toString(), this.props.userAddress);
+      socket.emit("enter" + queueSize.toString(), this.props.userAddress);
       this.setState({
         inQueue: true
       });
-      socket.on("statusQueue" + size.toString(), function (data) {
+      socket.on("statusQueue" + queueSize.toString(), function (data) {
         for (var i = 0; i < data.players.length; i++) {
           if (_this2.props.userAddress == data.players[i]) {
             var id = data.lastId + 1;
-            socket.emit("foundGame" + size.toString(), {
+            socket.emit("foundGame" + queueSize.toString(), {
               id: id,
               player: data.players[i],
               players: data.players
             });
-            foundGame(id, _this2.props.userAddress, size);
+            foundGame(id, _this2.props.userAddress, data.boardSize);
 
             _this2.setState({
               showQueue: false

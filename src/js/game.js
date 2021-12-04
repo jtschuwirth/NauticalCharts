@@ -16,8 +16,8 @@ import { HexGrid, Layout, Hexagon, Text, Pattern, Path, Hex } from 'react-hexgri
 
 
 
-const SERVER = "http://localhost:8000"
-//const SERVER = "https://jtschuwirth.xyz"
+//const SERVER = "http://localhost:8000"
+const SERVER = "https://jtschuwirth.xyz"
 
 const socket = io(SERVER, {  
     cors: {
@@ -47,20 +47,20 @@ class PlayButton extends React.Component {
     }
     componentDidMount() {
         socket.on('connect', function() {
-
         });
+        socket.emit("on", {userAddress: this.props.userAddress})
 
     }
 
-    joinQueue(size) {  
-        socket.emit("enter"+size.toString(), this.props.userAddress);
+    joinQueue(queueSize) {  
+        socket.emit("enter"+queueSize.toString(), this.props.userAddress);
         this.setState({inQueue: true});
-        socket.on("statusQueue"+size.toString(), (data) => {
+        socket.on("statusQueue"+queueSize.toString(), (data) => {
             for (let i=0; i<data.players.length; i++) {
                 if (this.props.userAddress == data.players[i]) {
                     const id = data.lastId+1;
-                    socket.emit("foundGame"+size.toString(), {id: id, player: data.players[i], players: data.players})
-                    foundGame(id, this.props.userAddress, size)
+                    socket.emit("foundGame"+queueSize.toString(), {id: id, player: data.players[i], players: data.players})
+                    foundGame(id, this.props.userAddress, data.boardSize)
                     this.setState({showQueue: false});
                     this.setState({inQueue: false});
                 }
